@@ -36,6 +36,31 @@ public class RomanTest {
     }
 
     @Test
+    public void inscribeCarvesLetters() {
+        assertEquals("AVGVSTVS", Roman.inscribe("Augustus", 8));
+        assertEquals("IVLII", Roman.inscribe("Iulii", 40));
+        assertEquals("SALVE", Roman.inscribe("  salve  ", 8));
+        assertEquals("AVE · ROMA", Roman.inscribe("Ave · Roma!", 20));
+        assertEquals("", Roman.inscribe("ДОМ", 8));
+        assertEquals("", Roman.inscribe(null, 8));
+        assertEquals("A B", Roman.inscribe("a    b", 8));
+        assertEquals("IVLIVS", Roman.inscribe("Julius", 8));
+    }
+
+    @Test
+    public void inscribeCutsAtMax() {
+        assertEquals("ABCDEFGH", Roman.inscribe("abcdefghij", 8));
+        assertEquals("ABC", Roman.inscribe("abc defgh", 4));   // the cut leaves no trailing space
+    }
+
+    @Test
+    public void inscribeDateLine() {
+        assertEquals("XX OCTOBRIS MMXXVI", Roman.inscribe(Roman.date(2026, 10, 20), 40));
+        assertEquals("V IVLII MMXXVI", Roman.inscribe(Roman.date(2026, 7, 5), 40));
+        assertEquals("I AVGVSTI MMXXVI", Roman.inscribe(Roman.date(2026, 8, 1), 40));
+    }
+
+    @Test
     public void dateLineYearOutOfRange() {
         assertEquals("V Martii 4500", Roman.date(4500, 3, 5));
     }

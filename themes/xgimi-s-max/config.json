@@ -8,8 +8,8 @@
   "rows_below_dock": 0,
   "background_color": "#000000",
   "wallpaper": false,
-  "font": "serif",
+  "style": "roman",
+  "roman_inscription": "SALVE",
   "roman_date": true,
-  "accent_color": "#C9A24B",
-  "laurel": true
+  "accent_color": "#C9A24B"
 }

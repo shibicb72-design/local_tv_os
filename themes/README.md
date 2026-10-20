@@ -15,7 +15,7 @@ powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost 192.168.1.50 th
 | `default/` | The built-in look written out as JSON, as a starting point for your own |
 | `aurora/` | A dark aurora wallpaper (teal and violet on navy, darker at the bottom) with a matching background colour |
 | `six-columns/` | Six smaller tiles per row and one grid row visible under the dock |
-| `xgimi-s-max/` | For the XGIMI HORIZON S Max (XK03H): YouTube, Prime Video and HDMI 1 in the dock, HDMI opened through XGIMI's own player (`com.xgimi.action.hdmiPlayer`), no Live TV, factory and screensaver apps hidden; the Roman look is on (serif, Roman date, gold accent, laurel) |
+| `xgimi-s-max/` | For the XGIMI HORIZON S Max (XK03H): YouTube, Prime Video and HDMI 1 in the dock, HDMI opened through XGIMI's own player (`com.xgimi.action.hdmiPlayer`), no Live TV, factory and screensaver apps hidden; the Roman look v2 is on (Cinzel lettering, Roman date, gold accent; stone and ornaments follow in later steps) |
 
 ## Keys
 
@@ -43,6 +43,18 @@ is ignored, and a file that doesn't parse is ignored as a whole, so a theme can 
 | `roman_date` | bool | Date line in Roman numerals, e.g. `XX Octobris MMXXVI`; replaces the Shamsi line when both are on |
 | `accent_color` | `#RRGGBB` | Colour of the greeting line and the laurel; unset keeps the default white look |
 | `laurel` | bool | A small laurel wreath beside the clock, tinted with `accent_color` |
+| `style` | string | `"roman"` turns on the Roman look v2 (Cinzel lettering, gold palette); anything else is off. Under it `font` and `laurel` are ignored and `accent_color` (default `#C9A24B`) is the gold. See `docs/plans/roman-theme-v2.md` |
+| `roman_stone` | string | `"travertine"` (default), `"marble"` or `"none"` |
+| `roman_stone_brightness` | 50 to 150 | Stone brightness in percent, default 100 |
+| `roman_seed` | 0 to 9999 | Pattern of the stone, default 7 |
+| `roman_vignette` | 0 to 100 | Edge darkening, default 70 |
+| `roman_meander` | bool (default `true`) | Greek-key frieze |
+| `roman_pilasters` | bool (default `true`) | Fluted pilasters at the edges |
+| `roman_crest` | bool (default `true`) | Laurel medallion in the frieze |
+| `roman_inscription` | string | Up to 8 letters inside the medallion, carved style (`U` becomes `V`, `J` becomes `I`; only `A-Z 0-9 space · . -`) |
+
+In this step only `style`, `accent_color`, `roman_date` and `roman_inscription` take effect; the stone, frieze,
+pilasters and medallion keys are read but drawn by the next steps.
 
 ## Wallpapers
 

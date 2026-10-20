@@ -125,6 +125,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
     private final boolean showHomeSettings;
     /** Calmer motion for weak GPUs (config.xml, reduced_motion): no overshoot, shorter fades. */
     private final boolean reducedMotion;
+    /** Roman look v2, or null for the old look: tile names are then set in Cinzel. */
+    private final RomanStyle roman;
     private final List<Entry> items = new ArrayList<>();
 
     AppAdapter(Context ctx, TileListener listener, int dockSize, Config cfg) {
@@ -136,6 +138,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         this.dockPlaceholders = cfg.dockPlaceholders;
         this.showHomeSettings = cfg.showHomeSettingsShortcut;
         this.reducedMotion = cfg.reducedMotion;
+        this.roman = cfg.roman;
         // Tiles keep their identity across reload(), so a focused tile stays on its app instead of
         // its view being rebound to whatever app now sits in that slot.
         setHasStableIds(true);
@@ -287,6 +290,10 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         nameLp.width = w;
         nameLp.topMargin = h + Math.round(7 * density);
         name.setLayoutParams(nameLp);
+        if (roman != null) {
+            RomanLook.text((TextView) name, 13f, 0.08f, RomanStyle.IVORY);
+            RomanLook.text(v.findViewById(R.id.label), 13f, 0.06f, RomanStyle.IVORY);
+        }
         return new Holder(v, listener, reducedMotion);
     }
 

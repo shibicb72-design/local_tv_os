@@ -62,6 +62,8 @@ final class Config {
     final File wallpaper;
     /** Whether the overlay file was present and parsed. */
     final boolean overlayApplied;
+    /** Roman look v2 (config.xml, style and roman_*), or null when style is not "roman": the old look. */
+    final RomanStyle roman;
 
     private Config(List<String> dockApps, List<String> hiddenApps, boolean dockPlaceholders,
                    String liveTvPackage, String liveTvAction,
@@ -70,7 +72,7 @@ final class Config {
                    boolean shamsiDate, boolean moduleCards, boolean reducedMotion, String vpnApp,
                    boolean showHomeSettingsShortcut, int backgroundColor,
                    String font, boolean romanDate, int accentColor, boolean laurel,
-                   File wallpaper, boolean overlayApplied) {
+                   File wallpaper, boolean overlayApplied, RomanStyle roman) {
         this.dockApps = Collections.unmodifiableList(dockApps);
         this.hiddenApps = Collections.unmodifiableList(hiddenApps);
         this.dockPlaceholders = dockPlaceholders;
@@ -93,6 +95,7 @@ final class Config {
         this.laurel = laurel;
         this.wallpaper = wallpaper;
         this.overlayApplied = overlayApplied;
+        this.roman = roman;
     }
 
     /** The folder the theme tools push into; null when external storage is unavailable. */
@@ -122,6 +125,15 @@ final class Config {
         boolean romanDate = res.getBoolean(R.bool.roman_date);
         int accent = color(res.getString(R.string.accent_color), 0);
         boolean laurel = res.getBoolean(R.bool.laurel);
+        String style = res.getString(R.string.style).trim();
+        String stone = res.getString(R.string.roman_stone).trim();
+        int brightness = ranged(res.getInteger(R.integer.roman_stone_brightness), 100, 50, 150);
+        int seed = ranged(res.getInteger(R.integer.roman_seed), 7, 0, 9999);
+        int vignette = ranged(res.getInteger(R.integer.roman_vignette), 70, 0, 100);
+        boolean meander = res.getBoolean(R.bool.roman_meander);
+        boolean pilasters = res.getBoolean(R.bool.roman_pilasters);
+        boolean crest = res.getBoolean(R.bool.roman_crest);
+        String inscription = res.getString(R.string.roman_inscription);
         boolean applied = false;
 
         File dir = dir(ctx);
@@ -149,6 +161,15 @@ final class Config {
             romanDate = bool(json, "roman_date", romanDate);
             accent = color(json, "accent_color", accent);
             laurel = bool(json, "laurel", laurel);
+            style = string(json, "style", style);
+            stone = string(json, "roman_stone", stone);
+            brightness = integer(json, "roman_stone_brightness", brightness, 50, 150);
+            seed = integer(json, "roman_seed", seed, 0, 9999);
+            vignette = integer(json, "roman_vignette", vignette, 0, 100);
+            meander = bool(json, "roman_meander", meander);
+            pilasters = bool(json, "roman_pilasters", pilasters);
+            crest = bool(json, "roman_crest", crest);
+            inscription = string(json, "roman_inscription", inscription);
         }
         File wallpaper = dir != null ? new File(dir, WALLPAPER_NAME) : null;
         if (wallpaper != null && !(wallpaper.isFile() && wallpaper.length() > 0)) wallpaper = null;
@@ -157,7 +178,8 @@ final class Config {
 
         return new Config(dock, hidden, dockPlaceholders, liveTv, liveTvAction, panelService, panelAction, inputAction,
                 Math.max(1, columns), Math.max(0, rowsBelow), shamsi, moduleCards, reducedMotion,
-                vpn, homeSettings, background, font, romanDate, accent, laurel, wallpaper, applied);
+                vpn, homeSettings, background, font, romanDate, accent, laurel, wallpaper, applied,
+                RomanStyle.of(style, stone, brightness, seed, vignette, meander, pilasters, crest, inscription, accent));
     }
 
     /** Reads and parses the overlay; any problem means "no overlay", never a crash on the home screen. */
@@ -195,6 +217,11 @@ final class Config {
         if (!(v instanceof Number)) return fallback;
         int i = ((Number) v).intValue();
         return i < min || i > max ? fallback : i;
+    }
+
+    /** A config.xml number outside its range falls back to the default, like a bad JSON value does. */
+    private static int ranged(int v, int fallback, int min, int max) {
+        return v < min || v > max ? fallback : v;
     }
 
     private static int color(JSONObject o, String key, int fallback) {

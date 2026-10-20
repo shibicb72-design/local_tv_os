@@ -97,6 +97,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private TextView shamsiDate;
     private boolean shamsi;
     private boolean romanDate;
+    /** Roman look v2, or null for the old look (config.xml, style). */
+    private RomanStyle roman;
     private String vpnApp;
     private SpringAnimation springX, springY;
     private float glassTargetX, glassTargetY;
@@ -207,6 +209,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         shamsiDate = findViewById(R.id.shamsiDate);
         shamsi = cfg.shamsiDate;
         romanDate = cfg.romanDate;
+        roman = cfg.roman;
         if (shamsi || romanDate) {
             shamsiDate.setVisibility(View.VISIBLE);
             TextView date = findViewById(R.id.date);
@@ -699,6 +702,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     /** The optional Roman look: serif header texts, an accent colour and a laurel; all off by default. */
     private void applyRomanLook(Config cfg) {
+        if (cfg.roman != null) {
+            // v2: Cinzel and the gold palette replace the S5 look (font and laurel are ignored).
+            RomanLook.applyHeader(this, cfg.roman);
+            findViewById(R.id.laurel).setVisibility(View.GONE);
+            return;
+        }
         if ("serif".equalsIgnoreCase(cfg.font)) {
             for (int id : new int[]{R.id.heroName, R.id.greeting, R.id.clock, R.id.ampm, R.id.shamsiDate, R.id.date}) {
                 TextView tv = findViewById(id);
@@ -725,7 +734,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         else if (hour < 22) res = R.string.good_evening;
         else res = R.string.good_night;
         greeting.setText(res);
-        if (romanDate) shamsiDate.setText(Roman.today());
+        if (romanDate) shamsiDate.setText(roman != null ? Roman.inscribe(Roman.today(), 40) : Roman.today());
         else if (shamsi) shamsiDate.setText(Shamsi.today());
     }
 
