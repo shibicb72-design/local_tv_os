@@ -248,6 +248,37 @@ the Player through Files' own read-only content provider; the Player has its own
 To remove it: `adb -s <tv-ip>:5555 shell pm uninstall com.gathin.files`, or Settings → Apps. The restore
 script (below) does not remove it; it leaves Files installed like the launcher.
 
+## Player
+
+`com.gathin.player` plays video, audio and photo folders from USB sticks and internal storage, with the same
+Roman look as the launcher and Files (shared code in `launcher/romancore`). Java and Views on Media3 ExoPlayer,
+`minSdk 30`, no network. It is in the S Max theme's dock after Files; the TV's own `com.xgimi.gimiplayer` stays
+visible until you decide to hide it.
+
+Build and install (the TV's address is yours; `adb` must be connected):
+
+```bash
+cd launcher && ./gradlew testReleaseUnitTest assembleRelease
+adb -s <tv-ip>:5555 install -r player/build/outputs/apk/release/player-release.apk
+adb -s <tv-ip>:5555 shell appops set --uid com.gathin.player MANAGE_EXTERNAL_STORAGE allow
+adb -s <tv-ip>:5555 shell appops get --uid com.gathin.player MANAGE_EXTERNAL_STORAGE   # prints: allow
+```
+
+The `appops` line is needed once, for the same reason as Files. Without it the Player shows the command
+instead of the file lists.
+
+- **Subtitles**: a sidecar `.srt`, `.ass`, `.ssa` or `.vtt` with the video's base name is picked up, including
+  language tags (`Movie.en.srt`, `Movie.eng.forced.srt`, `Movie.fa.srt`). Embedded tracks come from the container.
+  "Subtitle file…" in the tracks menu lists every subtitle file in the folder. Your choice is remembered with the
+  resume position. Non-UTF-8 files are converted for display: Windows-1256 is the default fallback (Persian and
+  Arabic), so a Western file that is not UTF-8 may need a different fallback. ASS styling is not drawn; the text is shown plain.
+- **Keys**: OK or Play/Pause plays and pauses; Left and Right skip 10 seconds (hold for 30); Down or Menu opens
+  the tracks menu; Back closes the menu, then the overlay, then saves the position and exits.
+- **Resume**: a video over a minute in is resumed from where you left it, unless it was finished.
+- **Formats**: what plays depends on the TV's decoders. The debug build has a codec report (`CodecReportActivity`,
+  not in the release APK) that lists them; use it before you rely on a format. If the Player cannot play a file,
+  it shows "Cannot play this file" with the error name. Opening the file in another player is not built yet.
+
 ## Restoring your TV
 
 Keep the list you applied. The restore script re-enables exactly those packages, puts the stock

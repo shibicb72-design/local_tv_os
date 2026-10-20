@@ -1,5 +1,5 @@
 {
-  "dock_apps": ["com.google.android.youtube.tv", "com.amazon.amazonvideo.livingroom", "input:hdmi1", "com.gathin.files"],
+  "dock_apps": ["com.google.android.youtube.tv", "com.amazon.amazonvideo.livingroom", "input:hdmi1", "com.gathin.files", "com.gathin.player"],
   "dock_placeholders": false,
   "hidden_apps": ["com.xgimi.minitvfactory", "com.xgimi.burnin", "com.xgimi.atvwifiverify", "com.xgimi.atmosphere", "com.xgimi.doubanfm", "com.mediatek.wwtv.tvcenter"],
   "input_action": "com.xgimi.action.hdmiPlayer",
