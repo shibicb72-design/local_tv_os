@@ -15,6 +15,7 @@ powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost 192.168.1.50 th
 | `default/` | The built-in look written out as JSON, as a starting point for your own |
 | `aurora/` | A dark aurora wallpaper (teal and violet on navy, darker at the bottom) with a matching background colour |
 | `six-columns/` | Six smaller tiles per row and one grid row visible under the dock |
+| `xgimi-s-max/` | For the XGIMI HORIZON S Max (XK03H): YouTube, Prime Video and Netflix in the dock, HDMI opened through XGIMI's own player (`com.xgimi.action.hdmiPlayer`), no Live TV, factory and screensaver apps hidden |
 
 ## Keys
 
