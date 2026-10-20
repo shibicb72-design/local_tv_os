@@ -142,6 +142,7 @@ SANYO · Skyworth · Thomson · Toshiba Fire TV · Vu · Stellamore and XGIMI pr
 | Thomson 32HE5800 (TCL-built UnionTV, Realtek RT2841), Spain | Android TV 9 |
 | Toshiba Fire TV (AFTHA004, hazel) | Fire OS 7 / Android 9 |
 | Vu 4K (HVCL, lushan, MediaTek), India | Google TV 12 |
+| XGIMI HORIZON S Max projector (XK03H, aiolia/xgimigalileo, MediaTek m7632, 32-bit, 1.7 GB) | Android TV 11 |
 | XGIMI Horizon S Pro projector (XK03H, xgimigalileo, MediaTek) | Android TV 11 |
 | Xiaomi Mi Box S (MIBOX4, oneday), streaming box | Android TV 9 |
 | Xiaomi Mi Box S 2nd gen (MiTV-AFKR0, jaws), streaming box | Google TV 11 |
