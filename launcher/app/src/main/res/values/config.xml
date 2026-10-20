@@ -15,6 +15,10 @@
         <item>in.startv.hotstar</item>
     </string-array>
 
+    <!-- true: a dock app that is not installed keeps its slot as a dimmed "Not installed" tile (select it to
+         open its Play Store page). false: missing apps are skipped. -->
+    <bool name="dock_placeholders">false</bool>
+
     <!-- Apps never shown as tiles (e.g. the Live TV app, which the Inputs menu already covers). -->
     <string-array name="hidden_apps">
         <item>com.mediatek.wwtv.tvcenter</item>
@@ -74,4 +78,13 @@
          tiles that zoom without overshoot, shorter fades and no tile entrance when Home comes back. Set it
          here or with "reduced_motion": true in a theme's config.json; false keeps the normal motion. -->
     <bool name="reduced_motion">false</bool>
+
+    <!-- Roman look, all off by default. font: "serif" switches the header texts to the system serif face
+         (empty keeps Outfit). roman_date: show the date as "XX Octobris MMXXVI" (replaces the Shamsi line).
+         accent_color: #RRGGBB for the greeting line and the laurel (empty keeps the default white).
+         laurel: a small laurel wreath beside the clock. -->
+    <string name="font" translatable="false"></string>
+    <bool name="roman_date">false</bool>
+    <string name="accent_color" translatable="false"></string>
+    <bool name="laurel">false</bool>
 </resources>

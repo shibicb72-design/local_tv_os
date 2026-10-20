@@ -1,0 +1,78 @@
+# XGIMI HORIZON S Max projector (model XK03H, device xgimigalileo, product aiolia, MediaTek/MStar m7632, 32-bit),
+# Android TV 11 (SDK 30), build RT.3.24.329 release-keys, patch 2026-05-01. About 1.7 GB RAM.
+#
+# Apply:   TV_HOST=<projector ip> tools/disable.sh examples/xgimi-horizon-s-max/debloat.txt
+# Undo:    TV_HOST=<projector ip> tools/restore.sh examples/xgimi-horizon-s-max/debloat.txt
+# Windows: tools/disable.ps1 and tools/restore.ps1 take the same file.
+# Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
+#
+# Same model code and build as the Horizon S Pro list (examples/xgimi-horizon-s-pro/); every package below
+# was checked against the package list of an S Max (read-only, 2026-10-20). Nothing was disabled from the factory.
+# Differences from the S Pro list:
+# - Prime Video (com.amazon.amazonvideo.livingroom, a SYSTEM app here) is NOT disabled: it is in the dock.
+# - The optional lines (voice, casting, phone remote, TalkBack, calendar sync) are commented out; batch 6 below.
+#
+# Stock launcher: com.google.android.tvlauncher (the only HOME claimant besides Settings' FallbackHome).
+# It is not in this file: disable it only after the new home is installed and set as Home, and keep
+# `pm enable com.google.android.tvlauncher` at hand over adb in case the new home fails.
+# Launcher notes (from the S Pro, same build): the Inputs menu needs `"input_action": "com.xgimi.action.hdmiPlayer"`
+# in the theme, no tuner so `"live_tv_package": ""`, Projector Settings stay reachable through the Settings pill.
+# The default Backdrop screensaver is disabled below; point the screensaver at another dream first.
+#
+# DO NOT DISABLE on XGIMI (projector hardware, inputs and remote):
+# com.xgimi.autokst                    # auto keystone correction (system uid)
+# com.xgimi.windowsystem               # keystone/window service (kstActivity, WondowService)
+# com.xgimi.tof                        # ToF autofocus calibration
+# com.xgimi.tvinput                    # HDMI input services (only HDMI1 is registered on this unit)
+# com.xgimi.xhplayer                   # HDMI input player + game mode
+# com.xgimi.bluetoothservice           # Bluetooth remote service
+# com.xgimi.misckey                    # remote keys, focus/keystone shortcuts, wall-colour adaptation
+# com.xgimi.uiconfiguration            # global key receiver, power listener
+# com.xgimi.xrmservice                 # picture/sound adaptation, brightness boost
+# com.xgimi.soundermodeservice         # Bluetooth speaker mode
+# com.xgimi.xgimiservice               # core XGIMI system service
+# com.xgimi.simpservice                # install service, purpose unclear: kept
+# com.xgimi.overseas.xgimiatvbootwizard  # first-boot wizard: kept, setup wizards can hold Home or provisioning
+# Extra on the S Max:
+# com.xgimi.ota.accessories            # remote-control firmware updater: remote related, keep
+# com.xgimi.upgrade                    # system OTA (UpgradeService, OTADownloadService): keep for security updates
+# com.mediatek.wwtv.webview            # vendor WebView
+# Android/Google core: com.android.vending, com.google.android.gms, com.google.android.gsf,
+# com.google.android.inputmethod.latin, com.android.bluetooth, com.android.tv.settings (Settings, Projector
+# Settings, FallbackHome), com.android.systemui, com.android.providers.tv (TV input database for HDMI),
+# com.google.android.tungsten.setupwraith, com.google.android.webview, com.google.android.tts,
+# com.android.dreams.basic, every com.android.providers.*, every *.auto_generated_rro_* overlay.
+# Dock apps: com.google.android.youtube.tv, com.amazon.amazonvideo.livingroom (Prime Video).
+
+# Batch 1: store demo, factory and test tools
+fusion.android.tv.demo                 # RetailDisplay store demo
+com.xgimi.burnin                       # factory burn-in test, runs on boot
+com.xgimi.atvwifiverify                # factory Wi-Fi verification
+com.xgimi.minitvfactory                # factory menu, file transfer and burn-in services
+
+# Batch 2: telemetry, feedback and auto-installs
+com.xgimi.bugreportsender              # XGIMI bug report uploader
+com.google.android.feedback            # Google feedback
+android.autoinstalls.config.xgimi.xgimigalileo  # Play auto-install config that re-pushes preloads
+
+# Batch 3: Google content and preloads
+com.google.android.tvrecommendations   # recommendation rows for the stock home, 26 MB resident
+com.google.android.videos              # Play Movies, 37 MB resident, registers TV inputs
+com.google.android.play.games          # Play Games
+com.google.android.youtube.tvmusic     # YouTube Music (YouTube itself stays)
+com.ted.android.tv                     # TED
+
+# Batch 4: XGIMI extras and screensaver
+com.xgimi.filemanager                  # file manager, DLNA/Samba servers, Baidu bridge
+com.xgimi.gimiplayer                   # local video/photo player
+com.xgimi.doubanfm                     # XGIMI music app, speaker-mode screen
+com.xgimi.atmosphere                   # XGIMI animated screensaver / ambient scenes, 13 MB resident
+com.google.android.backdrop            # Backdrop screensaver (set another dream first)
+
+# Batch 6: optional, off by choice on the S Pro; each line removes a feature, so they stay commented out here.
+# Uncomment only the ones you do not use.
+#com.google.android.katniss            # Google Assistant / voice search on the remote mic button (~90 MB resident)
+#com.google.android.apps.mediashell    # Chromecast built-in: casting from a phone stops working
+#com.google.android.tv.remote.service  # Google TV phone remote app stops working
+#com.google.android.marvin.talkback    # TalkBack screen reader
+#com.google.android.syncadapters.calendar  # calendar sync, 25 MB resident, no use on a projector

@@ -13,6 +13,8 @@ import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.media.tv.TvInputInfo;
+import android.media.tv.TvInputManager;
 import android.net.Uri;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
@@ -36,6 +38,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,10 +53,13 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
 
         /** Called for a D-pad direction key on a tile. Return true when handled (focus stays put). */
         boolean onTileVerticalKey(int position, int keyCode);
+
+        /** A dock input tile was selected: switch to this TV input. */
+        void onInputTile(String inputId);
     }
 
     static final class Entry {
-        static final int APP = 0, HOME_SETTINGS = 1, CARD = 2;
+        static final int APP = 0, HOME_SETTINGS = 1, CARD = 2, INPUT = 3, MISSING = 4;
 
         final int kind;
         final String label;
@@ -114,6 +120,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
     private final List<String> favourites;
     /** Never shown as tiles (res/values/config.xml, hidden_apps). */
     private final Set<String> hidden;
+    /** Keep a "Not installed" tile for a missing dock app (dock_placeholders). */
+    private final boolean dockPlaceholders;
     private final boolean showHomeSettings;
     /** Calmer motion for weak GPUs (config.xml, reduced_motion): no overshoot, shorter fades. */
     private final boolean reducedMotion;
@@ -125,6 +133,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         this.dockSize = dockSize;
         this.favourites = cfg.dockApps;
         this.hidden = new HashSet<>(cfg.hiddenApps);
+        this.dockPlaceholders = cfg.dockPlaceholders;
         this.showHomeSettings = cfg.showHomeSettingsShortcut;
         this.reducedMotion = cfg.reducedMotion;
         // Tiles keep their identity across reload(), so a focused tile stays on its app instead of
@@ -172,6 +181,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             if (ca != cb) return ca ? -1 : 1;
             return a.label.compareToIgnoreCase(b.label);
         });
+        fresh = withDockTiles(fresh, pm);
         // Optional "Default home" tile (config.xml), only when this TV actually has a home-screen picker.
         if (showHomeSettings
                 && pm.resolveActivity(new Intent(Settings.ACTION_HOME_SETTINGS), 0) != null) {
@@ -182,6 +192,66 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         items.clear();
         items.addAll(fresh);
         notifyDataSetChanged();
+    }
+
+    /**
+     * Lays the dock out in dock_apps order: installed apps (already sorted into {@code apps}), "Not installed"
+     * placeholders for missing ones, and TV input tiles. Everything else follows alphabetically.
+     */
+    private List<Entry> withDockTiles(List<Entry> apps, PackageManager pm) {
+        Set<String> installed = new HashSet<>();
+        for (Entry e : apps) installed.add(e.pkg);
+        // Passthrough inputs, HDMI first in label order, the same order the Inputs menu uses.
+        Map<String, String> labels = new HashMap<>();
+        List<String> hdmi = new ArrayList<>(), all = new ArrayList<>();
+        TvInputManager tim = (TvInputManager) ctx.getSystemService(Context.TV_INPUT_SERVICE);
+        if (tim != null) {
+            List<TvInputInfo> inputs = new ArrayList<>();
+            // Each label is loaded once; HDMI first, then label order with numbers compared as numbers
+            // ("HDMI 2" before "HDMI 10").
+            Map<String, String> raw = new HashMap<>();
+            for (TvInputInfo info : tim.getTvInputList()) {
+                if (!info.isPassthroughInput()) continue;
+                CharSequence l = info.loadLabel(ctx);
+                raw.put(info.getId(), l == null ? info.getId() : l.toString());
+                inputs.add(info);
+            }
+            Collections.sort(inputs, (a, b) -> {
+                boolean ha = a.getType() == TvInputInfo.TYPE_HDMI, hb = b.getType() == TvInputInfo.TYPE_HDMI;
+                if (ha != hb) return ha ? -1 : 1;
+                return DockSpec.compareLabels(raw.get(a.getId()), raw.get(b.getId()));
+            });
+            for (TvInputInfo info : inputs) {
+                String label = raw.get(info.getId());
+                if (info.getType() == TvInputInfo.TYPE_HDMI) {
+                    hdmi.add(info.getId());
+                    if (!label.toUpperCase(Locale.ROOT).contains("HDMI")) label = "HDMI " + label;
+                }
+                all.add(info.getId());
+                labels.put(info.getId(), Cards.cleanLabel(label, info.getId()));
+            }
+        }
+        List<DockSpec.Slot> slots = DockSpec.plan(favourites, installed, hidden, dockPlaceholders, arg -> DockSpec.resolveInput(arg, hdmi, all));
+        List<Entry> out = new ArrayList<>();
+        List<Entry> rest = new ArrayList<>(apps);
+        for (DockSpec.Slot s : slots) {
+            if (s.kind == DockSpec.Slot.INPUT) {
+                out.add(new Entry(Entry.INPUT, labels.get(s.key), new ComponentName(ctx.getPackageName(), "input/" + s.key),
+                        null, ctx.getDrawable(R.drawable.ic_input), null, 0));
+            } else if (s.kind == DockSpec.Slot.MISSING) {
+                out.add(new Entry(Entry.MISSING, DockSpec.friendlyName(s.key), new ComponentName(s.key, "missing"),
+                        null, ctx.getDrawable(R.drawable.ic_av), null, 0));
+            } else {
+                for (int i = 0; i < rest.size(); i++) {
+                    if (rest.get(i).pkg.equals(s.key)) {
+                        out.add(rest.remove(i));
+                        break;
+                    }
+                }
+            }
+        }
+        out.addAll(rest);
+        return out;
     }
 
     private Drawable loadBanner(PackageManager pm, ResolveInfo ri) {
@@ -239,11 +309,13 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             h.banner.setVisibility(View.GONE);
             h.icon.setImageDrawable(e.icon);
             h.icon.setVisibility(View.VISIBLE);
-            h.label.setText(e.label);
+            h.label.setText(e.kind == Entry.MISSING ? ctx.getString(R.string.not_installed) : e.label);
             h.label.setVisibility(View.VISIBLE);
         }
+        h.card.setAlpha(e.kind == Entry.MISSING ? 0.45f : 1f);   // dimmed, but still focusable
         h.card.setOnClickListener(v -> launch(e));
         h.card.setOnLongClickListener(v -> {
+            if (e.kind == Entry.INPUT || e.kind == Entry.MISSING) return true;   // no app to show details for
             Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + e.pkg));
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             try {
@@ -259,6 +331,21 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         if (e.kind == Entry.HOME_SETTINGS) {
             ctx.startActivity(new Intent(ctx, HomeSettingsActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            return;
+        }
+        if (e.kind == Entry.INPUT) {
+            String id = e.component.getClassName().substring("input/".length());
+            if (listener != null) listener.onInputTile(id);
+            return;
+        }
+        if (e.kind == Entry.MISSING) {
+            // Play Store listing when the TV has one, otherwise just say so; never crash.
+            Uri market = new Uri.Builder().scheme("market").authority("details").appendQueryParameter("id", e.pkg).build();
+            try {
+                ctx.startActivity(new Intent(Intent.ACTION_VIEW, market).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            } catch (Exception ex) {
+                Toast.makeText(ctx, ctx.getString(R.string.not_installed_toast, e.label), Toast.LENGTH_SHORT).show();
+            }
             return;
         }
         Intent i = new Intent(Intent.ACTION_MAIN)

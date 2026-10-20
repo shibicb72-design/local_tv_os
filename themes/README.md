@@ -15,6 +15,7 @@ powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost 192.168.1.50 th
 | `default/` | The built-in look written out as JSON, as a starting point for your own |
 | `aurora/` | A dark aurora wallpaper (teal and violet on navy, darker at the bottom) with a matching background colour |
 | `six-columns/` | Six smaller tiles per row and one grid row visible under the dock |
+| `xgimi-s-max/` | For the XGIMI HORIZON S Max (XK03H): YouTube, Prime Video and HDMI 1 in the dock, HDMI opened through XGIMI's own player (`com.xgimi.action.hdmiPlayer`), no Live TV, factory and screensaver apps hidden; the Roman look is on (serif, Roman date, gold accent, laurel) |
 
 ## Keys
 
@@ -23,7 +24,8 @@ is ignored, and a file that doesn't parse is ignored as a whole, so a theme can 
 
 | Key | Type | Meaning |
 |---|---|---|
-| `dock_apps` | list of package names | The dock row, in order; missing apps are skipped |
+| `dock_apps` | list of strings | The dock row, in order. A package name is an app; missing apps are skipped (see `dock_placeholders`). `input:<inputId>` is a TV input tile (e.g. `input:com.mediatek.tvinput/.hdmi.HDMIInputService/HW5`), `input:hdmi1` is the first HDMI input (`hdmi2`, ... the next ones); it opens like the Inputs menu entry, and an input the TV has not registered is skipped |
+| `dock_placeholders` | bool (default `false`) | `true`: a `dock_apps` package that is not installed keeps its slot as a dimmed "Not installed" tile (select it to open its Play Store page, or get a short toast). `false`: it is skipped. A package also in `hidden_apps` is never shown either way |
 | `hidden_apps` | list of package names | Never shown as tiles |
 | `live_tv_package`, `live_tv_action` | string | The Live TV app and, if it has no leanback entry, the action to start it with |
 | `source_panel_service`, `source_panel_action` | string | The TV's own source panel, for sets with no TvInputManager |
@@ -37,6 +39,10 @@ is ignored, and a file that doesn't parse is ignored as a whole, so a theme can 
 | `show_home_settings_shortcut` | bool | The "Default home" tile, where the TV has a home picker |
 | `background_color` | `#RRGGBB` | Colour behind everything; black by default |
 | `wallpaper` | bool | Show `wallpaper.jpg` from the theme folder (`true`), or ignore it (`false`) |
+| `font` | string | `"serif"` sets the header texts (clock, date, greeting, app name) in the system serif face; anything else keeps Outfit. Nothing is bundled |
+| `roman_date` | bool | Date line in Roman numerals, e.g. `XX Octobris MMXXVI`; replaces the Shamsi line when both are on |
+| `accent_color` | `#RRGGBB` | Colour of the greeting line and the laurel; unset keeps the default white look |
+| `laurel` | bool | A small laurel wreath beside the clock, tinted with `accent_color` |
 
 ## Wallpapers
 

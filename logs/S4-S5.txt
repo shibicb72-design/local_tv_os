@@ -1,0 +1,14 @@
+S4-S5 build and size record (builds run outside Claude, after each step)
+
+After S4 and after S5: testReleaseUnitTest + assembleRelease passed.
+
+Release APK size (bytes):
+  S1   278565  (baseline)
+  S4   280225  (+1660 vs S1)
+  S5   282253  (+2028 vs S4, +3688 vs S1)
+  S6   282253  (no change; scripts only)
+
+Budget (plan section 3): under 2 MB total, at most 150 KB per step. All steps are far inside it.
+
+Final size will be re-measured after the S7 review fixes (dock_placeholders, hidden_apps handling,
+numeric HDMI sort).

@@ -1,0 +1,15 @@
+S1 - baseline (no code change)
+Date: 2026-10-20
+Build run outside Claude, JDK 17.
+
+gradlew testReleaseUnitTest assembleRelease: PASSED
+  app-release.apk = 278565 bytes (272 KB; under the 400 KB CI limit)
+  app-debug.apk   = 1729403 bytes
+
+gradlew lint: FAILED on the pre-existing code
+  29 errors / 31 warnings
+  first error: CoarseFineLocation in AndroidManifest.xml:12
+  lint is not a CI gate.
+
+python unittest: the 6 test_debloat_paths cases error on Windows only, because
+  they call bash scripts. CI runs them on Linux.

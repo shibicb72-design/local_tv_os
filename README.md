@@ -142,6 +142,7 @@ SANYO · Skyworth · Thomson · Toshiba Fire TV · Vu · Stellamore and XGIMI pr
 | Thomson 32HE5800 (TCL-built UnionTV, Realtek RT2841), Spain | Android TV 9 |
 | Toshiba Fire TV (AFTHA004, hazel) | Fire OS 7 / Android 9 |
 | Vu 4K (HVCL, lushan, MediaTek), India | Google TV 12 |
+| XGIMI HORIZON S Max projector (XK03H, aiolia/xgimigalileo, MediaTek m7632, 32-bit, 1.7 GB) | Android TV 11 |
 | XGIMI Horizon S Pro projector (XK03H, xgimigalileo, MediaTek) | Android TV 11 |
 | Xiaomi Mi Box S (MIBOX4, oneday), streaming box | Android TV 9 |
 | Xiaomi Mi Box S 2nd gen (MiTV-AFKR0, jaws), streaming box | Google TV 11 |
@@ -182,8 +183,12 @@ tools/theme.sh themes/aurora                                 # push a theme; --r
 | [`tools/tv.py`](tools/tv.py) | Pure-Python ADB client: shell, batch, push, pull. Works where the stock `adb` binary is blocked. |
 | [`tools/b64push.py`](tools/b64push.py) | Uploads large files such as APKs in base64 chunks and verifies the checksum. |
 | [`tools/disable.sh`](tools/disable.sh), [`restore.sh`](tools/restore.sh) | Apply or undo a debloat list. |
+| [`tools/backup.sh`](tools/backup.sh), [`backup.ps1`](tools/backup.ps1) | Save package lists, `getprop`, settings and the current Home to `backup/<date>/` (gitignored). Read-only on the TV. Serial defaults to `10.0.0.242:5555`; uses `adb` from PATH or `%LOCALAPPDATA%/Android/Sdk/platform-tools`. |
 | [`tools/theme.sh`](tools/theme.sh) | Push a folder from [`themes/`](themes/) to the launcher and restart Home. |
 | [`launcher/build-and-install.sh`](launcher/build-and-install.sh) | Builds a shrunk release (about 280 KB), installs it, switches Home, and rolls back if Home does not land on it. |
+
+Take a backup before changing anything: `tools/backup.sh [serial]` or
+`tools\backup.ps1 -Serial 10.0.0.242:5555`.
 
 Debloat list paths passed to `disable.sh` and `restore.sh` are relative to the directory you run
 from, so your own lists can live outside the repository. Absolute paths also work.
