@@ -230,7 +230,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         grid.setLayoutManager(new GridLayoutManager(this, COLUMNS));
         grid.setHasFixedSize(true);
         grid.setItemAnimator(null);
-        grid.addItemDecoration(new DockDecoration(COLUMNS, density));
+        grid.addItemDecoration(new DockDecoration(COLUMNS, density, cfg.roman));
         int enterAnim = reducedMotion ? R.anim.tile_enter_reduced : R.anim.tile_enter;
         float enterDelay = reducedMotion ? 0f : 0.06f;
         grid.setLayoutAnimation(new LayoutAnimationController(
@@ -544,10 +544,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         Rect r = new Rect(0, 0, card.getWidth(), card.getHeight());
         root.offsetDescendantRectToMyCoords(card, r);
         float pad = 6f * density;        // matches GlassView's glow inset
-        float w = card.getWidth() * AppAdapter.FOCUS_SCALE + 2 * pad;
-        float h = card.getHeight() * AppAdapter.FOCUS_SCALE + 2 * pad;
-        float x = r.exactCenterX() - w / 2f;
-        float y = r.exactCenterY() - h / 2f;
+        float lift = roman != null ? AppAdapter.LIFT_DP * density : 0f;   // the tile rises, the glass follows
+        float[] g = FocusGeometry.glassRect(r.left, r.top, card.getWidth(), card.getHeight(),
+                AppAdapter.FOCUS_SCALE, pad, lift);
+        float x = g[0], y = g[1], w = g[2], h = g[3];
 
         ViewGroup.LayoutParams lp = glass.getLayoutParams();
         if (lp.width != (int) w || lp.height != (int) h) {
@@ -585,7 +585,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         } else {
             hideHero();
             // Scroll just enough so the whole glass (not only the tile) is visible.
-            Rect want = new Rect(0, -(int) pad * 2, item.getWidth(), item.getHeight() + (int) pad);
+            Rect want = new Rect(0, -(int) (pad * 2 + lift), item.getWidth(), item.getHeight() + (int) pad);
             grid.requestChildRectangleOnScreen(item, want, reducedMotion);
         }
     }
@@ -762,6 +762,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (cfg.roman != null) {
             // v2: Cinzel and the gold palette replace the S5 look (font and laurel are ignored).
             RomanLook.applyHeader(this, cfg.roman);
+            glass.setRoman(cfg.roman);
+            RomanLook.pill(findViewById(R.id.btnInputs), cfg.roman);
+            RomanLook.pill(findViewById(R.id.btnWifi), cfg.roman);
+            RomanLook.pill(findViewById(R.id.btnSettings), cfg.roman);
             findViewById(R.id.laurel).setVisibility(View.GONE);
             return;
         }

@@ -16,6 +16,8 @@ final class RomanStyle {
     /** AM/PM. */
     static final int IVORY_DIM_AMPM = 0xB3F3EBDD;
     static final int STONE_INK = 0xFF1A1511;
+    /** Background of icon tiles (HDMI 1 and friends). */
+    static final int ICON_TILE = 0xFF2A221B;
     static final int RELIEF_SHADOW = 0x80000000;
     /** Dark shadow under the clock. */
     static final int TEXT_SHADOW = 0x99000000;
