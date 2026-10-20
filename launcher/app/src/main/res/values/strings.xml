@@ -18,6 +18,8 @@
     <string name="offline">Offline</string>
     <string name="not_available">Not available on this TV</string>
     <string name="cant_open">Can\'t open %1$s</string>
+    <string name="not_installed">Not installed</string>
+    <string name="not_installed_toast">%1$s is not installed</string>
     <string name="date_format">EEEE  d MMMM</string>
     <string name="dream_name">Clock</string>
     <string name="vpn">VPN</string>

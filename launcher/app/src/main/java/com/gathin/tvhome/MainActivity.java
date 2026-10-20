@@ -660,6 +660,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         return true;
     }
 
+    @Override
+    public void onInputTile(String inputId) {
+        openInput(inputId);
+    }
+
     private void focusTile(int position) {
         if (adapter.getItemCount() == 0) {
             btnWifi.requestFocus();
