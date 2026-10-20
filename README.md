@@ -183,8 +183,12 @@ tools/theme.sh themes/aurora                                 # push a theme; --r
 | [`tools/tv.py`](tools/tv.py) | Pure-Python ADB client: shell, batch, push, pull. Works where the stock `adb` binary is blocked. |
 | [`tools/b64push.py`](tools/b64push.py) | Uploads large files such as APKs in base64 chunks and verifies the checksum. |
 | [`tools/disable.sh`](tools/disable.sh), [`restore.sh`](tools/restore.sh) | Apply or undo a debloat list. |
+| [`tools/backup.sh`](tools/backup.sh), [`backup.ps1`](tools/backup.ps1) | Save package lists, `getprop`, settings and the current Home to `backup/<date>/` (gitignored). Read-only on the TV. Serial defaults to `10.0.0.242:5555`; uses `adb` from PATH or `%LOCALAPPDATA%/Android/Sdk/platform-tools`. |
 | [`tools/theme.sh`](tools/theme.sh) | Push a folder from [`themes/`](themes/) to the launcher and restart Home. |
 | [`launcher/build-and-install.sh`](launcher/build-and-install.sh) | Builds a shrunk release (about 280 KB), installs it, switches Home, and rolls back if Home does not land on it. |
+
+Take a backup before changing anything: `tools/backup.sh [serial]` or
+`tools\backup.ps1 -Serial 10.0.0.242:5555`.
 
 Debloat list paths passed to `disable.sh` and `restore.sh` are relative to the directory you run
 from, so your own lists can live outside the repository. Absolute paths also work.
