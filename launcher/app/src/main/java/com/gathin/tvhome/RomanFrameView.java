@@ -23,6 +23,10 @@ public final class RomanFrameView extends View {
     private static final float GAP_DP = 40f;
     private static final float KEY_GRID_DP = 3f;
     private static final float SHADOW_PX = 2f;
+    private static final float PILASTER_W_DP = 28f;
+    private static final float PILASTER_SIDE_DP = 14f;
+    /** Bases end this far above the bottom edge. */
+    private static final float PILASTER_FOOT_DP = 12f;
 
     private RomanStyle style;
     private int friezeTop = -1;
@@ -38,6 +42,10 @@ public final class RomanFrameView extends View {
     private final Paint crestShadowFill = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint crestShadowStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint pFill = new Paint();
+    private final Paint pLine = new Paint();
+    private final Paint pGroove = new Paint();
+    private final Paint pLight = new Paint();
 
     private final Path keyPath = new Path();
     private final Path stems = new Path();
@@ -48,6 +56,8 @@ public final class RomanFrameView extends View {
     private final RectF[] ruleRects = new RectF[8];
     private int ruleCount;
     private final RectF arc = new RectF();
+    private final RectF tmp = new RectF();
+    private Pilaster pilasterL, pilasterR;
     private float crestX, crestY;
     private boolean crestOn;
     private String inscription = "";
@@ -76,6 +86,12 @@ public final class RomanFrameView extends View {
         text.setTextAlign(Paint.Align.CENTER);
         text.setTextSize(10 * context.getResources().getDisplayMetrics().scaledDensity);
         text.setLetterSpacing(0.12f);
+        pLine.setStyle(Paint.Style.STROKE);
+        pLine.setStrokeWidth(dp);
+        pGroove.setColor(0x47000000);
+        pGroove.setStrokeWidth(2 * dp);
+        pLight.setColor(0x1AFFF5E0);
+        pLight.setStrokeWidth(dp);
     }
 
     /** Turns the frieze on with this style (colours, meander and crest flags). */
@@ -89,6 +105,7 @@ public final class RomanFrameView extends View {
         crestShadowFill.setColor(RomanStyle.RELIEF_SHADOW);
         crestShadowStroke.setColor(RomanStyle.RELIEF_SHADOW);
         text.setColor(s.goldLight);
+        pLine.setColor(s.gold);
         text.setTypeface(RomanLook.typeface(getContext()));
         inscription = s.inscription;
         rebuild();
@@ -109,8 +126,45 @@ public final class RomanFrameView extends View {
         rebuild();
     }
 
-    /** Pilasters come in R4. */
+    /** Capital, base and shaft of both pilasters; the shaft is a lighter slab with five carved flutes. */
     private void drawPilasters(Canvas c) {
+        drawPilaster(c, pilasterL);
+        drawPilaster(c, pilasterR);
+    }
+
+    private void drawPilaster(Canvas c, Pilaster p) {
+        if (p == null) return;
+        pFill.setColor(0x0FF3EBDD);
+        rect(c, p.shaft, pFill);
+        pFill.setColor(0x33000000);
+        c.drawRect(p.shaft[0], p.shaft[1], p.shaft[0] + dp, p.shaft[3], pFill);
+        c.drawRect(p.shaft[2] - dp, p.shaft[1], p.shaft[2], p.shaft[3], pFill);
+        for (float x : p.fluteX) {
+            c.drawLine(x, p.fluteTop, x, p.fluteBottom, pGroove);
+            c.drawLine(x + 2 * dp, p.fluteTop, x + 2 * dp, p.fluteBottom, pLight);
+        }
+        pFill.setColor(RomanStyle.withAlpha(RomanStyle.STONE_INK, 0x80));
+        rect(c, p.abacus, pFill);
+        rect(c, p.plinth, pFill);
+        pFill.setColor(RomanStyle.withAlpha(RomanStyle.STONE_INK, 0x59));
+        rect(c, p.echinus, pFill);
+        tmp.set(p.torus[0], p.torus[1], p.torus[2], p.torus[3]);
+        c.drawRoundRect(tmp, 2.5f * dp, 2.5f * dp, pFill);
+        // Gold outline on the abacus, gold top lines on echinus, astragal, torus and plinth.
+        tmp.set(p.abacus[0], p.abacus[1], p.abacus[2], p.abacus[3]);
+        c.drawRect(tmp, pLine);
+        topLine(c, p.echinus);
+        topLine(c, p.astragal);
+        topLine(c, p.torus);
+        topLine(c, p.plinth);
+    }
+
+    private void topLine(Canvas c, float[] r) {
+        c.drawLine(r[0], r[1], r[2], r[1], pLine);
+    }
+
+    private void rect(Canvas c, float[] r, Paint paint) {
+        c.drawRect(r[0], r[1], r[2], r[3], paint);
     }
 
     private void rebuild() {
@@ -123,6 +177,14 @@ public final class RomanFrameView extends View {
         crestX = w / 2f;
         crestY = mid;
         slabRect.set(left, top, right, bottom);
+
+        // Pilasters run from under the frieze (past its relief line) to just above the bottom edge.
+        pilasterL = pilasterR = null;
+        if (style.pilasters) {
+            float pw = PILASTER_W_DP * dp, pTop = bottom + SHADOW_PX, pBottom = getHeight() - PILASTER_FOOT_DP * dp;
+            pilasterL = Pilaster.layout(PILASTER_SIDE_DP * dp, pTop, pBottom, pw, dp);
+            pilasterR = Pilaster.layout(w - PILASTER_SIDE_DP * dp - pw, pTop, pBottom, pw, dp);
+        }
 
         // Rules and key stop short of the crest on both sides; without the crest they run through.
         float gap = GAP_DP * dp;
