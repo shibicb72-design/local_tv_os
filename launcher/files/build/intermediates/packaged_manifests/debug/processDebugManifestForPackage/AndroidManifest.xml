@@ -21,6 +21,11 @@
         <package android:name="com.gathin.player" />
 
         <intent>
+            <action android:name="android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION" />
+
+            <data android:scheme="package" />
+        </intent>
+        <intent>
             <action android:name="android.intent.action.VIEW" />
 
             <data android:mimeType="video/*" />

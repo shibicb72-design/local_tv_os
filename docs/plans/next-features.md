@@ -247,6 +247,12 @@ current volume returns to the roots with a toast.
 - Tests (`VolumeModelTest`): order, labels, unmounted volumes hidden, read-only flag kept.
 - Reviewer checks: the callback is unregistered; no polling of volumes.
 - Device: none (the grant itself is in Op-F-install).
+- **Status: Op-F0 PENDING** (projector was off, so it was not run). F6 was built for both outcomes with runtime
+  detection: `PermissionGate` offers the Settings button only if the intent resolves (`<queries>` entry added for
+  it), otherwise shows the `appops` command (`FilesInfo.APPOPS_COMMAND`); `Volumes` treats a mount with
+  `ST_RDONLY` or state `mounted_ro` as read-only (`VolumeModel.Root.readOnly`). When Op-F0 runs, confirm which
+  path the device takes and whether NTFS sticks mount at all or read-only; adjust only the wording if needed.
+  `FilesActivity` is not yet wired to `PermissionGate`/`Volumes` (F7 does that).
 
 **F7. Browser UI** · Sonnet
 - `FilesActivity` + `EntryAdapter` (RecyclerView, `LinearLayoutManager`, stable ids = path hash), breadcrumb

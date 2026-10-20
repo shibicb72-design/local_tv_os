@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-53:12
-INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-53:12
-INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-53:12
-INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-53:12
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-57:12
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-57:12
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-57:12
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-57:12
 MERGED from [:romancore] C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.recyclerview:recyclerview:1.3.2] C:\Users\shibi\.gradle\caches\8.9\transforms\62454a3cca38d4b1256266a06e5b4e28\transformed\recyclerview-1.3.2\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.customview:customview:1.0.0] C:\Users\shibi\.gradle\caches\8.9\transforms\665b1e76a46b4d117d595669e0cc4c46\transformed\customview-1.0.0\AndroidManifest.xml:17:1-22:12
@@ -39,30 +39,38 @@ ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\l
 	android:name
 		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:10:9-52
 queries
-ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:13:5-31:15
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:13:5-35:15
 package#com.gathin.player
 ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:14:9-53
 	android:name
 		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:14:18-50
-intent#action:name:android.intent.action.VIEW+data:mimeType:video/*
+intent#action:name:android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION+data:scheme:package
 ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:15:9-18:18
-action#android.intent.action.VIEW
-ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:13-65
+action#android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:13-94
 	android:name
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:21-62
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:21-91
 data
-ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:13-48
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:13-46
+	android:scheme
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:19-43
 	android:mimeType
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:19-45
-intent#action:name:android.intent.action.VIEW+data:mimeType:audio/*
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:21:19-45
+intent#action:name:android.intent.action.VIEW+data:mimeType:video/*
 ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:19:9-22:18
-intent#action:name:android.intent.action.VIEW+data:mimeType:image/*
+action#android.intent.action.VIEW
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:20:13-65
+	android:name
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:20:21-62
+intent#action:name:android.intent.action.VIEW+data:mimeType:audio/*
 ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:23:9-26:18
-intent#action:name:android.intent.action.VIEW+data:mimeType:*/*
+intent#action:name:android.intent.action.VIEW+data:mimeType:image/*
 ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:27:9-30:18
+intent#action:name:android.intent.action.VIEW+data:mimeType:*/*
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:31:9-34:18
 application
-ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:33:5-52:19
-INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:33:5-52:19
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:37:5-56:19
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:37:5-56:19
 MERGED from [androidx.core:core:1.7.0] C:\Users\shibi\.gradle\caches\8.9\transforms\3afe7fa58a47c7b182ae0caccac05374\transformed\core-1.7.0\AndroidManifest.xml:24:5-89
 MERGED from [androidx.core:core:1.7.0] C:\Users\shibi\.gradle\caches\8.9\transforms\3afe7fa58a47c7b182ae0caccac05374\transformed\core-1.7.0\AndroidManifest.xml:24:5-89
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\shibi\.gradle\caches\8.9\transforms\d76f7faec08758676fd25dae129ae9e7\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
@@ -72,35 +80,35 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\sh
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.7.0] C:\Users\shibi\.gradle\caches\8.9\transforms\3afe7fa58a47c7b182ae0caccac05374\transformed\core-1.7.0\AndroidManifest.xml:24:18-86
 	android:label
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:37:9-41
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:41:9-41
 	android:icon
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:36:9-40
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:40:9-40
 	android:allowBackup
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:34:9-36
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:38:9-36
 	android:banner
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:35:9-42
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:39:9-42
 	android:theme
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:38:9-43
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:42:9-43
 activity#com.gathin.files.FilesActivity
-ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:40:9-49:20
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:44:9-53:20
 	android:launchMode
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:43:13-44
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:47:13-44
 	android:exported
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:42:13-36
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:46:13-36
 	android:configChanges
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:44:13-90
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:48:13-90
 	android:name
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:41:13-42
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:45:13-42
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LEANBACK_LAUNCHER
-ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:45:13-48:29
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:49:13-52:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:46:17-69
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:50:17-69
 	android:name
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:46:25-66
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:50:25-66
 category#android.intent.category.LEANBACK_LAUNCHER
-ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:47:17-86
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:51:17-86
 	android:name
-		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:47:27-83
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:51:27-83
 uses-sdk
 INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml
