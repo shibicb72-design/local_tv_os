@@ -237,3 +237,7 @@ To be tuned with Shibi.
 
 Netflix is a **top goal**. Shibi approved a direct install of `com.netflix.ninja`; a separate task handles that install (not part of S1-S7).
 In the launcher, the Netflix dock tile must stay visible and show **"Not installed"** gracefully (dimmed, focusable, no crash) when the package is missing, instead of silently skipping the slot. Implement this in S4 alongside the HDMI dock tiles, with JUnit coverage. This supersedes R4 and the "skip missing dock apps" note for Netflix.
+
+## 9. Update 2026-10-20 (after first look on the projector)
+
+Shibi asked to remove Netflix from the S Max dock entirely. The S Max dock is now YouTube, Prime Video, HDMI 1, and dock_placeholders is off for this theme (no 'Not installed' tile). This supersedes section 8. The placeholder feature stays in the launcher as an opt-in key, off by default.

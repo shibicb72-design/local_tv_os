@@ -42,7 +42,7 @@
 # Settings, FallbackHome), com.android.systemui, com.android.providers.tv (TV input database for HDMI),
 # com.google.android.tungsten.setupwraith, com.google.android.webview, com.google.android.tts,
 # com.android.dreams.basic, every com.android.providers.*, every *.auto_generated_rro_* overlay.
-# Dock apps: com.google.android.youtube.tv, com.amazon.amazonvideo.livingroom (Prime Video), com.netflix.ninja.
+# Dock apps: com.google.android.youtube.tv, com.amazon.amazonvideo.livingroom (Prime Video).
 
 # Batch 1: store demo, factory and test tools
 fusion.android.tv.demo                 # RetailDisplay store demo
