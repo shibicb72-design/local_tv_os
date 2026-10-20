@@ -232,6 +232,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                 if (info.getType() == TvInputInfo.TYPE_HDMI) {
                     hdmi.add(info.getId());
                     if (!label.toUpperCase(Locale.ROOT).contains("HDMI")) label = "HDMI " + label;
+                    label = DockSpec.normalizeHdmiLabel(label);
                 }
                 all.add(info.getId());
                 labels.put(info.getId(), Cards.cleanLabel(label, info.getId()));
