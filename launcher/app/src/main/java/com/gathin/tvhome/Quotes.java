@@ -121,7 +121,9 @@ final class Quotes {
                 i++;
             } while (depth > 0);
         } else {
+            int from = i;
             while (i < s.length() && ",}] \t\r\n".indexOf(s.charAt(i)) < 0) i++;
+            if (i == from) throw new IllegalStateException("unexpected " + c);
         }
     }
 

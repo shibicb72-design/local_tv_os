@@ -57,13 +57,15 @@ public class QuotesTest {
         assertEquals("S", q.get(0)[Quotes.SOURCE]);
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void badInputGivesAnEmptyList() {
         assertTrue(Quotes.parse(null).isEmpty());
         assertTrue(Quotes.parse("").isEmpty());
         assertTrue(Quotes.parse("not json").isEmpty());
         assertTrue(Quotes.parse("{\"quotes\":[{\"text\":\"a\",\"author\":\"b\"},{\"text\":\"c").isEmpty());
         assertTrue(Quotes.parse("{\"quotes\":[{\"text\":\"a\\u12\"").isEmpty());
+        assertTrue(Quotes.parse("{\"quotes\":[}]}").isEmpty());
+        assertTrue(Quotes.parse("{\"quotes\":[1}]}").isEmpty());
     }
 
     @Test

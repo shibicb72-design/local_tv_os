@@ -228,6 +228,7 @@ public class RomanDream extends DreamService {
      * bitmap.
      */
     private void teardown() {
+        if (dead) return;
         dead = true;
         if (choreographer != null) {
             choreographer.removeFrameCallback(frame);
@@ -302,6 +303,10 @@ public class RomanDream extends DreamService {
             for (Paint p : new Paint[]{time, timeShadow, small, date, gregorian, legend}) {
                 if (face != null) p.setTypeface(face);
                 p.setTextAlign(Paint.Align.CENTER);
+            }
+            // The Cinzel subset is ASCII only: non-English month names and digits use the system face.
+            if (!java.util.Locale.getDefault().getLanguage().equals("en")) {
+                gregorian.setTypeface(android.graphics.Typeface.DEFAULT);
             }
             time.setTextSize(96 * dp);
             time.setLetterSpacing(0.04f);
