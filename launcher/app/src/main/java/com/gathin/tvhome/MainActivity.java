@@ -221,6 +221,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             date.setPadding(0, (int) (4 * density), 0, 0);
         }
         applyRomanLook(cfg);
+        if (roman != null) showRomanFrame(roman);
         vpnApp = cfg.vpnApp;
         moduleCards = cfg.moduleCards;
         hiddenApps = new HashSet<>(cfg.hiddenApps);
@@ -737,6 +738,23 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             }
         });
         grid.smoothScrollToPosition(pos);
+    }
+
+    /**
+     * Roman look v2: shows the frieze 30 dp under the header and moves the grid down so scrolled tiles pass
+     * under the crest's lower half, never under the frieze. setFriezeTop ignores an unchanged value, so the
+     * layout listener cannot loop.
+     */
+    private void showRomanFrame(RomanStyle style) {
+        RomanFrameView frame = findViewById(R.id.romanFrame);
+        frame.setStyle(style);
+        frame.setVisibility(View.VISIBLE);
+        findViewById(R.id.header).addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) ->
+                frame.setFriezeTop(b + (int) (30 * density)));
+        View gridFrame = findViewById(R.id.gridFrame);
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) gridFrame.getLayoutParams();
+        lp.topMargin = (int) (62 * density);
+        gridFrame.setLayoutParams(lp);
     }
 
     /** The optional Roman look: serif header texts, an accent colour and a laurel; all off by default. */
