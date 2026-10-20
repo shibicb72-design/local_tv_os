@@ -17,21 +17,34 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.media3.common.C;
+import androidx.media3.common.Format;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
+import androidx.media3.common.TrackSelectionOverride;
+import androidx.media3.common.TrackSelectionParameters;
+import androidx.media3.common.Tracks;
 import androidx.media3.common.VideoSize;
+import androidx.media3.common.text.CueGroup;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 
 import com.gathin.roman.RomanDialog;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Playback (P1) with the Roman overlay and resume (P3): plays the intent's file into a SurfaceView, keys go
- * through {@link KeyMap}, the position is saved in onPause and on completion. Subtitles and the tracks menu
- * arrive in later steps. The player lives between onStart and onStop.
+ * through {@link KeyMap}, the position is saved in onPause and on completion. Subtitles (P4): sidecar files and
+ * embedded tracks, drawn by {@link CueView}. The tracks menu arrives in a later step. The player lives between onStart and onStop.
  */
 @UnstableApi
 public class PlayerActivity extends Activity {
@@ -43,6 +56,10 @@ public class PlayerActivity extends Activity {
     private static final long HELD_SEEK_GAP_MS = 400L;
     private static final String PREFS = "resume";
     private static final String PREF_DATA = "data";
+    /** Settings prefs: the charset used for subtitle files that are not UTF-8 (plan Q4). */
+    private static final String SETTINGS = "settings";
+    private static final String PREF_SUB_CHARSET = "sub_charset";
+    private static final String DEFAULT_SUB_CHARSET = "windows-1256";
 
     private FrameLayout root;
     private SurfaceView surface;
@@ -56,6 +73,12 @@ public class PlayerActivity extends Activity {
     private boolean resumeDecided;
     private Dialog resumeDialog;
     private long lastHeldSeekMs;
+    private CueView cueView;
+    private List<MediaItem.SubtitleConfiguration> sidecars;
+    /** True once the first READY has settled the default subtitle choice; later changes belong to the user. */
+    private boolean subtitlesSettled;
+    private boolean subtitleApplied;
+    private String appliedSubtitleId;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -67,6 +90,9 @@ public class PlayerActivity extends Activity {
         surface.setFocusable(false);
         root.addView(surface, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+        cueView = new CueView(this);
+        root.addView(cueView, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         root.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> applyFit());
         overlay = new Overlay(this, root, new Overlay.Source() {
             @Override
@@ -89,6 +115,7 @@ public class PlayerActivity extends Activity {
         resume = new ResumeStore(prefsStore());
         resumeKey = computeResumeKey();
         overlay.setTitle(displayName());
+        SubCache.prune(SubCache.dir(getCacheDir()), SubCache.MAX_FILES);
     }
 
     @Override
@@ -101,6 +128,8 @@ public class PlayerActivity extends Activity {
             return;
         }
         player = PlayerFactory.create(this);
+        subtitlesSettled = false;
+        subtitleApplied = false;
         player.addListener(new Player.Listener() {
             @Override
             public void onVideoSizeChanged(VideoSize size) {
@@ -115,7 +144,21 @@ public class PlayerActivity extends Activity {
             }
 
             @Override
+            public void onCues(CueGroup cueGroup) {
+                cueView.setCues(cueGroup.cues);
+            }
+
+            @Override
+            public void onTracksChanged(Tracks tracks) {
+                if (!subtitlesSettled) chooseSubtitles(tracks);
+            }
+
+            @Override
             public void onPlaybackStateChanged(int playbackState) {
+                if (playbackState == Player.STATE_READY && !subtitlesSettled) {
+                    chooseSubtitles(player.getCurrentTracks());
+                    subtitlesSettled = true;
+                }
                 if (playbackState == Player.STATE_ENDED) {
                     saveFinished();
                     finish();
@@ -144,6 +187,7 @@ public class PlayerActivity extends Activity {
     @Override
     protected void onStop() {
         overlay.release();
+        cueView.setCues(Collections.<androidx.media3.common.text.Cue>emptyList());
         if (resumeDialog != null) {
             resumeDialog.dismiss();   // dismiss, not cancel: no "start over" callback
             resumeDialog = null;
@@ -191,6 +235,56 @@ public class PlayerActivity extends Activity {
         }
         overlay.show();
         return true;
+    }
+
+    /**
+     * Default subtitle choice ({@link SubtitlePick}): remembered choice, forced track in the system language,
+     * first sidecar, else off. Runs on track changes until the first READY; applying the same choice twice is a
+     * no-op, so the selection change it causes does not loop.
+     */
+    private void chooseSubtitles(Tracks tracks) {
+        if (player == null) return;
+        Map<String, Tracks.Group> groups = new LinkedHashMap<>();
+        Map<String, Integer> indexes = new LinkedHashMap<>();
+        List<SubtitlePick.Track> found = new ArrayList<>();
+        for (Tracks.Group g : tracks.getGroups()) {
+            if (g.getType() != C.TRACK_TYPE_TEXT) continue;
+            for (int i = 0; i < g.length; i++) {
+                if (!g.isTrackSupported(i)) continue;
+                Format f = g.getTrackFormat(i);
+                if (f.id == null) continue;
+                String id = f.id.startsWith(SubtitlePick.SIDECAR_PREFIX) ? f.id : SubtitlePick.EMBEDDED_PREFIX + f.id;
+                if (groups.containsKey(id)) continue;
+                groups.put(id, g);
+                indexes.put(id, i);
+                found.add(new SubtitlePick.Track(id, SubtitleFinder.normalizeLang(f.language),
+                        (f.selectionFlags & C.SELECTION_FLAG_FORCED) != 0));
+            }
+        }
+        if (found.isEmpty()) return;
+        ResumeStore.Entry saved = resumeKey == null ? null : resume.get(resumeKey);
+        String id = SubtitlePick.pick(found, saved == null ? null : saved.subtitleId,
+                SubtitleFinder.normalizeLang(Locale.getDefault().getLanguage()));
+        if (subtitleApplied && (id == null ? appliedSubtitleId == null : id.equals(appliedSubtitleId))) return;
+        subtitleApplied = true;
+        appliedSubtitleId = id;
+        TrackSelectionParameters.Builder b = player.getTrackSelectionParameters().buildUpon();
+        if (id == null) {
+            b.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true);
+        } else {
+            b.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false).setOverrideForType(
+                    new TrackSelectionOverride(groups.get(id).getMediaTrackGroup(), indexes.get(id)));
+        }
+        player.setTrackSelectionParameters(b.build());
+    }
+
+    private Charset subtitleCharset() {
+        String name = getSharedPreferences(SETTINGS, MODE_PRIVATE).getString(PREF_SUB_CHARSET, DEFAULT_SUB_CHARSET);
+        try {
+            return Charset.forName(name);
+        } catch (RuntimeException e) {
+            return Charset.forName("ISO-8859-1");
+        }
     }
 
     private void seek(long delta, boolean held) {
@@ -275,7 +369,13 @@ public class PlayerActivity extends Activity {
         String path = getIntent().getStringExtra(EXTRA_PATH);
         if (path != null) {
             File f = new File(path);
-            if (f.isFile() && f.canRead()) return MediaItem.fromUri(Uri.fromFile(f));
+            if (f.isFile() && f.canRead()) {
+                if (sidecars == null) {
+                    sidecars = SubtitleSources.build(f, getCacheDir(), subtitleCharset(),
+                            Locale.getDefault().getLanguage());
+                }
+                return new MediaItem.Builder().setUri(Uri.fromFile(f)).setSubtitleConfigurations(sidecars).build();
+            }
         }
         Uri data = getIntent().getData();
         return data == null ? null : MediaItem.fromUri(data);
