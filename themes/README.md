@@ -24,7 +24,8 @@ is ignored, and a file that doesn't parse is ignored as a whole, so a theme can 
 
 | Key | Type | Meaning |
 |---|---|---|
-| `dock_apps` | list of strings | The dock row, in order. A package name is an app; one that is not installed stays as a dimmed "Not installed" tile (select it to open its Play Store page, or get a short toast). `input:<inputId>` is a TV input tile (e.g. `input:com.mediatek.tvinput/.hdmi.HDMIInputService/HW5`), `input:hdmi1` is the first HDMI input (`hdmi2`, ... the next ones); it opens like the Inputs menu entry, and an input the TV has not registered is skipped |
+| `dock_apps` | list of strings | The dock row, in order. A package name is an app; missing apps are skipped (see `dock_placeholders`). `input:<inputId>` is a TV input tile (e.g. `input:com.mediatek.tvinput/.hdmi.HDMIInputService/HW5`), `input:hdmi1` is the first HDMI input (`hdmi2`, ... the next ones); it opens like the Inputs menu entry, and an input the TV has not registered is skipped |
+| `dock_placeholders` | bool (default `false`) | `true`: a `dock_apps` package that is not installed keeps its slot as a dimmed "Not installed" tile (select it to open its Play Store page, or get a short toast). `false`: it is skipped. A package also in `hidden_apps` is never shown either way |
 | `hidden_apps` | list of package names | Never shown as tiles |
 | `live_tv_package`, `live_tv_action` | string | The Live TV app and, if it has no leanback entry, the action to start it with |
 | `source_panel_service`, `source_panel_action` | string | The TV's own source panel, for sets with no TvInputManager |

@@ -187,6 +187,11 @@ No bundled fonts, no bitmaps beyond the optional wallpaper, no blur, no animatio
 - All of it switched by theme keys (`font`, `roman_date`, `accent_color`, `laurel`), default off, so the
   upstream look is unchanged and other TVs are unaffected.
 
+Note (S5 as built): the Roman look deviates from the above. The accent tints the greeting text (not the
+focus-glow edge plus a hairline), the laurel sits beside the clock (not the greeting), the theme gold is
+`#C9A24B` (not `#B8975A`), and the date line reads `XX Octobris MMXXVI` (Latin month, not `XX · X · MMXXVI`).
+To be tuned with Shibi.
+
 ## 6. Steps (each a small PR from its own feature branch; first line of every PR body: `Do not merge without Shibi's OK.`)
 
 | Step | Who | What | Device? |

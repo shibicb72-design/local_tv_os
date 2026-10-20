@@ -1,5 +1,6 @@
 {
   "dock_apps": ["com.google.android.youtube.tv", "com.amazon.amazonvideo.livingroom", "com.netflix.ninja", "input:hdmi1"],
+  "dock_placeholders": true,
   "hidden_apps": ["com.xgimi.minitvfactory", "com.xgimi.burnin", "com.xgimi.atvwifiverify", "com.xgimi.atmosphere", "com.xgimi.doubanfm", "com.mediatek.wwtv.tvcenter"],
   "input_action": "com.xgimi.action.hdmiPlayer",
   "live_tv_package": "",

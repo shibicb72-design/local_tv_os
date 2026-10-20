@@ -56,10 +56,10 @@ public class DockSpecTest {
     }
 
     @Test
-    public void missingAppStaysAsPlaceholderAndUnregisteredInputIsSkipped() {
+    public void placeholdersOnMissingAppStaysAsPlaceholderAndUnregisteredInputIsSkipped() {
         List<DockSpec.Slot> slots = DockSpec.plan(
                 Arrays.asList("com.google.android.youtube.tv", "com.netflix.ninja", "input:hdmi1", "input:hdmi9"),
-                set("com.google.android.youtube.tv"), resolver());
+                set("com.google.android.youtube.tv"), set(), true, resolver());
         assertEquals(3, slots.size());
         assertEquals(DockSpec.Slot.APP, slots.get(0).kind);
         assertEquals(DockSpec.Slot.MISSING, slots.get(1).kind);
@@ -69,9 +69,48 @@ public class DockSpecTest {
     }
 
     @Test
+    public void placeholdersOffSkipsMissingApps() {
+        List<DockSpec.Slot> slots = DockSpec.plan(
+                Arrays.asList("com.google.android.youtube.tv", "com.netflix.ninja", "input:hdmi1"),
+                set("com.google.android.youtube.tv"), set(), false, resolver());
+        assertEquals(2, slots.size());
+        assertEquals(DockSpec.Slot.APP, slots.get(0).kind);
+        assertEquals(DockSpec.Slot.INPUT, slots.get(1).kind);
+    }
+
+    @Test
+    public void hiddenAppWinsOverDockWithAndWithoutPlaceholders() {
+        for (boolean placeholders : new boolean[]{true, false}) {
+            // Installed but hidden, and not installed but hidden: no slot either way.
+            List<DockSpec.Slot> slots = DockSpec.plan(
+                    Arrays.asList("a.installed", "b.missing", "c.shown"),
+                    set("c.shown"), set("a.installed", "b.missing"), placeholders, resolver());
+            assertEquals(1, slots.size());
+            assertEquals("c.shown", slots.get(0).key);
+        }
+    }
+
+    @Test
+    public void hiddenInstalledAppIsNotAPlaceholder() {
+        // The adapter's installed set leaves hidden apps out, so this is the "Not installed" trap.
+        List<DockSpec.Slot> slots = DockSpec.plan(
+                Collections.singletonList("a.b"), set(), set("a.b"), true, resolver());
+        assertTrue(slots.isEmpty());
+    }
+
+    @Test
+    public void labelsSortNumerically() {
+        assertTrue(DockSpec.compareLabels("HDMI 2", "HDMI 10") < 0);
+        assertTrue(DockSpec.compareLabels("HDMI 10", "HDMI 2") > 0);
+        assertEquals(0, DockSpec.compareLabels("hdmi 1", "HDMI 1"));
+        assertTrue(DockSpec.compareLabels("AV", "HDMI 1") < 0);
+        assertTrue(DockSpec.compareLabels("HDMI", "HDMI 1") < 0);
+    }
+
+    @Test
     public void netflixInstalledIsAnOrdinaryApp() {
         List<DockSpec.Slot> slots = DockSpec.plan(
-                Collections.singletonList("com.netflix.ninja"), set("com.netflix.ninja"), resolver());
+                Collections.singletonList("com.netflix.ninja"), set("com.netflix.ninja"), set(), false, resolver());
         assertEquals(1, slots.size());
         assertEquals(DockSpec.Slot.APP, slots.get(0).kind);
     }
@@ -80,7 +119,7 @@ public class DockSpecTest {
     public void blanksAndDuplicatesAreDropped() {
         List<DockSpec.Slot> slots = DockSpec.plan(
                 Arrays.asList("", "  ", null, "a.b", "a.b", "input:hdmi1", " input:hdmi1"),
-                set("a.b"), resolver());
+                set("a.b"), set(), true, resolver());
         assertEquals(2, slots.size());
         assertEquals("a.b", slots.get(0).key);
         assertEquals(DockSpec.Slot.INPUT, slots.get(1).kind);
@@ -88,7 +127,7 @@ public class DockSpecTest {
 
     @Test
     public void noInputsRegisteredDropsEveryInputSlot() {
-        List<DockSpec.Slot> slots = DockSpec.plan(Arrays.asList("input:hdmi1", "x.y"), set(),
+        List<DockSpec.Slot> slots = DockSpec.plan(Arrays.asList("input:hdmi1", "x.y"), set(), set(), true,
                 arg -> DockSpec.resolveInput(arg, Collections.emptyList(), Collections.emptyList()));
         assertEquals(1, slots.size());
         assertEquals(DockSpec.Slot.MISSING, slots.get(0).kind);

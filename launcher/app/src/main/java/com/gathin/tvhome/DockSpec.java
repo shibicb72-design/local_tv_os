@@ -7,8 +7,9 @@ import java.util.Set;
 
 /**
  * Pure parsing and decisions for dock_apps entries (no Android types, so JUnit can run it): a package
- * name is an app, "input:&lt;inputId&gt;" or "input:hdmi1" is a TV input. An app that is not installed
- * stays in its slot as a "Not installed" tile; an input that is not registered is skipped.
+ * name is an app, "input:&lt;inputId&gt;" or "input:hdmi1" is a TV input. An app that is not installed is
+ * skipped, or with dock_placeholders stays in its slot as a "Not installed" tile; an input that is not
+ * registered is skipped.
  */
 final class DockSpec {
 
@@ -67,8 +68,13 @@ final class DockSpec {
         return allIds.contains(arg) ? arg : null;
     }
 
-    /** One slot per dock entry, in order: blanks and duplicates dropped, unresolved inputs skipped. */
-    static List<Slot> plan(List<String> dock, Set<String> installedPkgs, InputResolver inputs) {
+    /**
+     * One slot per dock entry, in order: blanks and duplicates dropped, unresolved inputs skipped, apps in
+     * {@code hidden} skipped (hidden_apps wins). A missing app becomes a MISSING slot only when
+     * {@code placeholders} is on (dock_placeholders); otherwise it is skipped.
+     */
+    static List<Slot> plan(List<String> dock, Set<String> installedPkgs, Set<String> hidden, boolean placeholders,
+                           InputResolver inputs) {
         List<Slot> out = new ArrayList<>();
         List<String> seen = new ArrayList<>();
         for (String raw : dock) {
@@ -79,11 +85,39 @@ final class DockSpec {
             if (isInput(entry)) {
                 String id = inputs.resolve(inputArg(entry));
                 if (id != null) out.add(new Slot(Slot.INPUT, id));
-            } else {
-                out.add(new Slot(installedPkgs.contains(entry) ? Slot.APP : Slot.MISSING, entry));
+            } else if (hidden.contains(entry)) {
+                continue;
+            } else if (installedPkgs.contains(entry)) {
+                out.add(new Slot(Slot.APP, entry));
+            } else if (placeholders) {
+                out.add(new Slot(Slot.MISSING, entry));
             }
         }
         return out;
+    }
+
+    /** Case-insensitive label order that compares digit runs as numbers, so "HDMI 2" sorts before "HDMI 10". */
+    static int compareLabels(String a, String b) {
+        int i = 0, j = 0;
+        while (i < a.length() && j < b.length()) {
+            char x = a.charAt(i), y = b.charAt(j);
+            if (Character.isDigit(x) && Character.isDigit(y)) {
+                int si = i, sj = j;
+                while (i < a.length() && Character.isDigit(a.charAt(i))) i++;
+                while (j < b.length() && Character.isDigit(b.charAt(j))) j++;
+                String na = a.substring(si, i).replaceFirst("^0+(?=.)", "");
+                String nb = b.substring(sj, j).replaceFirst("^0+(?=.)", "");
+                if (na.length() != nb.length()) return na.length() < nb.length() ? -1 : 1;
+                int c = na.compareTo(nb);
+                if (c != 0) return c;
+            } else {
+                int c = Character.compare(Character.toLowerCase(x), Character.toLowerCase(y));
+                if (c != 0) return c;
+                i++;
+                j++;
+            }
+        }
+        return Integer.compare(a.length() - i, b.length() - j);
     }
 
     /** Name for a "Not installed" tile: a few well-known apps, otherwise the package itself. */

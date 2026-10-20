@@ -15,6 +15,10 @@
         <item>in.startv.hotstar</item>
     </string-array>
 
+    <!-- true: a dock app that is not installed keeps its slot as a dimmed "Not installed" tile (select it to
+         open its Play Store page). false: missing apps are skipped. -->
+    <bool name="dock_placeholders">false</bool>
+
     <!-- Apps never shown as tiles (e.g. the Live TV app, which the Inputs menu already covers). -->
     <string-array name="hidden_apps">
         <item>com.mediatek.wwtv.tvcenter</item>

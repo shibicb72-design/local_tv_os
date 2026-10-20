@@ -120,6 +120,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
     private final List<String> favourites;
     /** Never shown as tiles (res/values/config.xml, hidden_apps). */
     private final Set<String> hidden;
+    /** Keep a "Not installed" tile for a missing dock app (dock_placeholders). */
+    private final boolean dockPlaceholders;
     private final boolean showHomeSettings;
     /** Calmer motion for weak GPUs (config.xml, reduced_motion): no overshoot, shorter fades. */
     private final boolean reducedMotion;
@@ -131,6 +133,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         this.dockSize = dockSize;
         this.favourites = cfg.dockApps;
         this.hidden = new HashSet<>(cfg.hiddenApps);
+        this.dockPlaceholders = cfg.dockPlaceholders;
         this.showHomeSettings = cfg.showHomeSettingsShortcut;
         this.reducedMotion = cfg.reducedMotion;
         // Tiles keep their identity across reload(), so a focused tile stays on its app instead of
@@ -203,12 +206,23 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         List<String> hdmi = new ArrayList<>(), all = new ArrayList<>();
         TvInputManager tim = (TvInputManager) ctx.getSystemService(Context.TV_INPUT_SERVICE);
         if (tim != null) {
-            List<TvInputInfo> inputs = new ArrayList<>(tim.getTvInputList());
-            Collections.sort(inputs, (a, b) -> String.valueOf(a.loadLabel(ctx)).compareToIgnoreCase(String.valueOf(b.loadLabel(ctx))));
-            for (TvInputInfo info : inputs) {
+            List<TvInputInfo> inputs = new ArrayList<>();
+            // Each label is loaded once; HDMI first, then label order with numbers compared as numbers
+            // ("HDMI 2" before "HDMI 10").
+            Map<String, String> raw = new HashMap<>();
+            for (TvInputInfo info : tim.getTvInputList()) {
                 if (!info.isPassthroughInput()) continue;
                 CharSequence l = info.loadLabel(ctx);
-                String label = l == null ? info.getId() : l.toString();
+                raw.put(info.getId(), l == null ? info.getId() : l.toString());
+                inputs.add(info);
+            }
+            Collections.sort(inputs, (a, b) -> {
+                boolean ha = a.getType() == TvInputInfo.TYPE_HDMI, hb = b.getType() == TvInputInfo.TYPE_HDMI;
+                if (ha != hb) return ha ? -1 : 1;
+                return DockSpec.compareLabels(raw.get(a.getId()), raw.get(b.getId()));
+            });
+            for (TvInputInfo info : inputs) {
+                String label = raw.get(info.getId());
                 if (info.getType() == TvInputInfo.TYPE_HDMI) {
                     hdmi.add(info.getId());
                     if (!label.toUpperCase(Locale.ROOT).contains("HDMI")) label = "HDMI " + label;
@@ -217,7 +231,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                 labels.put(info.getId(), Cards.cleanLabel(label, info.getId()));
             }
         }
-        List<DockSpec.Slot> slots = DockSpec.plan(favourites, installed, arg -> DockSpec.resolveInput(arg, hdmi, all));
+        List<DockSpec.Slot> slots = DockSpec.plan(favourites, installed, hidden, dockPlaceholders, arg -> DockSpec.resolveInput(arg, hdmi, all));
         List<Entry> out = new ArrayList<>();
         List<Entry> rest = new ArrayList<>(apps);
         for (DockSpec.Slot s : slots) {
