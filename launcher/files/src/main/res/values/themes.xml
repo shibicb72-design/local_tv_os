@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Files" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <!-- Roman stone ink (RomanStyle.STONE_INK); no stone texture in Files (plan D8). -->
+        <item name="android:windowBackground">@color/stone_ink</item>
+    </style>
+    <color name="stone_ink">#FF1A1511</color>
+</resources>

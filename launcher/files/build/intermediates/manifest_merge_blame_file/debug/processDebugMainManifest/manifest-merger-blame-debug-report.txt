@@ -1,0 +1,117 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.gathin.files"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="30"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+11-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:4:5-82
+11-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:4:22-79
+12
+13    <uses-feature
+13-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:6:5-8:36
+14        android:name="android.software.leanback"
+14-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:7:9-49
+15        android:required="false" />
+15-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:8:9-33
+16    <uses-feature
+16-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:9:5-11:36
+17        android:name="android.hardware.touchscreen"
+17-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:10:9-52
+18        android:required="false" />
+18-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:11:9-33
+19
+20    <queries>
+20-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:13:5-31:15
+21        <package android:name="com.gathin.player" />
+21-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:14:9-53
+21-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:14:18-50
+22
+23        <intent>
+23-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:15:9-18:18
+24            <action android:name="android.intent.action.VIEW" />
+24-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:13-65
+24-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:21-62
+25
+26            <data android:mimeType="video/*" />
+26-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:13-48
+26-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:19-45
+27        </intent>
+28        <intent>
+28-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:19:9-22:18
+29            <action android:name="android.intent.action.VIEW" />
+29-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:13-65
+29-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:21-62
+30
+31            <data android:mimeType="audio/*" />
+31-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:13-48
+31-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:19-45
+32        </intent>
+33        <intent>
+33-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:23:9-26:18
+34            <action android:name="android.intent.action.VIEW" />
+34-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:13-65
+34-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:21-62
+35
+36            <data android:mimeType="image/*" />
+36-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:13-48
+36-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:19-45
+37        </intent>
+38        <intent>
+38-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:27:9-30:18
+39            <action android:name="android.intent.action.VIEW" />
+39-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:13-65
+39-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:21-62
+40
+41            <data android:mimeType="*/*" />
+41-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:13-48
+41-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:19-45
+42        </intent>
+43    </queries>
+44
+45    <application
+45-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:33:5-52:19
+46        android:allowBackup="false"
+46-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:34:9-36
+47        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+47-->[androidx.core:core:1.7.0] C:\Users\shibi\.gradle\caches\8.9\transforms\3afe7fa58a47c7b182ae0caccac05374\transformed\core-1.7.0\AndroidManifest.xml:24:18-86
+48        android:banner="@drawable/banner"
+48-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:35:9-42
+49        android:debuggable="true"
+50        android:extractNativeLibs="false"
+51        android:icon="@drawable/banner"
+51-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:36:9-40
+52        android:label="@string/app_name"
+52-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:37:9-41
+53        android:theme="@style/Theme.Files" >
+53-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:38:9-43
+54        <activity
+54-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:40:9-49:20
+55            android:name="com.gathin.files.FilesActivity"
+55-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:41:13-42
+56            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode"
+56-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:44:13-90
+57            android:exported="true"
+57-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:42:13-36
+58            android:launchMode="singleTask" >
+58-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:43:13-44
+59            <intent-filter>
+59-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:45:13-48:29
+60                <action android:name="android.intent.action.MAIN" />
+60-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:46:17-69
+60-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:46:25-66
+61
+62                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+62-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:47:17-86
+62-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:47:27-83
+63            </intent-filter>
+64        </activity>
+65
+66        <!-- StreamProvider is added in F8. -->
+67    </application>
+68
+69</manifest>
