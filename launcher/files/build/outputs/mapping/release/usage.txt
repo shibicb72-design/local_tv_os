@@ -2492,8 +2492,14 @@ androidx.versionedparcelable.VersionedParcelStream$1
 androidx.versionedparcelable.VersionedParcelStream$FieldBuffer
 androidx.versionedparcelable.VersionedParcelStream
 androidx.versionedparcelable.VersionedParcelize
+com.gathin.files.ConflictNamer
 com.gathin.files.EntryAdapter:
     com.gathin.files.EntryAdapter$Row get(int)
+com.gathin.files.FileOps$Cancelled
+com.gathin.files.FileOps$Conflict
+com.gathin.files.FileOps$Progress
+com.gathin.files.FileOps$Result
+com.gathin.files.FileOps
 com.gathin.files.FileSort:
     private void <init>()
 com.gathin.files.FilesActivity:
@@ -2505,6 +2511,9 @@ com.gathin.files.FocusMemory:
 com.gathin.files.MimeKinds:
     public static final java.lang.String UNKNOWN_MIME
     private void <init>()
+com.gathin.files.OpPlan$Reason
+com.gathin.files.OpPlan$Refused
+com.gathin.files.OpPlan
 com.gathin.files.Opener:
     static final java.lang.String EXTRA_PATH
     static final java.lang.String PLAYER_PACKAGE

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.gathin.files.FileOpsTest" tests="13" skipped="1" failures="0" errors="0" timestamp="2026-10-20T23:17:01" hostname="ZAZBALL500" time="0.196">
+  <properties/>
+  <testcase name="moveOntoItselfIsSkipped" classname="com.gathin.files.FileOpsTest" time="0.009"/>
+  <testcase name="insufficientSpaceRefusedBeforeAnyByte" classname="com.gathin.files.FileOpsTest" time="0.012"/>
+  <testcase name="copyReportsProgressToTotal" classname="com.gathin.files.FileOpsTest" time="0.028"/>
+  <testcase name="rename" classname="com.gathin.files.FileOpsTest" time="0.003"/>
+  <testcase name="cancelLeavesNoPartialFile" classname="com.gathin.files.FileOpsTest" time="0.014"/>
+  <testcase name="copyTreeEqualsSource" classname="com.gathin.files.FileOpsTest" time="0.04"/>
+  <testcase name="folderIntoItselfOrDescendantRefused" classname="com.gathin.files.FileOpsTest" time="0.01"/>
+  <testcase name="conflictNaming" classname="com.gathin.files.FileOpsTest" time="0.002"/>
+  <testcase name="deleteRemovesTree" classname="com.gathin.files.FileOpsTest" time="0.011"/>
+  <testcase name="moveRemovesSource" classname="com.gathin.files.FileOpsTest" time="0.042"/>
+  <testcase name="keepBothSkipAndReplace" classname="com.gathin.files.FileOpsTest" time="0.014"/>
+  <testcase name="copyOntoItselfNeverReplacesTheSource" classname="com.gathin.files.FileOpsTest" time="0.006"/>
+  <testcase name="deleteOfProtectedFileReportsFailureWithoutThrowing" classname="com.gathin.files.FileOpsTest" time="0.004">
+    <skipped/>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
