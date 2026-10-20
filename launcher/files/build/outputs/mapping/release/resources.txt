@@ -1,4 +1,3 @@
-Marking font:cinzel_roman:2131034112 reachable: referenced from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:recyclerViewStyle:2130771989 reachable: referenced from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking dimen:fastscroll_default_thickness:2130903047 reachable: referenced from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking dimen:fastscroll_minimum_range:2130903049 reachable: referenced from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -8,6 +7,7 @@ Marking id:pooling_container_listener_holder_tag:2131099707 reachable: reference
 Marking id:tag_unhandled_key_listeners:2131099721 reachable: referenced from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:tag_window_insets_animation_callback:2131099722 reachable: referenced from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:tag_accessibility_actions:2131099710 reachable: referenced from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking font:cinzel_roman:2131034112 reachable: referenced from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:accessibility_action_clickable_span:2131099648 reachable: referenced from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:tag_accessibility_clickable_spans:2131099711 reachable: referenced from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 @attr/alpha : reachable=false
