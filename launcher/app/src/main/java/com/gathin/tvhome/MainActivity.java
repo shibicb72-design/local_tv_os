@@ -1,7 +1,9 @@
 package com.gathin.tvhome;
 
 import com.gathin.roman.Roman;
+import com.gathin.roman.RomanLook;
 import com.gathin.roman.RomanStyle;
+import com.gathin.roman.StoneCache;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -763,7 +765,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private void applyRomanLook(Config cfg) {
         if (cfg.roman != null) {
             // v2: Cinzel and the gold palette replace the S5 look (font and laurel are ignored).
-            RomanLook.applyHeader(this, cfg.roman);
+            RomanHeader.applyHeader(this, cfg.roman);
             glass.setRoman(cfg.roman);
             RomanLook.pill(findViewById(R.id.btnInputs), cfg.roman);
             RomanLook.pill(findViewById(R.id.btnWifi), cfg.roman);

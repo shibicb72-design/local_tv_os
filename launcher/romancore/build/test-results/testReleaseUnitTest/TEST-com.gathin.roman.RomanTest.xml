@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.gathin.roman.RomanTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-20T22:59:12" hostname="ZAZBALL500" time="0.001">
+<testsuite name="com.gathin.roman.RomanTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-20T23:01:03" hostname="ZAZBALL500" time="0.001">
   <properties/>
   <testcase name="numerals" classname="com.gathin.roman.RomanTest" time="0.0"/>
   <testcase name="inscribeDateLine" classname="com.gathin.roman.RomanTest" time="0.0"/>
   <testcase name="outOfRange" classname="com.gathin.roman.RomanTest" time="0.0"/>
   <testcase name="inscribeCarvesLetters" classname="com.gathin.roman.RomanTest" time="0.0"/>
   <testcase name="dateLineYearOutOfRange" classname="com.gathin.roman.RomanTest" time="0.0"/>
-  <testcase name="dateLine" classname="com.gathin.roman.RomanTest" time="0.0"/>
-  <testcase name="inscribeCutsAtMax" classname="com.gathin.roman.RomanTest" time="0.001"/>
+  <testcase name="dateLine" classname="com.gathin.roman.RomanTest" time="0.001"/>
+  <testcase name="inscribeCutsAtMax" classname="com.gathin.roman.RomanTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

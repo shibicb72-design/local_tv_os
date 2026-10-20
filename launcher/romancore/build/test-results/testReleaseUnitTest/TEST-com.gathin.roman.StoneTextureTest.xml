@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.gathin.roman.StoneTextureTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-20T22:59:12" hostname="ZAZBALL500" time="0.746">
+<testsuite name="com.gathin.roman.StoneTextureTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-20T23:01:03" hostname="ZAZBALL500" time="0.761">
   <properties/>
   <testcase name="flatGreyDithersBackToItself" classname="com.gathin.roman.StoneTextureTest" time="0.001"/>
   <testcase name="generatorUsesOnlyExactArithmetic" classname="com.gathin.roman.StoneTextureTest" time="0.002"/>
-  <testcase name="sameArgumentsGiveIdenticalRows" classname="com.gathin.roman.StoneTextureTest" time="0.012"/>
+  <testcase name="sameArgumentsGiveIdenticalRows" classname="com.gathin.roman.StoneTextureTest" time="0.011"/>
   <testcase name="redIsInTheHighBits" classname="com.gathin.roman.StoneTextureTest" time="0.0"/>
   <testcase name="anotherSeedChangesMostPixels" classname="com.gathin.roman.StoneTextureTest" time="0.006"/>
   <testcase name="channelsStayWithinThePalette" classname="com.gathin.roman.StoneTextureTest" time="0.007"/>
-  <testcase name="travertineHasPores" classname="com.gathin.roman.StoneTextureTest" time="0.114"/>
-  <testcase name="headerKeepsTheTextReadable" classname="com.gathin.roman.StoneTextureTest" time="0.219"/>
-  <testcase name="vignetteDarkensTheCornersButNotTheCentre" classname="com.gathin.roman.StoneTextureTest" time="0.376"/>
-  <testcase name="brightnessScalesTheStone" classname="com.gathin.roman.StoneTextureTest" time="0.008"/>
+  <testcase name="travertineHasPores" classname="com.gathin.roman.StoneTextureTest" time="0.109"/>
+  <testcase name="headerKeepsTheTextReadable" classname="com.gathin.roman.StoneTextureTest" time="0.215"/>
+  <testcase name="vignetteDarkensTheCornersButNotTheCentre" classname="com.gathin.roman.StoneTextureTest" time="0.4"/>
+  <testcase name="brightnessScalesTheStone" classname="com.gathin.roman.StoneTextureTest" time="0.009"/>
   <testcase name="ditherKeepsBlackAndWhite" classname="com.gathin.roman.StoneTextureTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

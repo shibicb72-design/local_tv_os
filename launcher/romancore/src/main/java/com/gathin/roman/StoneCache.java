@@ -1,7 +1,4 @@
-package com.gathin.tvhome;
-
-import com.gathin.roman.RomanStyle;
-import com.gathin.roman.StoneTexture;
+package com.gathin.roman;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -26,7 +23,7 @@ import java.util.function.Consumer;
  * pixels live in graphics memory only). Home must never fail because of the stone: any problem leaves the
  * plain background and is only logged.
  */
-final class StoneCache {
+public final class StoneCache {
 
     private static final String TAG = "StoneCache";
     /** Half of 1920x1080; the ImageView stretches it. */
@@ -45,12 +42,12 @@ final class StoneCache {
     }
 
     /** The style the shared stone was built for, or null before the first load; lets the dream skip re-reading the config. */
-    static RomanStyle lastStyle() {
+    public static RomanStyle lastStyle() {
         return last != null && !last.isRecycled() ? lastStyle : null;
     }
 
     /** Calls {@code onReady} on the main thread with the stone; never calls it when something went wrong. */
-    static void load(Context context, RomanStyle style, Consumer<Bitmap> onReady) {
+    public static void load(Context context, RomanStyle style, Consumer<Bitmap> onReady) {
         final String key = style.stoneKey();
         if (last != null && !last.isRecycled() && key.equals(lastKey)) {
             onReady.accept(last);
