@@ -7,11 +7,27 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class RomanStyleTest {
 
     private static RomanStyle of(String style, String stone, int brightness, int seed, int vignette) {
         return RomanStyle.of(style, stone, brightness, seed, vignette, true, true, true, "SALVE", 0);
+    }
+
+    @Test
+    public void dreamColoursAreOpaqueAndRed() {
+        for (int c : new int[]{RomanStyle.ROMAN_RED, RomanStyle.CRIMSON, RomanStyle.PORPHYRY,
+                RomanStyle.PORPHYRY_DEEP}) {
+            int r = (c >> 16) & 0xFF, g = (c >> 8) & 0xFF, b = c & 0xFF;
+            assertEquals(0xFF, c >>> 24);
+            assertTrue(r > g && r > b);
+        }
+        assertTrue(sum(RomanStyle.PORPHYRY_DEEP) < sum(RomanStyle.PORPHYRY));
+    }
+
+    private static int sum(int c) {
+        return ((c >> 16) & 0xFF) + ((c >> 8) & 0xFF) + (c & 0xFF);
     }
 
     @Test

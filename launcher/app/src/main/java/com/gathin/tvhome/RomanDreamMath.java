@@ -1,5 +1,10 @@
 package com.gathin.tvhome;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+
 /**
  * The numbers and strings behind the Roman screensaver ({@link RomanDream}); pure Java so they can be unit
  * tested.
@@ -16,7 +21,25 @@ final class RomanDreamMath {
     /** Pan translations are snapped to this many px, so the wall is redrawn only when it really moves. */
     static final float PAN_STEP_PX = 0.5f;
 
+    /** Legend on the legion standard (Legio XII Fulminata bears the thunderbolt); change it to switch legions. */
+    static final String LEGION = "LEG XII FVLMINATA";
+
     private RomanDreamMath() {
+    }
+
+    /** The plain localized long date, e.g. "20 October 2026" (en-GB) or "October 20, 2026" (en-US). */
+    static String gregorian(int year, int month, int day, Locale locale) {
+        Calendar c = new GregorianCalendar(year, month - 1, day);
+        return DateFormat.getDateInstance(DateFormat.LONG, locale).format(c.getTime());
+    }
+
+    /**
+     * Text size (px) that makes a text of {@code widthAtOnePx} (its width at a 1 px size) fill {@code maxWidth},
+     * clamped to [{@code minPx}, {@code maxPx}]. A width of zero or less gives {@code maxPx}.
+     */
+    static float fitTextSize(float maxWidth, float widthAtOnePx, float minPx, float maxPx) {
+        float fit = widthAtOnePx <= 0f ? maxPx : maxWidth / widthAtOnePx;
+        return Math.max(minPx, Math.min(maxPx, fit));
     }
 
     /** Largest translation (px) that keeps a view of {@code size} px, scaled by {@code scale}, covering the screen. */

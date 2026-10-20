@@ -32,6 +32,12 @@ final class RomanStyle {
     static final int MARBLE_LIGHT = 0xFF5C5851;
     static final int MARBLE_VEIN = 0xFFA39C90;
 
+    // Screensaver only (RomanDream v2); the Home look stays gold on travertine.
+    static final int ROMAN_RED = 0xFF9B1B1E;
+    static final int CRIMSON = 0xFFB0202E;
+    static final int PORPHYRY = 0xFF5E1A24;
+    static final int PORPHYRY_DEEP = 0xFF2A0B10;
+
     static final String STONE_TRAVERTINE = "travertine";
     static final String STONE_MARBLE = "marble";
     static final String STONE_NONE = "none";

@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -85,6 +86,33 @@ public class RomanDreamMathTest {
     @Test
     public void dateLineIsInscribed() {
         assertEquals("XX OCTOBRIS MMXXVI", Roman.inscribe(Roman.date(2026, 10, 20), 40));
+    }
+
+    @Test
+    public void legionLegendIsInscribedUnchanged() {
+        assertEquals("LEG XII FVLMINATA", RomanDreamMath.LEGION);
+        assertEquals(RomanDreamMath.LEGION, Roman.inscribe(RomanDreamMath.LEGION, 24));
+        // the longer alternative still fits the inscription limit
+        assertEquals("LEG XXII PRIMIGENIA", Roman.inscribe("LEG XXII PRIMIGENIA", 24));
+    }
+
+    @Test
+    public void gregorianDateIsLocalized() {
+        assertEquals("20 October 2026", RomanDreamMath.gregorian(2026, 10, 20, Locale.UK));
+        assertEquals("October 20, 2026", RomanDreamMath.gregorian(2026, 10, 20, Locale.US));
+    }
+
+    @Test
+    public void fitTextSizeFillsTheWidthWithinTheClamp() {
+        assertEquals(10f, RomanDreamMath.fitTextSize(100f, 10f, 1f, 50f), 1e-4f);
+        assertEquals(5f, RomanDreamMath.fitTextSize(10f, 10f, 5f, 50f), 0f);      // too wide: minimum
+        assertEquals(50f, RomanDreamMath.fitTextSize(1000f, 10f, 1f, 50f), 0f);   // lots of room: maximum
+        assertEquals(50f, RomanDreamMath.fitTextSize(100f, 0f, 1f, 50f), 0f);     // nothing to measure
+        for (float at1 = 1f; at1 < 40f; at1 += 0.7f) {
+            float size = RomanDreamMath.fitTextSize(160f, at1, 4f, 30f);
+            assertTrue(size >= 4f && size <= 30f);
+            if (size > 4f) assertTrue(size * at1 <= 160f + 1e-3f);
+        }
     }
 
     @Test
