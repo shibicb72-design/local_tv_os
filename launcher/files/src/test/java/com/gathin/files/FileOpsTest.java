@@ -152,7 +152,23 @@ public class FileOpsTest {
     }
 
     @Test
-    public void moveOntoItselfIsSkipped() throws IOException {
+    public void replaceNeverDeletesAnAncestorOfTheSource() throws IOException {
+        File inner = write(new File(tmp.newFolder("v", "Movies", "Movies"), "a.bin"), 7).getParentFile();
+        File outerDir = inner.getParentFile();
+        File dest = outerDir.getParentFile();
+        assertEquals(0, OpRules.conflicts(Collections.singletonList(inner), dest));
+        for (boolean move : new boolean[] {false, true}) {
+            OpPlan p = plan(dest, inner);
+            FileOps.Result r = move ? new FileOps(null).move(p, FileOps.Conflict.REPLACE)
+                    : new FileOps(null).copy(p, FileOps.Conflict.REPLACE);
+            assertFalse(r.ok());
+            assertEquals(Collections.singletonList(inner.getAbsolutePath()), r.failed);
+            assertEquals(7, new File(inner, "a.bin").length());
+        }
+    }
+
+    @Test
+    public void moveOntoItselfIsSkipped()throws IOException {
         File a = write(new File(tmp.newFolder("d"), "f.txt"), 5);
         FileOps.Result r = new FileOps(null).move(plan(a.getParentFile(), a), FileOps.Conflict.REPLACE);
         assertEquals(1, r.skipped);

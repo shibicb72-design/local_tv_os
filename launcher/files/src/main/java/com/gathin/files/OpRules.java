@@ -54,9 +54,26 @@ final class OpRules {
         for (File s : sources) {
             File target = new File(destDir, s.getName());
             if (!target.exists() && !Files.isSymbolicLink(target.toPath())) continue;
-            if (!sameFile(s, target)) n++;
+            if (!sameFile(s, target) && !sourceInside(s, target)) n++;
         }
         return n;
+    }
+
+    /** True when {@code src} is {@code target} or lives under it, so replacing {@code target} would delete src. */
+    static boolean sourceInside(File src, File target) {
+        File t;
+        try {
+            t = target.getCanonicalFile();
+            for (File c = src.getCanonicalFile(); c != null; c = c.getParentFile()) {
+                if (c.equals(t)) return true;
+            }
+        } catch (IOException e) {
+            t = target.getAbsoluteFile();
+            for (File c = src.getAbsoluteFile(); c != null; c = c.getParentFile()) {
+                if (c.equals(t)) return true;
+            }
+        }
+        return false;
     }
 
     private static boolean sameFile(File a, File b) {

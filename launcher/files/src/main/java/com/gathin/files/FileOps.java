@@ -127,6 +127,10 @@ public final class FileOps {
                 result.skipped++;
                 return;
             }
+            if (OpRules.sourceInside(src, target)) {   // replacing would delete the source itself
+                result.failed.add(src.getAbsolutePath());
+                return;
+            }
             if (!deleteTree(target)) {
                 result.failed.add(target.getAbsolutePath());
                 return;
