@@ -575,3 +575,26 @@ Reviewer checks (whole v2):
 3. Everything is behind `"style": "roman"` plus 8 `roman_*` knobs (off by default). It is turned on only in `themes/xgimi-s-max/config.json` and the local debug overlay; the dock stays YouTube, Prime Video, HDMI 1.
 4. Budget: about +0.5 MB PSS (stone 960x540 RGB_565 as a hardware bitmap; the ambient bitmap shrinks to pay for it), at most +25 KB APK (≤ 330 KB), no raster assets, no layers.
 5. Six slices (R1 keys and type, R2 stone, R3 frieze and crest, R4 pilasters, R5 focus and dock, R6 integration and measurement), each with pure-Java unit tests and explicit reviewer checks.
+
+## 8. Roman screensaver (RomanDream)
+
+A second `DreamService` next to `ClockDream` (which is untouched). It reuses the R1–R6 pieces: the palette in
+`RomanStyle`, the cached stone from `StoneCache` (never re-rendered when cached; the same style as Home, or the
+default travertine if `style` is not `roman`), `Laurel` for the wreath and the Cinzel face from `RomanLook`.
+
+- Look: the stone drawn 12% larger than the screen and panned corner to corner by **one** `ValueAnimator`
+  (linear, 90 s each way, reversing; no other animation), a vignette, a gold laurel (the R3 geometry at 1.7×),
+  the time in Cinzel (96 dp, AM/PM small beside it), two thin gold rules and the inscribed Roman date
+  (`XX OCTOBRIS MMXXVI`). The clock updates on `ACTION_TIME_TICK` (plus time and zone changes).
+- Light: one bitmap, the shared 960x540 RGB_565 stone (no copy); no `WakeLock`; `setFullscreen(true)`,
+  `setInteractive(false)`; the receiver, the animator and the image reference are released in
+  `onDreamingStopped` and `onDetachedFromWindow`. The bitmap is dereferenced, **not recycled**, because it is
+  the same object Home may be showing; recycling it would crash Home's next draw.
+- Robustness: any failure loading the stone (or `roman_stone: "none"`) leaves the solid dark stone colour
+  (`TRAVERTINE_DEEP`); a missing Cinzel falls back to the system font.
+- Select it (document only, needs Shibi's OK before it is run on the projector):
+  `settings put secure screensaver_components com.gathin.tvhome/.RomanDream`
+  and `settings put secure screensaver_enabled 1` (the constant is `RomanDreamMath.COMPONENT`). The manifest entry is
+  exported with the `android.service.dreams.DreamService` filter and `BIND_DREAM_SERVICE`, so it is also
+  listed in the TV's screensaver settings. Back to the clock: `… com.gathin.tvhome/.ClockDream`.
+- Tests: `RomanDreamMathTest` (pan travel and offset, ping-pong fraction, 12/24 h time, date line, manifest entry).

@@ -66,6 +66,14 @@ Projector advice: a projector's black is the colour of the wall, so the stone is
 the edges; lower it for a flatter wall. Both only need a `config.json` change, no rebuild. The stone is cached by
 its settings, so the first start after a change takes a moment longer.
 
+### Roman screensaver
+
+`RomanDream` is a second screensaver beside the clock: the cached stone panning slowly behind a gold laurel, the
+time in Cinzel and the Roman date. It needs no keys (it follows `roman_stone`, `roman_seed`, `roman_stone_brightness`,
+`roman_vignette` and `accent_color` when the theme is Roman, else a default travertine). To select it:
+`settings put secure screensaver_components com.gathin.tvhome/.RomanDream` and
+`settings put secure screensaver_enabled 1` over adb (not run automatically). Details: `docs/plans/roman-theme-v2.md`, section 8.
+
 ## Wallpapers
 
 `wallpaper.jpg` is drawn full screen behind the launcher, centre-cropped. Keep it dark, 1920×1080 and
