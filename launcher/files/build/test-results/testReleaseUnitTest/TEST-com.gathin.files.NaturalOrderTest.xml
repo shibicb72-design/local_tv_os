@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.gathin.files.NaturalOrderTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-20T23:06:01" hostname="ZAZBALL500" time="0.0">
+  <properties/>
+  <testcase name="caseInsensitiveWithStableTieBreak" classname="com.gathin.files.NaturalOrderTest" time="0.0"/>
+  <testcase name="sortsList" classname="com.gathin.files.NaturalOrderTest" time="0.0"/>
+  <testcase name="digitRunsAreNumeric" classname="com.gathin.files.NaturalOrderTest" time="0.0"/>
+  <testcase name="prefixSortsFirst" classname="com.gathin.files.NaturalOrderTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
