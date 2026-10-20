@@ -44,7 +44,7 @@ import java.util.Map;
 /**
  * Playback (P1) with the Roman overlay and resume (P3): plays the intent's file into a SurfaceView, keys go
  * through {@link KeyMap}, the position is saved in onPause and on completion. Subtitles (P4): sidecar files and
- * embedded tracks, drawn by {@link CueView}. The tracks menu arrives in a later step. The player lives between onStart and onStop.
+ * embedded tracks, drawn by {@link CueView}. Tracks menu (P5): audio, subtitles, "Subtitle file…", remembered per file. The player lives between onStart and onStop.
  */
 @UnstableApi
 public class PlayerActivity extends Activity {
@@ -54,6 +54,9 @@ public class PlayerActivity extends Activity {
 
     /** Minimum gap between seeks while a key is held; the key repeat rate is far faster than useful. */
     private static final long HELD_SEEK_GAP_MS = 400L;
+    private static final String ID_FILE_LIST = "file-list";
+    /** Rows in the "Subtitle file…" list; a folder with more subtitle files than this is cut. */
+    private static final int MAX_FILE_ROWS = 60;
     private static final String PREFS = "resume";
     private static final String PREF_DATA = "data";
     /** Settings prefs: the charset used for subtitle files that are not UTF-8 (plan Q4). */
@@ -79,6 +82,26 @@ public class PlayerActivity extends Activity {
     private boolean subtitlesSettled;
     private boolean subtitleApplied;
     private String appliedSubtitleId;
+    private TracksMenu menu;
+    /** Remembered choices (ResumeStore): audio track id, subtitle id or {@link SubtitlePick#OFF}; null = none made. */
+    private String chosenAudioId;
+    private String chosenSubtitleId;
+    private boolean audioRestored;
+
+    /** A text track of the current media: where it is in the tracks and how to show it. */
+    private static final class TextEntry {
+        final Tracks.Group group;
+        final int index;
+        final Format format;
+        final boolean supported;
+
+        TextEntry(Tracks.Group group, int index, Format format, boolean supported) {
+            this.group = group;
+            this.index = index;
+            this.format = format;
+            this.supported = supported;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle state) {
@@ -114,6 +137,12 @@ public class PlayerActivity extends Activity {
         hideSystemBars();
         resume = new ResumeStore(prefsStore());
         resumeKey = computeResumeKey();
+        menu = new TracksMenu(this, root, this::onMenuChosen);
+        ResumeStore.Entry remembered = resumeKey == null ? null : resume.get(resumeKey);
+        if (remembered != null) {
+            chosenAudioId = remembered.audioId;
+            chosenSubtitleId = remembered.subtitleId;
+        }
         overlay.setTitle(displayName());
         SubCache.prune(SubCache.dir(getCacheDir()), SubCache.MAX_FILES);
     }
@@ -130,6 +159,7 @@ public class PlayerActivity extends Activity {
         player = PlayerFactory.create(this);
         subtitlesSettled = false;
         subtitleApplied = false;
+        audioRestored = false;
         player.addListener(new Player.Listener() {
             @Override
             public void onVideoSizeChanged(VideoSize size) {
@@ -150,6 +180,7 @@ public class PlayerActivity extends Activity {
 
             @Override
             public void onTracksChanged(Tracks tracks) {
+                if (!audioRestored) restoreAudio(tracks);
                 if (!subtitlesSettled) chooseSubtitles(tracks);
             }
 
@@ -187,6 +218,7 @@ public class PlayerActivity extends Activity {
     @Override
     protected void onStop() {
         overlay.release();
+        menu.hide();
         cueView.setCues(Collections.<androidx.media3.common.text.Cue>emptyList());
         if (resumeDialog != null) {
             resumeDialog.dismiss();   // dismiss, not cancel: no "start over" callback
@@ -211,10 +243,16 @@ public class PlayerActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (player == null) return super.onKeyDown(keyCode, event);
         int repeat = event.getRepeatCount();
-        KeyMap.Action action = KeyMap.map(keyCode, repeat, overlay.isVisible(), false);
+        KeyMap.Action action = KeyMap.map(keyCode, repeat, overlay.isVisible(), menu.isShowing());
         switch (action) {
             case NONE:
-                return super.onKeyDown(keyCode, event);
+                return super.onKeyDown(keyCode, event);   // with the menu open this is focus movement
+            case CLOSE_MENU:
+                menu.hide();
+                return true;
+            case OPEN_TRACKS:
+                if (repeat == 0) showTracksMenu();
+                return true;
             case HIDE_OVERLAY:
                 overlay.hide();
                 return true;
@@ -231,7 +269,7 @@ public class PlayerActivity extends Activity {
                 seek(KeyMap.seekDelta(action), repeat > 0);
                 break;
             default:
-                break;   // tracks, next and previous arrive in later steps; the key still shows the overlay
+                break;   // next and previous arrive in a later step; the key still shows the overlay
         }
         overlay.show();
         return true;
@@ -244,38 +282,223 @@ public class PlayerActivity extends Activity {
      */
     private void chooseSubtitles(Tracks tracks) {
         if (player == null) return;
-        Map<String, Tracks.Group> groups = new LinkedHashMap<>();
-        Map<String, Integer> indexes = new LinkedHashMap<>();
+        Map<String, TextEntry> entries = textEntries(tracks);
         List<SubtitlePick.Track> found = new ArrayList<>();
+        for (Map.Entry<String, TextEntry> e : entries.entrySet()) {
+            if (!e.getValue().supported) continue;
+            Format f = e.getValue().format;
+            found.add(new SubtitlePick.Track(e.getKey(), SubtitleFinder.normalizeLang(f.language),
+                    (f.selectionFlags & C.SELECTION_FLAG_FORCED) != 0));
+        }
+        if (found.isEmpty()) return;
+        String id = SubtitlePick.pick(found, chosenSubtitleId,
+                SubtitleFinder.normalizeLang(Locale.getDefault().getLanguage()));
+        if (subtitleApplied && (id == null ? appliedSubtitleId == null : id.equals(appliedSubtitleId))) return;
+        applySubtitle(entries, id);
+    }
+
+    /** Text tracks of the media keyed by subtitle id ({@code ext:<file>} or {@code emb:<format id>}). */
+    private Map<String, TextEntry> textEntries(Tracks tracks) {
+        Map<String, TextEntry> out = new LinkedHashMap<>();
         for (Tracks.Group g : tracks.getGroups()) {
             if (g.getType() != C.TRACK_TYPE_TEXT) continue;
             for (int i = 0; i < g.length; i++) {
-                if (!g.isTrackSupported(i)) continue;
                 Format f = g.getTrackFormat(i);
                 if (f.id == null) continue;
                 String id = f.id.startsWith(SubtitlePick.SIDECAR_PREFIX) ? f.id : SubtitlePick.EMBEDDED_PREFIX + f.id;
-                if (groups.containsKey(id)) continue;
-                groups.put(id, g);
-                indexes.put(id, i);
-                found.add(new SubtitlePick.Track(id, SubtitleFinder.normalizeLang(f.language),
-                        (f.selectionFlags & C.SELECTION_FLAG_FORCED) != 0));
+                if (!out.containsKey(id)) out.put(id, new TextEntry(g, i, f, g.isTrackSupported(i)));
             }
         }
-        if (found.isEmpty()) return;
-        ResumeStore.Entry saved = resumeKey == null ? null : resume.get(resumeKey);
-        String id = SubtitlePick.pick(found, saved == null ? null : saved.subtitleId,
-                SubtitleFinder.normalizeLang(Locale.getDefault().getLanguage()));
-        if (subtitleApplied && (id == null ? appliedSubtitleId == null : id.equals(appliedSubtitleId))) return;
+        return out;
+    }
+
+    /** Shows the subtitle track {@code id}, or none when null or unknown. */
+    private void applySubtitle(Map<String, TextEntry> entries, String id) {
+        TextEntry e = id == null ? null : entries.get(id);
         subtitleApplied = true;
-        appliedSubtitleId = id;
+        appliedSubtitleId = e == null ? null : id;
         TrackSelectionParameters.Builder b = player.getTrackSelectionParameters().buildUpon();
-        if (id == null) {
+        if (e == null) {
             b.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true);
         } else {
             b.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false).setOverrideForType(
-                    new TrackSelectionOverride(groups.get(id).getMediaTrackGroup(), indexes.get(id)));
+                    new TrackSelectionOverride(e.group.getMediaTrackGroup(), e.index));
         }
         player.setTrackSelectionParameters(b.build());
+    }
+
+    /** The user's subtitle choice from the menu: applied, remembered with the file, and final for this playback. */
+    private void chooseSubtitleByUser(String id) {
+        subtitlesSettled = true;
+        chosenSubtitleId = id == null ? SubtitlePick.OFF : id;
+        saveChoices();
+        applySubtitle(textEntries(player.getCurrentTracks()), id);
+    }
+
+    private static String audioId(Format f, int group, int index) {
+        return "aud:" + (f.id != null ? f.id : group + "/" + index);
+    }
+
+    /** Applies the remembered audio track once the tracks are known; nothing to do when none was chosen. */
+    private void restoreAudio(Tracks tracks) {
+        if (player == null) return;
+        if (chosenAudioId == null) {
+            audioRestored = true;
+            return;
+        }
+        boolean any = false;
+        List<Tracks.Group> groups = tracks.getGroups();
+        for (int gi = 0; gi < groups.size(); gi++) {
+            Tracks.Group g = groups.get(gi);
+            if (g.getType() != C.TRACK_TYPE_AUDIO) continue;
+            any = true;
+            for (int i = 0; i < g.length; i++) {
+                if (g.isTrackSupported(i) && chosenAudioId.equals(audioId(g.getTrackFormat(i), gi, i))) {
+                    if (!g.isTrackSelected(i)) selectAudio(g, i);
+                    audioRestored = true;
+                    return;
+                }
+            }
+        }
+        if (any) audioRestored = true;   // the remembered track is not in this file: keep the default
+    }
+
+    private void selectAudio(Tracks.Group g, int index) {
+        player.setTrackSelectionParameters(player.getTrackSelectionParameters().buildUpon()
+                .setTrackTypeDisabled(C.TRACK_TYPE_AUDIO, false)
+                .setOverrideForType(new TrackSelectionOverride(g.getMediaTrackGroup(), index))
+                .build());
+    }
+
+    private void saveChoices() {
+        if (resumeKey != null) resume.saveTracks(resumeKey, chosenAudioId, chosenSubtitleId);
+    }
+
+    private void showTracksMenu() {
+        if (player == null) return;
+        Locale locale = Locale.getDefault();
+        Tracks tracks = player.getCurrentTracks();
+        List<TracksMenu.Row> rows = new ArrayList<>();
+        boolean headed = false;
+        List<Tracks.Group> groups = tracks.getGroups();
+        for (int gi = 0; gi < groups.size(); gi++) {
+            Tracks.Group g = groups.get(gi);
+            if (g.getType() != C.TRACK_TYPE_AUDIO) continue;
+            if (!headed) rows.add(TracksMenu.Row.header("Audio"));
+            headed = true;
+            for (int i = 0; i < g.length; i++) {
+                Format f = g.getTrackFormat(i);
+                boolean ok = g.isTrackSupported(i);
+                rows.add(TracksMenu.Row.option("a:" + audioId(f, gi, i),
+                        TrackLabels.audio(f.language, f.sampleMimeType, f.channelCount, ok, locale),
+                        g.isTrackSelected(i), ok));
+            }
+        }
+        rows.add(TracksMenu.Row.header("Subtitles"));
+        Map<String, TextEntry> entries = textEntries(tracks);
+        boolean anySelected = false;
+        for (TextEntry e : entries.values()) anySelected |= e.group.isTrackSelected(e.index);
+        rows.add(TracksMenu.Row.option("s:" + SubtitlePick.OFF, "Off", !anySelected, true));
+        for (Map.Entry<String, TextEntry> me : entries.entrySet()) {
+            TextEntry e = me.getValue();
+            Format f = e.format;
+            rows.add(TracksMenu.Row.option("s:" + me.getKey(),
+                    TrackLabels.subtitle(f.language, f.label, (f.selectionFlags & C.SELECTION_FLAG_FORCED) != 0,
+                            e.supported, locale),
+                    e.group.isTrackSelected(e.index), e.supported));
+        }
+        if (!subtitleFiles().isEmpty()) {
+            rows.add(TracksMenu.Row.option(ID_FILE_LIST, "Subtitle file…", false, true));
+        }
+        menu.show("Tracks", rows);
+    }
+
+    private void showSubtitleFileMenu() {
+        List<TracksMenu.Row> rows = new ArrayList<>();
+        rows.add(TracksMenu.Row.header("Subtitle file"));
+        for (String name : subtitleFiles()) {
+            rows.add(TracksMenu.Row.option("file:" + name, name,
+                    (SubtitlePick.SIDECAR_PREFIX + name).equals(chosenSubtitleId), true));
+        }
+        menu.show("Tracks", rows);
+    }
+
+    private void onMenuChosen(String id) {
+        if (player == null) return;
+        if (id.equals(ID_FILE_LIST)) {
+            showSubtitleFileMenu();
+            return;
+        }
+        menu.hide();
+        if (id.startsWith("a:")) {
+            List<Tracks.Group> groups = player.getCurrentTracks().getGroups();
+            for (int gi = 0; gi < groups.size(); gi++) {
+                Tracks.Group g = groups.get(gi);
+                if (g.getType() != C.TRACK_TYPE_AUDIO) continue;
+                for (int i = 0; i < g.length; i++) {
+                    if (id.equals("a:" + audioId(g.getTrackFormat(i), gi, i))) {
+                        chosenAudioId = id.substring(2);
+                        saveChoices();
+                        selectAudio(g, i);
+                        return;
+                    }
+                }
+            }
+        } else if (id.startsWith("s:")) {
+            String sub = id.substring(2);
+            chooseSubtitleByUser(sub.equals(SubtitlePick.OFF) ? null : sub);
+        } else if (id.startsWith("file:")) {
+            pickSubtitleFile(id.substring(5));
+        }
+    }
+
+    /** A folder file chosen by hand: select it when it is already a sidecar track, else add it and reload. */
+    private void pickSubtitleFile(String name) {
+        String sidecarId = SubtitlePick.SIDECAR_PREFIX + name;
+        TextEntry known = textEntries(player.getCurrentTracks()).get(sidecarId);
+        if (known != null && known.supported) {
+            chooseSubtitleByUser(sidecarId);
+            return;
+        }
+        File video = videoFile();
+        MediaItem.SubtitleConfiguration config = video == null || sidecars == null ? null
+                : SubtitleSources.buildOne(video, name, getCacheDir(), subtitleCharset());
+        if (config == null) {
+            Toast.makeText(this, "Cannot read that subtitle file", Toast.LENGTH_LONG).show();
+            return;
+        }
+        // Stay under SubCache.MAX_FILES so a copy ExoPlayer still needs is never pruned.
+        if (sidecars.size() >= SubCache.MAX_FILES - 2) sidecars.remove(0);
+        sidecars.add(config);
+        chosenSubtitleId = sidecarId;
+        saveChoices();
+        long position = player.getCurrentPosition();
+        boolean playing = player.getPlayWhenReady();
+        subtitlesSettled = false;   // the remembered choice is applied on the next READY
+        subtitleApplied = false;
+        player.setMediaItem(mediaItem(), position);
+        player.setPlayWhenReady(playing);
+        player.prepare();
+    }
+
+    /** Every subtitle file in the video's folder, by name; empty when the video is not a plain file. */
+    private List<String> subtitleFiles() {
+        List<String> out = new ArrayList<>();
+        File video = videoFile();
+        String[] names = video == null || video.getParentFile() == null ? null : video.getParentFile().list();
+        if (names == null) return out;
+        for (String n : names) {
+            if (SubtitleFinder.isSubtitleFile(n) && out.size() < MAX_FILE_ROWS) out.add(n);
+        }
+        Collections.sort(out, String.CASE_INSENSITIVE_ORDER);
+        return out;
+    }
+
+    private File videoFile() {
+        String path = getIntent().getStringExtra(EXTRA_PATH);
+        if (path == null) return null;
+        File f = new File(path);
+        return f.isFile() ? f : null;
     }
 
     private Charset subtitleCharset() {

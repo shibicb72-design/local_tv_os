@@ -37,24 +37,37 @@ final class SubtitleSources {
         File dir = SubCache.dir(cacheDir);
         for (SubtitleFinder.Candidate c : SubtitleFinder.find(video.getName(), Arrays.asList(names), systemLang)) {
             if (out.size() >= MAX_SIDECARS) break;
-            File src = new File(folder, c.name);
-            if (!src.isFile() || src.length() > MAX_BYTES) continue;
-            try {
-                byte[] utf8 = SrtText.toUtf8(Files.readAllBytes(src.toPath()), fallback);
-                String key = src.getAbsolutePath() + "|" + src.length() + "|" + src.lastModified();
-                File copy = SubCache.write(dir, key, extensionOf(c.name), utf8);
-                out.add(new MediaItem.SubtitleConfiguration.Builder(Uri.fromFile(copy))
-                        .setMimeType(SubtitleFinder.mimeFor(c.name))
-                        .setLanguage(c.language)
-                        .setLabel(c.name)
-                        .setId(SubtitlePick.SIDECAR_PREFIX + c.name)
-                        .setSelectionFlags(c.forced ? C.SELECTION_FLAG_FORCED : 0)
-                        .build());
-            } catch (IOException | RuntimeException e) {
-                // unreadable or oversized file: skip it, playback goes on without that subtitle
-            }
+            MediaItem.SubtitleConfiguration config = config(new File(folder, c.name), c.name, c.language,
+                    c.forced, dir, fallback);
+            if (config != null) out.add(config);
         }
         return out;
+    }
+
+    /** One subtitle file of the video's folder picked by hand ("Subtitle file…"); null when it cannot be read. */
+    static MediaItem.SubtitleConfiguration buildOne(File video, String name, File cacheDir, Charset fallback) {
+        File folder = video.getParentFile();
+        if (folder == null || !SubtitleFinder.isSubtitleFile(name)) return null;
+        return config(new File(folder, name), name, null, false, SubCache.dir(cacheDir), fallback);
+    }
+
+    private static MediaItem.SubtitleConfiguration config(File src, String name, String language, boolean forced,
+                                                          File dir, Charset fallback) {
+        if (!src.isFile() || src.length() > MAX_BYTES) return null;
+        try {
+            byte[] utf8 = SrtText.toUtf8(Files.readAllBytes(src.toPath()), fallback);
+            String key = src.getAbsolutePath() + "|" + src.length() + "|" + src.lastModified();
+            File copy = SubCache.write(dir, key, extensionOf(name), utf8);
+            return new MediaItem.SubtitleConfiguration.Builder(Uri.fromFile(copy))
+                    .setMimeType(SubtitleFinder.mimeFor(name))
+                    .setLanguage(language)
+                    .setLabel(name)
+                    .setId(SubtitlePick.SIDECAR_PREFIX + name)
+                    .setSelectionFlags(forced ? C.SELECTION_FLAG_FORCED : 0)
+                    .build();
+        } catch (IOException | RuntimeException e) {
+            return null;   // unreadable or oversized file: playback goes on without that subtitle
+        }
     }
 
     private static String extensionOf(String name) {
