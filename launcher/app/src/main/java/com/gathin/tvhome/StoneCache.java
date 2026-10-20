@@ -63,7 +63,10 @@ final class StoneCache {
             final Bitmap bmp = result;
             main.post(() -> {
                 inFlight = false;
-                if (bmp == null) return;
+                if (bmp == null) {
+                    pending = null;
+                    return;
+                }
                 last = bmp;
                 lastKey = key;
                 Consumer<Bitmap> cb = pending;
@@ -133,9 +136,18 @@ final class StoneCache {
                 }
                 out.write(bytes);
             }
+        } catch (IOException | RuntimeException e) {
+            tmp.delete();
+            throw e;
         }
-        if (file.exists() && !file.delete()) throw new IOException("cannot replace " + file);
-        if (!tmp.renameTo(file)) throw new IOException("cannot rename " + tmp);
+        if (file.exists() && !file.delete()) {
+            tmp.delete();
+            throw new IOException("cannot replace " + file);
+        }
+        if (!tmp.renameTo(file)) {
+            tmp.delete();
+            throw new IOException("cannot rename " + tmp);
+        }
         File[] old = dir.listFiles((d, name) -> name.startsWith("stone-") && !name.equals(file.getName()));
         if (old != null) for (File f : old) f.delete();
     }

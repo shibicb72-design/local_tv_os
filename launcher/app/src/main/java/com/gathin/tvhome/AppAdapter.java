@@ -39,7 +39,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -219,7 +218,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             for (TvInputInfo info : tim.getTvInputList()) {
                 if (!info.isPassthroughInput()) continue;
                 CharSequence l = info.loadLabel(ctx);
-                raw.put(info.getId(), l == null ? info.getId() : l.toString());
+                raw.put(info.getId(), DockSpec.inputLabel(l == null ? info.getId() : l.toString(),
+                        info.getType() == TvInputInfo.TYPE_HDMI));
                 inputs.add(info);
             }
             Collections.sort(inputs, (a, b) -> {
@@ -231,8 +231,6 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                 String label = raw.get(info.getId());
                 if (info.getType() == TvInputInfo.TYPE_HDMI) {
                     hdmi.add(info.getId());
-                    if (!label.toUpperCase(Locale.ROOT).contains("HDMI")) label = "HDMI " + label;
-                    label = DockSpec.normalizeHdmiLabel(label);
                 }
                 all.add(info.getId());
                 labels.put(info.getId(), Cards.cleanLabel(label, info.getId()));

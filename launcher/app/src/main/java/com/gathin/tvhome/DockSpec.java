@@ -127,6 +127,13 @@ final class DockSpec {
         return m.matches() ? "HDMI " + m.group(1) : label;
     }
 
+    /** The label shown for an input: HDMI ports always read "HDMI n", so sorting and display agree. */
+    static String inputLabel(String raw, boolean hdmi) {
+        if (!hdmi) return raw;
+        String label = raw.toUpperCase(java.util.Locale.ROOT).contains("HDMI") ? raw : "HDMI " + raw;
+        return normalizeHdmiLabel(label);
+    }
+
     private static final java.util.regex.Pattern HDMI_LABEL =
             java.util.regex.Pattern.compile("^HDMI\\s*(\\d+)$", java.util.regex.Pattern.CASE_INSENSITIVE);
 

@@ -86,6 +86,7 @@ public class RomanDream extends DreamService {
                 if (dead || stone == null || bmp == null || bmp.isRecycled()) return;
                 stone.setImageBitmap(bmp);
                 stone.animate().alpha(1f).setDuration(1500).start();
+                stone.post(this::startPan);
             });
         } catch (Exception | OutOfMemoryError e) {
             Log.w(TAG, "stone failed, dark colour stays", e);
@@ -101,7 +102,6 @@ public class RomanDream extends DreamService {
         f.addAction(Intent.ACTION_TIMEZONE_CHANGED);
         registerReceiver(tick, f);
         receiverOn = true;
-        stone.post(this::startPan);
     }
 
     /** One animator for the whole dream: the stone moves from one corner to the other and back, over minutes. */
@@ -273,7 +273,7 @@ public class RomanDream extends DreamService {
             int w = getWidth(), h = getHeight();
             c.drawRect(0, 0, w, h, vignette);
             c.save();
-            c.translate(0, 2);
+            c.translate(0, 2 * dp);
             c.drawPath(stems, shadowStroke);
             c.drawPath(leaves, shadow);
             c.drawPath(berries, shadow);
@@ -287,8 +287,8 @@ public class RomanDream extends DreamService {
                 float x = cx + time.measureText(timeText) / 2f + 12 * dp;
                 c.drawText(ampmText, x, timeY, small);
             }
-            c.drawRect(cx - ruleHalf, ruleY, cx + ruleHalf, ruleY + 2, rule);
-            c.drawRect(cx - ruleHalf * 0.6f, ruleY + 8 * dp, cx + ruleHalf * 0.6f, ruleY + 8 * dp + 1, rule);
+            c.drawRect(cx - ruleHalf, ruleY, cx + ruleHalf, ruleY + 2 * dp, rule);
+            c.drawRect(cx - ruleHalf * 0.6f, ruleY + 8 * dp, cx + ruleHalf * 0.6f, ruleY + 8 * dp + dp, rule);
             c.drawText(dateText, cx, dateY + 8 * dp, date);
         }
     }
