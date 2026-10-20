@@ -4,6 +4,8 @@ Status: **plan only, waiting for Shibi's review.** No app code has been written 
 projector was changed. Source brief: `C:\Users\shibi\cc_xgimi\PROMPT.md`.
 Branch: `opus/xgimi-os-plan` (work stays on feature branches; never `main`).
 
+Files, Player and voice control are planned in [`next-features.md`](next-features.md); this file stays the device reference.
+
 ## 1. What was checked on the device (read-only, 2026-10-20)
 
 All commands were read-only (`getprop`, `pm list packages`, `dumpsys`, `cmd package query-activities`,

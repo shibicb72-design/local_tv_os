@@ -225,6 +225,29 @@ the install script finds `~/Android/Sdk` and the `java` on your PATH.
 - **Navigation** is deliberate: Up and Down move one row, the top buttons never fall through to tiles and Down from them returns to the dock tile you came from, the last focused app is remembered, and installing or removing an app refreshes the tiles while Home is open.
 - **Artwork**: app banners load at xhdpi or better, so low-density TV UIs do not downsample them before the focus zoom.
 
+## Files
+
+`com.gathin.files` is a small file manager for USB sticks and internal storage, built with the same Roman
+look as the launcher (shared code in `launcher/romancore`). Java and Views, `minSdk 30`, no network. It is in
+the S Max theme's dock; the TV's own `com.xgimi.filemanager` stays visible until you decide to hide it.
+
+Build and install (the TV's address is yours; `adb` must be connected):
+
+```bash
+cd launcher && ./gradlew testReleaseUnitTest assembleRelease
+adb -s <tv-ip>:5555 install -r files/build/outputs/apk/release/files-release.apk
+adb -s <tv-ip>:5555 shell appops set --uid com.gathin.files MANAGE_EXTERNAL_STORAGE allow
+adb -s <tv-ip>:5555 shell appops get --uid com.gathin.files MANAGE_EXTERNAL_STORAGE   # prints: allow
+```
+
+The `appops` line is needed once. Files reads and writes USB sticks with plain file access, so it needs
+"All files access"; on this TV there is no settings screen for it, so the command grants it. Without the
+grant, Files opens a screen that shows this command instead of the file lists. Opening a video hands it to
+the Player through Files' own read-only content provider; the Player has its own grant step when it ships.
+
+To remove it: `adb -s <tv-ip>:5555 shell pm uninstall com.gathin.files`, or Settings → Apps. The restore
+script (below) does not remove it; it leaves Files installed like the launcher.
+
 ## Restoring your TV
 
 Keep the list you applied. The restore script re-enables exactly those packages, puts the stock

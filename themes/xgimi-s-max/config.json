@@ -1,10 +1,10 @@
 {
-  "dock_apps": ["com.google.android.youtube.tv", "com.amazon.amazonvideo.livingroom", "input:hdmi1"],
+  "dock_apps": ["com.google.android.youtube.tv", "com.amazon.amazonvideo.livingroom", "input:hdmi1", "com.gathin.files"],
   "dock_placeholders": false,
   "hidden_apps": ["com.xgimi.minitvfactory", "com.xgimi.burnin", "com.xgimi.atvwifiverify", "com.xgimi.atmosphere", "com.xgimi.doubanfm", "com.mediatek.wwtv.tvcenter"],
   "input_action": "com.xgimi.action.hdmiPlayer",
   "live_tv_package": "",
-  "columns": 4,
+  "columns": 5,
   "rows_below_dock": 0,
   "background_color": "#000000",
   "wallpaper": false,
