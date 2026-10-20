@@ -43,6 +43,9 @@ final class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.Holder> {
 
     interface OnRowClick {
         void onRowClick(Row row);
+
+        /** OK held (the system long-press time): the action menu. */
+        void onRowLongClick(Row row);
     }
 
     private final RomanStyle style = RomanStyle.defaults();
@@ -144,6 +147,13 @@ final class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.Holder> {
             @Override
             public void onClick(View v) {
                 click.onRowClick(r);
+            }
+        });
+        h.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                click.onRowLongClick(r);
+                return true;
             }
         });
     }

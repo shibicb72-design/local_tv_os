@@ -2492,18 +2492,19 @@ androidx.versionedparcelable.VersionedParcelStream$1
 androidx.versionedparcelable.VersionedParcelStream$FieldBuffer
 androidx.versionedparcelable.VersionedParcelStream
 androidx.versionedparcelable.VersionedParcelize
-com.gathin.files.ConflictNamer
-com.gathin.files.EntryAdapter:
-    com.gathin.files.EntryAdapter$Row get(int)
-com.gathin.files.FileOps$Cancelled
-com.gathin.files.FileOps$Conflict
-com.gathin.files.FileOps$Progress
-com.gathin.files.FileOps$Result
-com.gathin.files.FileOps
+com.gathin.files.ActionMenu:
+    private void <init>()
+com.gathin.files.ConflictNamer:
+    private void <init>()
+com.gathin.files.FileOps$Result:
+    public boolean ok()
+com.gathin.files.FileOps:
+    static final int BUFFER
 com.gathin.files.FileSort:
     private void <init>()
 com.gathin.files.FilesActivity:
     private static final java.lang.String PREFS
+    private static final java.lang.String PREF_HIDDEN
     private static final java.lang.String PREF_SORT
 com.gathin.files.FilesInfo
 com.gathin.files.FocusMemory:
@@ -2511,9 +2512,10 @@ com.gathin.files.FocusMemory:
 com.gathin.files.MimeKinds:
     public static final java.lang.String UNKNOWN_MIME
     private void <init>()
-com.gathin.files.OpPlan$Reason
-com.gathin.files.OpPlan$Refused
-com.gathin.files.OpPlan
+com.gathin.files.OpProgress$Sizes:
+    private void <init>()
+com.gathin.files.OpRules:
+    private void <init>()
 com.gathin.files.Opener:
     static final java.lang.String EXTRA_PATH
     static final java.lang.String PLAYER_PACKAGE
@@ -2544,8 +2546,8 @@ com.gathin.roman.Roman:
     public static java.lang.String date(int,int,int)
     public static java.lang.String numeral(int)
     public static java.lang.String today()
-com.gathin.roman.RomanDialog$InputListener
-com.gathin.roman.RomanDialog
+com.gathin.roman.RomanDialog:
+    private void <init>()
 com.gathin.roman.RomanLook:
     private void <init>()
     public static android.graphics.drawable.GradientDrawable iconTile(com.gathin.roman.RomanStyle,float,float)
@@ -4350,7 +4352,7 @@ androidx.collection.SimpleArrayMap:
     public static java.lang.Object setValueAt()
     public final java.lang.Object valueAt(int)
 androidx.core.R$id
-androidx.core.app.CoreComponentFactory$$InternalSyntheticThrowCCEIfNotNull$6$28d6d52be828bd520f37653069cdb0fd59ddc413967dd43deec606fddf5e864e$0
+androidx.core.app.CoreComponentFactory$$InternalSyntheticThrowCCEIfNotNull$8$28d6d52be828bd520f37653069cdb0fd59ddc413967dd43deec606fddf5e864e$0
 androidx.core.app.CoreComponentFactory$CompatWrapped
 androidx.core.graphics.Insets:
     public static androidx.core.graphics.Insets max(androidx.core.graphics.Insets,androidx.core.graphics.Insets)
@@ -4437,19 +4439,19 @@ androidx.core.view.ViewGroupKt
 androidx.core.view.ViewKt$allViews$1:
     public final java.lang.Object invoke(java.lang.Object,java.lang.Object)
 androidx.core.view.ViewKt
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$2a61360a7b1c60393fcf5820ae00ee4320c4549037c2fc658de4c3e75adecd88$0
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$2a61360a7b1c60393fcf5820ae00ee4320c4549037c2fc658de4c3e75adecd88$1
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$2b58d0105ca4ae4f6719b0b4a846dcc72268a4e510902cfe69948bc82e875e1d$0
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$34af3155686c2fece4e64a76009a6e235cdd4be8bb6db90a3cae2a722d38a40e$0
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$34af3155686c2fece4e64a76009a6e235cdd4be8bb6db90a3cae2a722d38a40e$1
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$34af3155686c2fece4e64a76009a6e235cdd4be8bb6db90a3cae2a722d38a40e$2
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$5dd6341c2af74899b57723b3b9d3a554047f0a0827486edba582c4b22393673c$0
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$5dd6341c2af74899b57723b3b9d3a554047f0a0827486edba582c4b22393673c$1
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$60b38615cadf5bc3bdee9729b7b7b4714748a0db720b551ac9c31444ad6b7359$0
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$a25fecbb808ccf037ff4d2bc14a28f05f01e2c21fed64e33b063e87cc80444ab$0
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$a25fecbb808ccf037ff4d2bc14a28f05f01e2c21fed64e33b063e87cc80444ab$1
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$ab1bf97d81fb365da45faf90a0ae00aea90bab7067241d36e6be99051195be86$0
-androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$6$ab1bf97d81fb365da45faf90a0ae00aea90bab7067241d36e6be99051195be86$1
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$2a61360a7b1c60393fcf5820ae00ee4320c4549037c2fc658de4c3e75adecd88$0
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$2a61360a7b1c60393fcf5820ae00ee4320c4549037c2fc658de4c3e75adecd88$1
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$2b58d0105ca4ae4f6719b0b4a846dcc72268a4e510902cfe69948bc82e875e1d$0
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$34af3155686c2fece4e64a76009a6e235cdd4be8bb6db90a3cae2a722d38a40e$0
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$34af3155686c2fece4e64a76009a6e235cdd4be8bb6db90a3cae2a722d38a40e$1
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$34af3155686c2fece4e64a76009a6e235cdd4be8bb6db90a3cae2a722d38a40e$2
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$5dd6341c2af74899b57723b3b9d3a554047f0a0827486edba582c4b22393673c$0
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$5dd6341c2af74899b57723b3b9d3a554047f0a0827486edba582c4b22393673c$1
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$60b38615cadf5bc3bdee9729b7b7b4714748a0db720b551ac9c31444ad6b7359$0
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$a25fecbb808ccf037ff4d2bc14a28f05f01e2c21fed64e33b063e87cc80444ab$0
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$a25fecbb808ccf037ff4d2bc14a28f05f01e2c21fed64e33b063e87cc80444ab$1
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$ab1bf97d81fb365da45faf90a0ae00aea90bab7067241d36e6be99051195be86$0
+androidx.core.view.ViewParentCompat$$InternalSyntheticThrowCCEIfNotNull$8$ab1bf97d81fb365da45faf90a0ae00aea90bab7067241d36e6be99051195be86$1
 androidx.core.view.ViewParentCompat
 androidx.core.view.WindowInsetsCompat$Builder
 androidx.core.view.WindowInsetsCompat$BuilderImpl20
@@ -4531,7 +4533,7 @@ androidx.core.view.WindowInsetsCompat:
     public static void setStableInsets()
     public final android.view.WindowInsets toWindowInsets()
 androidx.core.view.accessibility.AccessibilityEventCompat
-androidx.core.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityActionCompat$$InternalSyntheticThrowCCEIfNotNull$8$51a518e2562bdd83f1a37db6273eca8c40d29d82445ffc5c9314f2450daba410$0
+androidx.core.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityActionCompat$$InternalSyntheticThrowCCEIfNotNull$10$51a518e2562bdd83f1a37db6273eca8c40d29d82445ffc5c9314f2450daba410$0
 androidx.core.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityActionCompat:
     public static final androidx.core.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityActionCompat ACTION_ACCESSIBILITY_FOCUS
     public static final androidx.core.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityActionCompat ACTION_CLEAR_ACCESSIBILITY_FOCUS
@@ -4835,8 +4837,8 @@ androidx.recyclerview.widget.OpReorderer:
     public static void swapMoveUpdate()
 androidx.recyclerview.widget.OrientationHelper:
     public abstract void onLayoutComplete()
-androidx.recyclerview.widget.RecyclerView$$InternalSyntheticThrowCCEIfNotNull$11$25afd68fa2348859b7543da3a4a459d8c399b73922bc144b750ebd2ecb97ea96$0
-androidx.recyclerview.widget.RecyclerView$$InternalSyntheticThrowCCEIfNotNull$11$d0c8fb5152f7346534634e64c58a01049944a6d1492d1200890f23d1433c266c$0
+androidx.recyclerview.widget.RecyclerView$$InternalSyntheticThrowCCEIfNotNull$13$25afd68fa2348859b7543da3a4a459d8c399b73922bc144b750ebd2ecb97ea96$0
+androidx.recyclerview.widget.RecyclerView$$InternalSyntheticThrowCCEIfNotNull$13$d0c8fb5152f7346534634e64c58a01049944a6d1492d1200890f23d1433c266c$0
 androidx.recyclerview.widget.RecyclerView$1
 androidx.recyclerview.widget.RecyclerView$4:
     public static void processPersistent()
@@ -5146,7 +5148,7 @@ androidx.recyclerview.widget.RecyclerView:
     public static androidx.recyclerview.widget.RecyclerView$ViewHolder findViewHolderForItemId()
     public static androidx.recyclerview.widget.RecyclerView$ViewHolder findViewHolderForPosition()
     public static boolean fling()
-    public static int getChildAdapterPosition()
+    public static int getChildAdapterPosition(android.view.View)
     public static int getDeepestFocusedViewWithId()
     public static java.lang.String getFullClassName()
     public static float getSplineFlingDistance()
@@ -5347,40 +5349,82 @@ androidx.versionedparcelable.VersionedParcelParcel:
     public final void writeInt(int)
     public final void writeParcelable()
     public final void writeString(java.lang.String)
+com.gathin.files.ConflictNamer
 com.gathin.files.DirLister
 com.gathin.files.Entry:
     public final com.gathin.files.MimeKinds$Kind kind
 com.gathin.files.EntryAdapter$OnRowClick:
-    public abstract void onRowClick()
+    public abstract void onRowClick(com.gathin.files.EntryAdapter$Row)
+    public abstract void onRowLongClick()
 com.gathin.files.EntryAdapter$Row:
     public final com.gathin.files.Entry entry
 com.gathin.files.EntryAdapter:
+    public static com.gathin.files.EntryAdapter$Row get()
     public final int getItemCount()
     public final void onBindViewHolder()
     public static void onBindViewHolder$2()
     public static com.gathin.files.EntryAdapter$Holder onCreateViewHolder()
     public static void submit()
     public final android.widget.TextView text(android.content.Context)
+com.gathin.files.FileOps$$InternalSyntheticLambda$5$00ec2e642d5f320703318f134e5c822227a61fedcb72d511cd960f376b5a7b2b$0
+com.gathin.files.FileOps$Conflict$EnumUnboxingLocalUtility
+com.gathin.files.FileOps$Conflict
+com.gathin.files.FileOps$Progress
+com.gathin.files.FileOps:
+    public final void begin(com.gathin.files.OpPlan)
+    public static void cancel()
+    public static com.gathin.files.FileOps$Result copy()
+    public static com.gathin.files.FileOps$Result delete()
+    public final void fail(java.io.File)
+    public static com.gathin.files.FileOps$Result move()
+    public static void moveOne()
 com.gathin.files.FileSort$1:
     public static int compare()
 com.gathin.files.FileSort$Key$EnumUnboxingLocalUtility
 com.gathin.files.FileSort$Key
 com.gathin.files.FileSort
-com.gathin.files.FilesActivity$3$1:
-    public final synthetic java.util.List val$now
+com.gathin.files.FilesActivity$11:
+    public final synthetic com.gathin.files.FilesActivity this$0
+com.gathin.files.FilesActivity$16:
+    public final synthetic com.gathin.files.FilesActivity this$0
+com.gathin.files.FilesActivity$18:
+    public static void onProgress()
+com.gathin.files.FilesActivity$6:
+    public static void onInput()
+com.gathin.files.FilesActivity$8:
+    public final synthetic com.gathin.files.FilesActivity this$0
 com.gathin.files.FilesActivity:
-    public java.util.List roots
     public static boolean ascending()
+    public static void askConflict()
+    public static void askDelete()
+    public static void askRename()
     public final int begin()
+    public static void beginTransfer()
     public static java.lang.String breadcrumb()
     public static void buildBrowser()
-    public static void cycleSort()
+    public static android.view.View buildPasteBar()
+    public static void finishOp()
     public final void focusPosition(int,int)
-    public final void loadDir(java.lang.String,boolean)
+    public static com.gathin.files.EntryAdapter$Row focusedRow()
+    public static synthetic void lambda$present$0()
+    public static synthetic void lambda$showMenu$1()
+    public static synthetic void lambda$showMenu$2()
+    public static void lambda$showMenu$3()
+    public static synthetic void lambda$showMenu$4()
+    public static synthetic void lambda$showMenu$5()
+    public static void lambda$showMenu$6()
+    public static synthetic void lambda$showMenu$7()
     public final void loadRoots(boolean)
-    public final void onRowClick()
+    public final void onRowLongClick()
     public final void onVolumesChanged()
+    public final java.lang.String pasteBlocker()
+    public static java.lang.String plainName(com.gathin.files.EntryAdapter$Row)
+    public final void refresh()
+    public static void runDelete()
     public static void show()
+    public static void showPasteMenu()
+    public static java.lang.String sortName()
+    public static void toggleHidden()
 com.gathin.files.FocusMemory$1:
     public final synthetic com.gathin.files.FocusMemory this$0
 com.gathin.files.FocusMemory:
@@ -5395,7 +5439,23 @@ com.gathin.files.NaturalOrder:
     public final synthetic bridge int compare(java.lang.Object,java.lang.Object)
     public static boolean isDigit(char)
     public static int runEnd(java.lang.String,int)
+com.gathin.files.OpPlan$Reason$EnumUnboxingLocalUtility
+com.gathin.files.OpPlan$Reason
+com.gathin.files.OpPlan$Refused:
+    public final int reason
+com.gathin.files.OpPlan:
+    public static java.io.File canonical(java.io.File)
+com.gathin.files.OpProgress:
+    public final void dismiss()
+    public static synthetic void lambda$new$0()
+    public static synthetic void lambda$new$1()
+    public static void show()
+    public static void update()
+com.gathin.files.OpRules$1
+com.gathin.files.OpRules$Action$EnumUnboxingLocalUtility
+com.gathin.files.OpRules$Action
 com.gathin.files.Opener:
+    public static void openWith(android.content.Context,java.lang.String)
     public static boolean start(android.content.Context,android.content.Intent)
 com.gathin.files.PermissionGate
 com.gathin.files.StreamProvider:
@@ -5412,9 +5472,9 @@ com.gathin.files.Volumes:
     public static void stop()
 com.gathin.roman.R$font
 com.gathin.roman.Roman
-com.gathin.roman.RomanRows:
-    public static void rule(android.view.View,com.gathin.roman.RomanStyle)
-    public static void title(android.widget.TextView,com.gathin.roman.RomanStyle)
+com.gathin.roman.RomanDialog$InputListener
+com.gathin.roman.RomanDialog:
+    public static android.app.Dialog base(android.content.Context)
 com.gathin.roman.RomanStyle:
     public final int brightness
     public final boolean crest
@@ -5426,7 +5486,6 @@ com.gathin.roman.RomanStyle:
     public final int vignette
     public static int deep(int)
     public static int light(int)
-    public static int withAlpha(int,int)
 kotlin.Function
 kotlin.Result$Companion
 kotlin.Result
