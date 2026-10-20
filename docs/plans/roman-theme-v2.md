@@ -618,3 +618,155 @@ default travertine if `style` is not `roman`), `Laurel` for the wreath and the C
   exported with the `android.service.dreams.DreamService` filter and `BIND_DREAM_SERVICE`, so it is also
   listed in the TV's screensaver settings. Back to the clock: `… com.gathin.tvhome/.ClockDream`.
 - Tests: `RomanDreamMathTest` (pan travel and offset, ping-pong fraction, 12/24 h time, date line, manifest entry).
+
+## 9. RomanDream v2
+
+Status: **plan only.** Shibi liked v1. v2 keeps its skeleton (one shared stone, one overlay View, minute tick,
+teardown from 2.1.1) and adds motion, a red palette, laurels at the sides, a legion standard, two date lines and
+rolling quotes. The Home rules in 2.1 ("no continuous animation, no Handler loops") stay for Home; the dream is the
+one place with a throttled frame loop.
+
+### 9.1 Look (1920x1080; y as a fraction of the height h)
+
+```
+ 0.05 ┌────────────────────────────────────────────────────────┐
+      │ (  )             ┃  spear tip / small wreath           (  )│
+      │ (  )      ═══════╋═══════  crossbar                    (  )│  laurel sprays
+      │ (  )      ┃ crimson vexillum ┃  thunderbolt emblem       (  )│  left and right,
+      │ (  )      ┃ LEG XII FVLMINATA┃  gold border, fringe       (  )│  x 4..12% / 88..96%
+ 0.40 │ (  )             ┃                                     (  )│
+ 0.60 │ (  )           10:45 PM            (Cinzel 96 dp)       (  )│
+ 0.64 │ (  )        ──────────────           two gold rules     (  )│
+ 0.70 │ (  )        XX OCTOBRIS MMXXVI      (Cinzel 22 dp gold)  (  )│
+ 0.75 │ (  )          20 October 2026       (Cinzel 14 dp ivory dim)│
+ 0.88 │      "They make a desert and call it peace." — Calgacus      │  quote, ≤ 2 lines
+ 1.00 └────────────────────────────────────────────────────────┘
+```
+
+- **Palette (dream only):** new constants in `RomanStyle`: `ROMAN_RED #9B1B1E`, `CRIMSON #B0202E`,
+  `PORPHYRY #5E1A24`, `PORPHYRY_DEEP #2A0B10`; gold stays `style.gold/goldLight/goldDeep`. The stone is warmed
+  toward red with `stone.setColorFilter(new LightingColorFilter(0xFFC07A6C, 0x00140000))`, set once (GPU, no new
+  bitmap, works on the HARDWARE bitmap). Vignette ends in `PORPHYRY_DEEP` at `0xB0` instead of black. No stone
+  (`none` or load failure) → `PORPHYRY_DEEP`. The code has no lavender colour; the cast on the wall is the
+  projector rendering the dim grey-brown stone plus the black vignette, which the red tint and red vignette fix.
+- **Decision, S Max Home:** stays gold on travertine. Its colours are contrast-tested over that stone (R2) and
+  Shibi likes it; a red Home would need new contrast tests. Other TVs are unaffected: the dream already uses the
+  launcher's `RomanStyle` or the default travertine, and the red lives only in dream code.
+- **Laurels:** two vertical sprays, mirrored about the centre: a stem curving gently inward from 0.16h to
+  0.86h, 13 leaves on alternating sides, 4 berries, the R3 leaf shape at 1.4×. One `Path` for all leaves of
+  both sprays, gold gradient, relief shadow +2 dp, as v1. The centre wreath of v1 goes (the standard replaces it).
+- **Legion standard (vexillum):** pole (gold, 3 dp) from 0.05h to 0.40h on the centre line, a spear tip at the
+  top, a crossbar 200 dp wide, a crimson cloth 180x100 dp with a 1.5 dp gold border and a gold fringe (short
+  vertical strokes) at the bottom. On the cloth: a **thunderbolt** (fulmen: a central spindle, four zigzag bolts,
+  two small wings, all one gold `Path`) and the legend in Cinzel gold light, size fitted to the cloth width
+  (shrink once in `onSizeChanged`, 10..14 dp). The legend comes from **one constant**
+  `RomanDreamMath.LEGION = "LEG XII FVLMINATA"`. Shibi said "fifth"; the thunderbolt is the emblem of Legio XII
+  Fulminata (the V legions are *Alaudae* and *Macedonica*), so the default is XII; change the constant (e.g.
+  `"LEG V MACEDONICA"`) to switch. It is shown through `Roman.inscribe(LEGION, 24)`.
+- **Dates:** the Roman line as v1 (`XX OCTOBRIS MMXXVI`), below it the plain localized Gregorian date from
+  `java.text.DateFormat.getDateInstance(LONG, Locale.getDefault())` (en-GB: `20 October 2026`, en-US:
+  `October 20, 2026`); both are recomputed on the minute tick only.
+- **Time:** Cinzel 96 dp as v1, but the blurred `setShadowLayer` is replaced by a hard shadow (the same text in
+  `TEXT_SHADOW` drawn +2 dp lower first). A blur is re-rasterised every composited frame on the Skia pipeline;
+  at 16 fps that is the most expensive thing on screen.
+- **Quotes:** `assets/quotes.json` (100 entries, `{"version":1,"quotes":[{"text","author","source"}]}`,
+  fact-checked, ASCII only so Cinzel covers every glyph). Shown as `text — author` (U+2014 is in the Cinzel
+  subset), ivory text, author in gold light, Cinzel 20 dp, at most 2 lines, centred at 0.88h, max width 70% of
+  the screen. `source` is loaded and kept in code/docs, not drawn. One quote per 6 s: 0.8 s fade in, 4.4 s
+  hold, 0.8 s fade out. Start index random once per dream, then sequential (all 100 before a repeat).
+
+### 9.2 Motion and budgets
+
+- **One frame loop:** a single `Choreographer.FrameCallback` field (no `ValueAnimator`, no per-frame lambda)
+  re-posted with `postFrameCallbackDelayed(cb, FRAME_MS)`, `FRAME_MS = 60` (≈ 16 fps, 15–20 allowed). Each tick
+  computes from `frameTimeNanos` only: stone `translationX/Y = offset(ease(pingPong(t, 71 s)), travelX)` and
+  `… (pingPong(t, 47 s)) …, travelY` (two legs, so the wall drifts in a slow Lissajous, never a single
+  diagonal; `ease` is smoothstep so the reversal is soft), and the quote line's alpha and index. Speed ≈ 3 px/s;
+  no half-pixel snap any more (bilinear filtering makes sub-pixel steps smooth).
+- Per frame only `RenderNode` properties change (`setTranslation*` on the stone, `setAlpha` on the quote View):
+  no `invalidate()` of the overlay, no display-list re-record, **zero allocation**. `setText` runs once per quote
+  change with a display string built at load time.
+- **Memory:** still one bitmap (the shared stone, dereferenced not recycled); the quotes are ≈ 25 KB of heap,
+  loaded once on `onAttachedToWindow` on the main thread (12 KB file, < 5 ms) and nulled in `teardown()`.
+  Target PSS < 60 MB during the dream and 30 s after it (same three `dumpsys meminfo` readings as 2.1.1).
+- **APK:** quotes.json 12.5 KB raw (≈ 6 KB deflated in the APK), DV1 code ≤ 6 KB, DV2 code ≤ 4 KB: **< 30 KB
+  total even uncompressed**. Vector/Canvas only, no raster assets, no XML drawables.
+
+### 9.3 Slices (Sonnet, one commit each, `DVn: <what> (Sonnet)`; rules of section 4 apply)
+
+#### DV1. Red palette, laurels, legion standard, date lines
+
+Files:
+- `RomanStyle.java`: the four dream colours of 9.1.
+- `RomanDreamMath.java`: `LEGION`; `static String gregorian(int y, int m, int d, Locale l)`; `static float
+  fitTextSize(float maxWidth, float widthAtOnePx, float minPx, float maxPx)`.
+- New `DreamOrnaments.java` (pure): `static Laurel.Leaf[] spray(float w, float h, float dp, boolean right)`,
+  `static float[] sprayBerries(…)`, `static float[] fulmen(float cx, float cy, float size)` (polyline x,y pairs),
+  `static float[] standard(float w, float h, float dp)` = {poleTop, poleBottom, barY, barHalf, clothL, clothT,
+  clothR, clothB} (plain floats, no `RectF`, so it stays testable on the JVM).
+- `RomanDream.java` (Overlay only): drop the centre wreath; draw sprays, standard, fulmen, legend, hard time
+  shadow, Roman + Gregorian date lines; red vignette; `LightingColorFilter` on the stone; `PORPHYRY_DEEP`
+  root colour. Everything built in `onSizeChanged`/`refresh()`, nothing allocated in `onDraw`.
+
+Tests (`DreamOrnamentsTest`, additions to `RomanDreamMathTest`, `RomanStyleTest`):
+- Each dream colour is opaque and red-dominant (`r > g && r > b`); `PORPHYRY_DEEP` darker than `PORPHYRY`.
+- Spray: 13 leaves per side; right leaf i mirrors left leaf i about w/2 (1e-3); every leaf centre in x < 0.14w
+  (left) and y in [0.14h, 0.88h]; no leaf inside the standard's or the time's box at 1920x1080 and 1280x720.
+- Fulmen: symmetric about cx, every point inside the cloth rect; standard: cloth centred, pole bottom above the
+  time's top at 1920x1080.
+- `LEGION` equals `"LEG XII FVLMINATA"` and `Roman.inscribe(LEGION, 24)` returns it unchanged.
+- `gregorian(2026, 10, 20, Locale.UK)` = `20 October 2026`; `Locale.US` = `October 20, 2026`.
+- `fitTextSize` never exceeds maxWidth, clamps to [min, max].
+
+Budget: APK ≤ 6 KB; memory ≈ 0 (Paths only).
+
+Reviewer checks:
+- Home (S Max and default config) unchanged: `git diff` touches no launcher view code, only `RomanStyle`
+  constants and dream files.
+- No allocation in `onDraw`; no `setLayerType`; no `setShadowLayer` left in the dream.
+- Legend fits on the cloth for `"LEG XII FVLMINATA"` and a longer `"LEG XXII PRIMIGENIA"`.
+- On the wall (Shibi's photo): red/porphyry, not lavender; laurels clear of the screen edge on the projector's
+  overscan; the standard reads as a standard.
+
+#### DV2. Rolling motion, quotes ticker, lifecycle
+
+Files:
+- New `Quotes.java` (pure): `static List<String[]> parse(String json)` — a small scanner for this flat format
+  (string values with `\"` `\\` `\n` `\uXXXX` escapes; unknown keys ignored; malformed input → empty list, never
+  an exception; `org.json` is not usable in JVM tests). `static String display(String[] q)` = `text + " — " + author`.
+- New `QuoteClock.java` (pure): `PERIOD_MS = 6000`, `FADE_MS = 800`; `static int index(long t, int start, int n)`,
+  `static float alpha(long t)`.
+- `RomanDreamMath.java`: `FRAME_MS = 60`, `LEG_X_MS = 71_000`, `LEG_Y_MS = 47_000`, `static float ease(float)`;
+  remove `PAN_MS`/`snap` use from the dream (keep the methods if tests still use them, else delete them with
+  their tests).
+- `RomanDream.java`: replace the `ValueAnimator` with the frame callback of 9.2; a quote `TextView` (Cinzel,
+  2 lines, ellipsize end, not focusable); load the quotes from `getAssets()` in `onAttachedToWindow` (any
+  failure → no quote line, dream goes on); start the loop in `onDreamingStarted`, stop it in `teardown()`
+  (`removeFrameCallback`, null the quotes and the TextView, keep the `dead` guard for a late stone callback).
+
+Tests (`QuotesTest`, `QuoteClockTest`, additions to `RomanDreamMathTest`):
+- The real `src/main/assets/quotes.json` (read from disk): exactly 100, `version` 1, every text ≤ 110 chars and
+  non-empty author and source, no duplicate texts, every char ASCII 0x20–0x7E.
+- Parser: escapes decoded; extra key ignored; truncated JSON → empty list; `null` → empty list.
+- QuoteClock: alpha 0 at t = 0, 1 from 800 to 5200 ms, 0 at 6000; monotonic in each fade; index steps once per
+  6 s and wraps at n; start offset respected.
+- `ease(0) = 0`, `ease(1) = 1`, `ease(0.5) = 0.5`, monotonic; offsets from both legs stay within ±travel;
+  `FRAME_MS` in [50, 67].
+- Source rule: `RomanDream.java` contains no `ValueAnimator` and no `setShadowLayer`.
+
+Budget: APK ≤ 4 KB code + quotes.json (≈ 6 KB deflated); memory ≈ +25 KB heap while dreaming, 0 after.
+
+Reviewer checks:
+- `doFrame` allocates nothing (no `new`, no string concatenation, no boxing, no lambda) and calls no
+  `invalidate()`; the callback is one field and is removed in every teardown path.
+- After HOME ends the dream: no frame callback pending (`dumpsys gfxinfo` frame count stops), receiver gone,
+  quotes nulled; the shared stone is not recycled.
+- Device (each step needs Shibi's OK): PSS < 60 MB at 1 min into the dream, right after HOME, and 30 s later;
+  motion visible but calm from the sofa; quotes readable at 3 m.
+
+### 9.4 Summary
+
+1. Quotes: 78 of Haiku's 87 candidates kept (with 14 sources or authors corrected), 22 well-attested additions, exactly 100 in `assets/quotes.json` (12.5 KB, ASCII only).
+2. RomanDream v2: red/porphyry palette (dream only; S Max Home stays gold), laurels left and right, a vexillum with a thunderbolt and `LEGION = "LEG XII FVLMINATA"`, Roman + localized Gregorian dates, time in Cinzel.
+3. Motion: one throttled Choreographer loop (≈ 16 fps) drifting the one shared stone and fading a quote every 6 s, zero per-frame allocation, PSS target < 60 MB during and after.
+4. Two Sonnet slices: DV1 (palette, laurels, standard, dates, constant, tests) and DV2 (motion, quotes loader and ticker, lifecycle, tests); APK growth < 30 KB.
