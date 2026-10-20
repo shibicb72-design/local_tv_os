@@ -661,7 +661,12 @@ public class PlayerActivity extends Activity {
     }
 
     private ResumeStore.Store prefsStore() {
-        SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        return prefsStore(this);
+    }
+
+    /** The resume blob in SharedPreferences; the Library screen reads the same one. */
+    static ResumeStore.Store prefsStore(android.content.Context ctx) {
+        SharedPreferences prefs = ctx.getSharedPreferences(PREFS, MODE_PRIVATE);
         return new ResumeStore.Store() {
             @Override
             public String load() {

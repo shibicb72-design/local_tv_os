@@ -3,7 +3,9 @@ package com.gathin.player;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Pure resume logic. Key = path + size + mtime, so an edited or replaced file never resumes. Position is saved
@@ -81,6 +83,41 @@ final class ResumeStore {
     void clear(String key) {
         Map<String, Entry> map = read();
         if (map.remove(key) != null) write(map);
+    }
+
+    /** One "Continue watching" row. */
+    static final class Recent {
+        final String path;
+        final long positionMs;
+
+        Recent(String path, long positionMs) {
+            this.path = path;
+            this.positionMs = positionMs;
+        }
+    }
+
+    /**
+     * Entries with a saved position, newest first, whose file {@code exists}; at most {@code max}. The path is
+     * the key without its trailing size and mtime. Entries that only hold track choices are not listed.
+     */
+    List<Recent> recent(Predicate<String> exists, int max) {
+        List<Map.Entry<String, Entry>> all = new ArrayList<>(read().entrySet());
+        List<Recent> out = new ArrayList<>();
+        for (int i = all.size() - 1; i >= 0 && out.size() < max; i--) {
+            Entry e = all.get(i).getValue();
+            if (e.positionMs <= 0) continue;
+            String path = pathOf(all.get(i).getKey());
+            if (path != null && exists.test(path)) out.add(new Recent(path, e.positionMs));
+        }
+        return out;
+    }
+
+    /** Inverse of {@link #key}: drops the last two {@code |} fields; null if the key is malformed. */
+    static String pathOf(String key) {
+        int b = key.lastIndexOf('|');
+        if (b <= 0) return null;
+        int a = key.lastIndexOf('|', b - 1);
+        return a <= 0 ? null : key.substring(0, a);
     }
 
     private void put(Map<String, Entry> map, String key, long pos, String audioId, String subtitleId) {

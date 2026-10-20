@@ -142,4 +142,31 @@ public class ResumeStoreTest {
         assertEquals(600_000L, store.resumePosition(odd));
         assertEquals(700_000L, store.resumePosition(KEY));
     }
+
+    @Test
+    public void recentIsNewestFirstAndSkipsMissingFilesAndTrackOnlyEntries() {
+        String a = "/m/a.mkv", b = "/m/b|odd.mkv", c = "/m/c.mkv", d = "/m/d.mkv";
+        store.savePosition(ResumeStore.key(a, 1L, 1L), 100_000L, DUR);
+        store.savePosition(ResumeStore.key(b, 2L, 2L), 200_000L, DUR);
+        store.savePosition(ResumeStore.key(c, 3L, 3L), 300_000L, DUR);
+        store.saveTracks(ResumeStore.key(d, 4L, 4L), "a1", null);   // no position: not listed
+        store.savePosition(ResumeStore.key(a, 1L, 1L), 150_000L, DUR);   // a becomes newest
+
+        java.util.List<ResumeStore.Recent> r = store.recent(p -> !p.equals(c), 20);
+        assertEquals(2, r.size());
+        assertEquals(a, r.get(0).path);
+        assertEquals(150_000L, r.get(0).positionMs);
+        assertEquals(b, r.get(1).path);   // a '|' in the name survives
+    }
+
+    @Test
+    public void recentIsCappedAndPathOfRejectsMalformedKeys() {
+        for (int i = 0; i < 30; i++) {
+            store.savePosition(ResumeStore.key("/m/" + i + ".mkv", 1L, 1L), 100_000L, DUR);
+        }
+        assertEquals(20, store.recent(p -> true, 20).size());
+        assertEquals("/m/29.mkv", store.recent(p -> true, 20).get(0).path);
+        assertNull(ResumeStore.pathOf("nopipes"));
+        assertNull(ResumeStore.pathOf("one|pipe"));
+    }
 }
