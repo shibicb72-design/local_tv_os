@@ -67,7 +67,11 @@
             </intent-filter>
         </activity>
 
-        <!-- StreamProvider is added in F8. -->
+        <provider
+            android:name="com.gathin.files.StreamProvider"
+            android:authorities="com.gathin.files.stream"
+            android:exported="false"
+            android:grantUriPermissions="true" />
     </application>
 
 </manifest>

@@ -3,8 +3,8 @@
 # min_api: 30
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.2"}
-# pg_map_id: adbcca6
-# pg_map_hash: SHA-256 adbcca64e68e8ab495efc16b39c9566f50adc71677a4b9ff72b74951ec455750
+# pg_map_id: 14ca646
+# pg_map_hash: SHA-256 14ca6468d04608e0d0554ebf9758ff4f5bd82a010781295ecb43f27a97246b5e
 android.support.v4.app.RemoteActionCompatParcelizer -> android.support.v4.app.RemoteActionCompatParcelizer:
 # {"id":"sourceFile","fileName":"RemoteActionCompatParcelizer.java"}
     0:3:void <init>():11:11 -> <init>
@@ -13927,12 +13927,56 @@ com.gathin.files.EntryAdapter$1 -> com.gathin.files.EntryAdapter$1:
     40:43:void onClick(android.view.View):146 -> onClick
     44:47:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):203:203 -> onClick
     44:47:void onClick(android.view.View):146 -> onClick
-    48:51:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):204:204 -> onClick
-    48:51:void onClick(android.view.View):146 -> onClick
-    52:54:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):205:205 -> onClick
-    52:54:void onClick(android.view.View):146 -> onClick
-    55:61:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):206:206 -> onClick
-    55:61:void onClick(android.view.View):146 -> onClick
+    48:53:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):204:204 -> onClick
+    48:53:void onClick(android.view.View):146 -> onClick
+    54:56:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):205:205 -> onClick
+    54:56:void onClick(android.view.View):146 -> onClick
+    57:60:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):206:206 -> onClick
+    57:60:void onClick(android.view.View):146 -> onClick
+    61:71:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):20:20 -> onClick
+    61:71:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    61:71:void onClick(android.view.View):146 -> onClick
+    72:85:com.gathin.files.MimeKinds$Kind com.gathin.files.MimeKinds.kindOf(java.lang.String):61:61 -> onClick
+    72:85:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):20 -> onClick
+    72:85:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    72:85:void onClick(android.view.View):146 -> onClick
+    86:87:com.gathin.files.MimeKinds$Kind com.gathin.files.MimeKinds.kindOf(java.lang.String):62:62 -> onClick
+    86:87:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):20 -> onClick
+    86:87:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    86:87:void onClick(android.view.View):146 -> onClick
+    88:99:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):21:21 -> onClick
+    88:99:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    88:99:void onClick(android.view.View):146 -> onClick
+    100:107:boolean com.gathin.files.Opener.playerInstalled(android.content.Context):48:48 -> onClick
+    100:107:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):22 -> onClick
+    100:107:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    100:107:void onClick(android.view.View):146 -> onClick
+    108:111:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):23:23 -> onClick
+    108:111:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    108:111:void onClick(android.view.View):146 -> onClick
+    112:114:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):24:24 -> onClick
+    112:114:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    112:114:void onClick(android.view.View):146 -> onClick
+    115:119:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):25:25 -> onClick
+    115:119:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    115:119:void onClick(android.view.View):146 -> onClick
+    120:123:boolean com.gathin.files.Opener.start(android.content.Context,android.content.Intent):57:57 -> onClick
+    120:123:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):26 -> onClick
+    120:123:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    120:123:void onClick(android.view.View):146 -> onClick
+    124:132:void com.gathin.files.Opener.openWith(android.content.Context,java.lang.String):33:33 -> onClick
+    124:132:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):28 -> onClick
+    124:132:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    124:132:void onClick(android.view.View):146 -> onClick
+    133:136:boolean com.gathin.files.Opener.start(android.content.Context,android.content.Intent):57:57 -> onClick
+    133:136:void com.gathin.files.Opener.openWith(android.content.Context,java.lang.String):34 -> onClick
+    133:136:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):28 -> onClick
+    133:136:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    133:136:void onClick(android.view.View):146 -> onClick
+    137:147:void com.gathin.files.Opener.openWith(android.content.Context,java.lang.String):35:35 -> onClick
+    137:147:void com.gathin.files.Opener.open(android.content.Context,java.lang.String):28 -> onClick
+    137:147:void com.gathin.files.FilesActivity.onRowClick(com.gathin.files.EntryAdapter$Row):208 -> onClick
+    137:147:void onClick(android.view.View):146 -> onClick
 com.gathin.files.EntryAdapter$Holder -> com.gathin.files.EntryAdapter$Holder:
 # {"id":"sourceFile","fileName":"EntryAdapter.java"}
     0:2:void <init>(android.view.View,android.widget.TextView,android.widget.TextView,android.widget.TextView):157:157 -> <init>
@@ -14009,40 +14053,40 @@ com.gathin.files.FilesActivity -> com.gathin.files.FilesActivity:
       # {"id":"com.android.tools.r8.residualsignature","signature":"Landroid/widget/LinearLayout;"}
     com.gathin.files.FileSort$Key sortKey -> sortKey
       # {"id":"com.android.tools.r8.residualsignature","signature":"I"}
-    0:1:void show(java.util.List,java.lang.String,boolean,java.lang.String):329:329 -> -$$Nest$mshow
+    0:1:void show(java.util.List,java.lang.String,boolean,java.lang.String):330:330 -> -$$Nest$mshow
       # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/gathin/files/FilesActivity;Ljava/util/ArrayList;Ljava/lang/String;ZLjava/lang/String;)V"}
     2:3:void com.gathin.files.EntryAdapter.submit(java.util.List):77:77 -> -$$Nest$mshow
-    2:3:void show(java.util.List,java.lang.String,boolean,java.lang.String):329 -> -$$Nest$mshow
+    2:3:void show(java.util.List,java.lang.String,boolean,java.lang.String):330 -> -$$Nest$mshow
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
     4:8:void androidx.recyclerview.widget.RecyclerView$Adapter.notifyDataSetChanged():8094:8094 -> -$$Nest$mshow
     4:8:void com.gathin.files.EntryAdapter.submit(java.util.List):78 -> -$$Nest$mshow
-    4:8:void show(java.util.List,java.lang.String,boolean,java.lang.String):329 -> -$$Nest$mshow
-    9:21:void show(java.util.List,java.lang.String,boolean,java.lang.String):330:330 -> -$$Nest$mshow
-    22:29:void show(java.util.List,java.lang.String,boolean,java.lang.String):331:331 -> -$$Nest$mshow
-    30:35:void show(java.util.List,java.lang.String,boolean,java.lang.String):333:333 -> -$$Nest$mshow
-    36:54:void show(java.util.List,java.lang.String,boolean,java.lang.String):334:334 -> -$$Nest$mshow
-    55:61:void show(java.util.List,java.lang.String,boolean,java.lang.String):337:337 -> -$$Nest$mshow
+    4:8:void show(java.util.List,java.lang.String,boolean,java.lang.String):330 -> -$$Nest$mshow
+    9:21:void show(java.util.List,java.lang.String,boolean,java.lang.String):331:331 -> -$$Nest$mshow
+    22:29:void show(java.util.List,java.lang.String,boolean,java.lang.String):332:332 -> -$$Nest$mshow
+    30:35:void show(java.util.List,java.lang.String,boolean,java.lang.String):334:334 -> -$$Nest$mshow
+    36:54:void show(java.util.List,java.lang.String,boolean,java.lang.String):335:335 -> -$$Nest$mshow
+    55:61:void show(java.util.List,java.lang.String,boolean,java.lang.String):338:338 -> -$$Nest$mshow
     62:71:com.gathin.files.FocusMemory$Spot com.gathin.files.FocusMemory.recall(java.lang.String):38:38 -> -$$Nest$mshow
-    62:71:void show(java.util.List,java.lang.String,boolean,java.lang.String):337 -> -$$Nest$mshow
+    62:71:void show(java.util.List,java.lang.String,boolean,java.lang.String):338 -> -$$Nest$mshow
     72:73:com.gathin.files.FocusMemory$Spot com.gathin.files.FocusMemory.recall(java.lang.String):39:39 -> -$$Nest$mshow
-    72:73:void show(java.util.List,java.lang.String,boolean,java.lang.String):337 -> -$$Nest$mshow
-    74:85:void show(java.util.List,java.lang.String,boolean,java.lang.String):338:338 -> -$$Nest$mshow
-    86:87:void show(java.util.List,java.lang.String,boolean,java.lang.String):339:339 -> -$$Nest$mshow
+    72:73:void show(java.util.List,java.lang.String,boolean,java.lang.String):338 -> -$$Nest$mshow
+    74:85:void show(java.util.List,java.lang.String,boolean,java.lang.String):339:339 -> -$$Nest$mshow
+    86:87:void show(java.util.List,java.lang.String,boolean,java.lang.String):340:340 -> -$$Nest$mshow
     88:89:void androidx.recyclerview.widget.LinearLayoutManager.scrollToPositionWithOffset(int,int):1126:1126 -> -$$Nest$mshow
-    88:89:void show(java.util.List,java.lang.String,boolean,java.lang.String):339 -> -$$Nest$mshow
+    88:89:void show(java.util.List,java.lang.String,boolean,java.lang.String):340 -> -$$Nest$mshow
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
     90:93:void androidx.recyclerview.widget.LinearLayoutManager.scrollToPositionWithOffset(int,int):1127:1127 -> -$$Nest$mshow
-    90:93:void show(java.util.List,java.lang.String,boolean,java.lang.String):339 -> -$$Nest$mshow
+    90:93:void show(java.util.List,java.lang.String,boolean,java.lang.String):340 -> -$$Nest$mshow
     94:98:void androidx.recyclerview.widget.LinearLayoutManager.scrollToPositionWithOffset(int,int):1128:1128 -> -$$Nest$mshow
-    94:98:void show(java.util.List,java.lang.String,boolean,java.lang.String):339 -> -$$Nest$mshow
+    94:98:void show(java.util.List,java.lang.String,boolean,java.lang.String):340 -> -$$Nest$mshow
     99:100:void androidx.recyclerview.widget.LinearLayoutManager$SavedState.invalidateAnchor():2476:2476 -> -$$Nest$mshow
     99:100:void androidx.recyclerview.widget.LinearLayoutManager.scrollToPositionWithOffset(int,int):1129 -> -$$Nest$mshow
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
-    99:100:void show(java.util.List,java.lang.String,boolean,java.lang.String):339 -> -$$Nest$mshow
+    99:100:void show(java.util.List,java.lang.String,boolean,java.lang.String):340 -> -$$Nest$mshow
     101:103:void androidx.recyclerview.widget.LinearLayoutManager.scrollToPositionWithOffset(int,int):1131:1131 -> -$$Nest$mshow
-    101:103:void show(java.util.List,java.lang.String,boolean,java.lang.String):339 -> -$$Nest$mshow
-    104:115:void focusPosition(int,int):345:345 -> -$$Nest$mshow
-    104:115:void show(java.util.List,java.lang.String,boolean,java.lang.String):340 -> -$$Nest$mshow
+    101:103:void show(java.util.List,java.lang.String,boolean,java.lang.String):340 -> -$$Nest$mshow
+    104:115:void focusPosition(int,int):346:346 -> -$$Nest$mshow
+    104:115:void show(java.util.List,java.lang.String,boolean,java.lang.String):341 -> -$$Nest$mshow
     0:2:void <init>():35:35 -> <init>
     3:8:void <init>():40:40 -> <init>
     9:15:void <init>():41:41 -> <init>
@@ -14050,13 +14094,13 @@ com.gathin.files.FilesActivity -> com.gathin.files.FilesActivity:
     27:32:void <init>():43:43 -> <init>
     33:38:void <init>():46:46 -> <init>
     39:41:void <init>():55:55 -> <init>
-    0:3:void onBackPressed():213:213 -> onBackPressed
-    4:7:void onBackPressed():214:214 -> onBackPressed
-    8:15:void onBackPressed():215:215 -> onBackPressed
-    16:19:void onBackPressed():216:216 -> onBackPressed
-    20:30:void onBackPressed():218:218 -> onBackPressed
-    31:35:void onBackPressed():219:219 -> onBackPressed
-    36:46:void onBackPressed():220:220 -> onBackPressed
+    0:3:void onBackPressed():214:214 -> onBackPressed
+    4:7:void onBackPressed():215:215 -> onBackPressed
+    8:15:void onBackPressed():216:216 -> onBackPressed
+    16:19:void onBackPressed():217:217 -> onBackPressed
+    20:30:void onBackPressed():219:219 -> onBackPressed
+    31:35:void onBackPressed():220:220 -> onBackPressed
+    36:46:void onBackPressed():221:221 -> onBackPressed
     0:2:void onCreate(android.os.Bundle):64:64 -> onCreate
     3:9:void onCreate(android.os.Bundle):65:65 -> onCreate
     10:23:void onCreate(android.os.Bundle):66:66 -> onCreate
@@ -14305,74 +14349,74 @@ com.gathin.files.FilesActivity -> com.gathin.files.FilesActivity:
     39:59:java.lang.String breadcrumb():194:194 -> open
     39:59:void open(java.lang.String,boolean):188 -> open
     60:62:void open(java.lang.String,boolean):188:188 -> open
-    63:70:int begin():323:323 -> open
-    63:70:void loadDir(java.lang.String,boolean):297 -> open
+    63:70:int begin():324:324 -> open
+    63:70:void loadDir(java.lang.String,boolean):298 -> open
     63:70:void open(java.lang.String,boolean):189 -> open
-    71:76:int begin():324:324 -> open
-    71:76:void loadDir(java.lang.String,boolean):297 -> open
+    71:76:int begin():325:325 -> open
+    71:76:void loadDir(java.lang.String,boolean):298 -> open
     71:76:void open(java.lang.String,boolean):189 -> open
-    77:83:void loadDir(java.lang.String,boolean):299:299 -> open
+    77:83:void loadDir(java.lang.String,boolean):300:300 -> open
     77:83:void open(java.lang.String,boolean):189 -> open
-    84:102:void loadDir(java.lang.String,boolean):301:301 -> open
+    84:102:void loadDir(java.lang.String,boolean):302:302 -> open
     84:102:void open(java.lang.String,boolean):189 -> open
-    0:4:void rememberFocus():361:361 -> rememberFocus
-    5:11:void rememberFocus():362:362 -> rememberFocus
-    12:16:void rememberFocus():364:364 -> rememberFocus
+    0:4:void rememberFocus():362:362 -> rememberFocus
+    5:11:void rememberFocus():363:363 -> rememberFocus
+    12:16:void rememberFocus():365:365 -> rememberFocus
     17:23:int androidx.recyclerview.widget.RecyclerView.getChildAdapterPosition(android.view.View):5349:5349 -> rememberFocus
-    17:23:void rememberFocus():364 -> rememberFocus
+    17:23:void rememberFocus():365 -> rememberFocus
     24:28:int androidx.recyclerview.widget.RecyclerView$ViewHolder.getAbsoluteAdapterPosition():12081:12081 -> rememberFocus
     24:28:int androidx.recyclerview.widget.RecyclerView.getChildAdapterPosition(android.view.View):5350 -> rememberFocus
-    24:28:void rememberFocus():364 -> rememberFocus
+    24:28:void rememberFocus():365 -> rememberFocus
     29:35:int androidx.recyclerview.widget.RecyclerView$ViewHolder.getAbsoluteAdapterPosition():12084:12084 -> rememberFocus
     29:35:int androidx.recyclerview.widget.RecyclerView.getChildAdapterPosition(android.view.View):5350 -> rememberFocus
-    29:35:void rememberFocus():364 -> rememberFocus
-    36:60:void rememberFocus():366:366 -> rememberFocus
+    29:35:void rememberFocus():365 -> rememberFocus
+    36:60:void rememberFocus():367:367 -> rememberFocus
     61:71:void com.gathin.files.FocusMemory.remember(java.lang.String,int,int):33:33 -> rememberFocus
-    61:71:void rememberFocus():366 -> rememberFocus
+    61:71:void rememberFocus():367 -> rememberFocus
     0:3:void showRoots():176:176 -> showRoots
     4:5:void showRoots():177:177 -> showRoots
     6:7:void showRoots():178:178 -> showRoots
     8:9:void showRoots():179:179 -> showRoots
     10:16:void showRoots():180:180 -> showRoots
     17:23:void showRoots():181:181 -> showRoots
-    24:31:int begin():323:323 -> showRoots
-    24:31:void loadRoots(boolean):278 -> showRoots
+    24:31:int begin():324:324 -> showRoots
+    24:31:void loadRoots(boolean):279 -> showRoots
     24:31:void showRoots():182 -> showRoots
-    32:36:int begin():324:324 -> showRoots
-    32:36:void loadRoots(boolean):278 -> showRoots
+    32:36:int begin():325:325 -> showRoots
+    32:36:void loadRoots(boolean):279 -> showRoots
     32:36:void showRoots():182 -> showRoots
-    37:50:void loadRoots(boolean):279:279 -> showRoots
+    37:50:void loadRoots(boolean):280:280 -> showRoots
     37:50:void showRoots():182 -> showRoots
-    0:15:void updateSortPill():266:266 -> updateSortPill
-    16:27:void updateSortPill():267:267 -> updateSortPill
+    0:15:void updateSortPill():267:267 -> updateSortPill
+    16:27:void updateSortPill():268:268 -> updateSortPill
 com.gathin.files.FilesActivity$1 -> com.gathin.files.FilesActivity$1:
 # {"id":"sourceFile","fileName":"FilesActivity.java"}
     0:5:void <init>(com.gathin.files.FilesActivity):130:130 -> <init>
     0:7:void onClick(android.view.View):133:133 -> onClick
     8:11:com.gathin.files.FileSort$Key[] com.gathin.files.FileSort$Key.values():7:7 -> onClick
-    8:11:void com.gathin.files.FilesActivity.cycleSort():258 -> onClick
+    8:11:void com.gathin.files.FilesActivity.cycleSort():259 -> onClick
     8:11:void onClick(android.view.View):133 -> onClick
-    12:25:void com.gathin.files.FilesActivity.cycleSort():259:259 -> onClick
+    12:25:void com.gathin.files.FilesActivity.cycleSort():260:260 -> onClick
     12:25:void onClick(android.view.View):133 -> onClick
-    26:51:void com.gathin.files.FilesActivity.cycleSort():260:260 -> onClick
+    26:51:void com.gathin.files.FilesActivity.cycleSort():261:261 -> onClick
     26:51:void onClick(android.view.View):133 -> onClick
-    52:54:void com.gathin.files.FilesActivity.cycleSort():261:261 -> onClick
+    52:54:void com.gathin.files.FilesActivity.cycleSort():262:262 -> onClick
     52:54:void onClick(android.view.View):133 -> onClick
-    55:58:void com.gathin.files.FilesActivity.cycleSort():262:262 -> onClick
+    55:58:void com.gathin.files.FilesActivity.cycleSort():263:263 -> onClick
     55:58:void onClick(android.view.View):133 -> onClick
-    59:65:int com.gathin.files.FilesActivity.begin():323:323 -> onClick
-    59:65:void com.gathin.files.FilesActivity.loadDir(java.lang.String,boolean):297 -> onClick
-    59:65:void com.gathin.files.FilesActivity.cycleSort():262 -> onClick
+    59:65:int com.gathin.files.FilesActivity.begin():324:324 -> onClick
+    59:65:void com.gathin.files.FilesActivity.loadDir(java.lang.String,boolean):298 -> onClick
+    59:65:void com.gathin.files.FilesActivity.cycleSort():263 -> onClick
     59:65:void onClick(android.view.View):133 -> onClick
-    66:71:int com.gathin.files.FilesActivity.begin():324:324 -> onClick
-    66:71:void com.gathin.files.FilesActivity.loadDir(java.lang.String,boolean):297 -> onClick
-    66:71:void com.gathin.files.FilesActivity.cycleSort():262 -> onClick
+    66:71:int com.gathin.files.FilesActivity.begin():325:325 -> onClick
+    66:71:void com.gathin.files.FilesActivity.loadDir(java.lang.String,boolean):298 -> onClick
+    66:71:void com.gathin.files.FilesActivity.cycleSort():263 -> onClick
     66:71:void onClick(android.view.View):133 -> onClick
-    72:79:void com.gathin.files.FilesActivity.loadDir(java.lang.String,boolean):299:299 -> onClick
-    72:79:void com.gathin.files.FilesActivity.cycleSort():262 -> onClick
+    72:79:void com.gathin.files.FilesActivity.loadDir(java.lang.String,boolean):300:300 -> onClick
+    72:79:void com.gathin.files.FilesActivity.cycleSort():263 -> onClick
     72:79:void onClick(android.view.View):133 -> onClick
-    80:96:void com.gathin.files.FilesActivity.loadDir(java.lang.String,boolean):301:301 -> onClick
-    80:96:void com.gathin.files.FilesActivity.cycleSort():262 -> onClick
+    80:96:void com.gathin.files.FilesActivity.loadDir(java.lang.String,boolean):302:302 -> onClick
+    80:96:void com.gathin.files.FilesActivity.cycleSort():263 -> onClick
     80:96:void onClick(android.view.View):133 -> onClick
 com.gathin.files.FilesActivity$2 -> com.gathin.files.FilesActivity$2:
 # {"id":"sourceFile","fileName":"FilesActivity.java"}
@@ -14382,29 +14426,29 @@ com.gathin.files.FilesActivity$2 -> com.gathin.files.FilesActivity$2:
       # {"id":"com.android.tools.r8.residualsignature","signature":"Ljava/lang/Object;"}
     1:1:void <init>(java.lang.Object,java.io.Serializable,int):0:0 -> <init>
       # {"id":"com.android.tools.r8.synthesized"}
-    2:2:void com.gathin.files.FilesActivity$3$1.<init>(com.gathin.files.FilesActivity$3,java.util.List,java.util.List):284:284 -> <init>
+    2:2:void com.gathin.files.FilesActivity$3$1.<init>(com.gathin.files.FilesActivity$3,java.util.List,java.util.List):285:285 -> <init>
       # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/gathin/files/FilesActivity$3;Ljava/util/ArrayList;Ljava/util/ArrayList;)V"}
-    10:20:void com.gathin.files.FilesActivity$3$1.run():287:287 -> run
-    21:41:void com.gathin.files.FilesActivity$3$1.run():289:289 -> run
-    42:52:void com.gathin.files.FilesActivity$2$1.run():239:239 -> run
-    53:72:void com.gathin.files.FilesActivity$2$1.run():240:240 -> run
-    73:99:boolean com.gathin.files.FilesActivity.hasRoot(java.util.List,java.lang.String):251:251 -> run
-    73:99:void com.gathin.files.FilesActivity$2$1.run():240 -> run
-    100:133:void com.gathin.files.FilesActivity$2$1.run():241:241 -> run
-    134:141:void com.gathin.files.FilesActivity$2$1.run():242:242 -> run
-    142:149:void run():235:235 -> run
-    150:161:void run():236:236 -> run
+    10:20:void com.gathin.files.FilesActivity$3$1.run():288:288 -> run
+    21:41:void com.gathin.files.FilesActivity$3$1.run():290:290 -> run
+    42:52:void com.gathin.files.FilesActivity$2$1.run():240:240 -> run
+    53:72:void com.gathin.files.FilesActivity$2$1.run():241:241 -> run
+    73:99:boolean com.gathin.files.FilesActivity.hasRoot(java.util.List,java.lang.String):252:252 -> run
+    73:99:void com.gathin.files.FilesActivity$2$1.run():241 -> run
+    100:133:void com.gathin.files.FilesActivity$2$1.run():242:242 -> run
+    134:141:void com.gathin.files.FilesActivity$2$1.run():243:243 -> run
+    142:149:void run():236:236 -> run
+    150:161:void run():237:237 -> run
 com.gathin.files.FilesActivity$3 -> com.gathin.files.FilesActivity$3:
 # {"id":"sourceFile","fileName":"FilesActivity.java"}
-    0:9:void <init>(com.gathin.files.FilesActivity,int,boolean):279:279 -> <init>
-    0:7:void run():282:282 -> run
+    0:9:void <init>(com.gathin.files.FilesActivity,int,boolean):280:280 -> <init>
+    0:7:void run():283:283 -> run
     8:16:java.util.List com.gathin.files.EntryAdapter.rootRows(java.util.List):69:69 -> run
-    8:16:void run():283 -> run
+    8:16:void run():284 -> run
     17:32:java.util.List com.gathin.files.EntryAdapter.rootRows(java.util.List):70:70 -> run
-    17:32:void run():283 -> run
+    17:32:void run():284 -> run
     33:60:java.util.List com.gathin.files.EntryAdapter.rootRows(java.util.List):71:71 -> run
-    33:60:void run():283 -> run
-    61:71:void run():284:284 -> run
+    33:60:void run():284 -> run
+    61:71:void run():285:285 -> run
 com.gathin.files.FilesActivity$4 -> com.gathin.files.FilesActivity$4:
 # {"id":"sourceFile","fileName":"FilesActivity.java"}
     com.gathin.files.FilesActivity this$0 -> this$0
@@ -14415,7 +14459,7 @@ com.gathin.files.FilesActivity$4 -> com.gathin.files.FilesActivity$4:
       # {"id":"com.android.tools.r8.residualsignature","signature":"I"}
     java.lang.String val$path -> val$path
       # {"id":"com.android.tools.r8.residualsignature","signature":"Ljava/lang/Object;"}
-    1:1:void <init>(com.gathin.files.FilesActivity,java.lang.String,com.gathin.files.FileSort$Key,boolean,android.content.Context,int,boolean):301:301 -> <init>
+    1:1:void <init>(com.gathin.files.FilesActivity,java.lang.String,com.gathin.files.FileSort$Key,boolean,android.content.Context,int,boolean):302:302 -> <init>
       # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/gathin/files/FilesActivity;Ljava/lang/String;IZLandroid/content/Context;IZ)V"}
     2:2:void androidx.recyclerview.widget.RecyclerView$ViewFlinger.<init>(androidx.recyclerview.widget.RecyclerView):5775:5775 -> <init>
     3:3:void androidx.recyclerview.widget.RecyclerView$ViewFlinger.<init>(androidx.recyclerview.widget.RecyclerView):5767:5767 -> <init>
@@ -14564,80 +14608,63 @@ com.gathin.files.FilesActivity$4 -> com.gathin.files.FilesActivity$4:
     441:444:void androidx.recyclerview.widget.RecyclerView$ViewFlinger.run():5928 -> run
     445:447:void androidx.recyclerview.widget.RecyclerView$ViewFlinger.run():5930:5930 -> run
     448:451:void androidx.recyclerview.widget.RecyclerView$ViewFlinger.run():5931:5931 -> run
-    452:460:void run():305:305 -> run
+    452:460:void run():306:306 -> run
     461:465:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):17:17 -> run
-    461:465:void run():305 -> run
-    466:471:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):21:21 -> run
-    466:471:void run():305 -> run
-    472:478:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):25:25 -> run
-    472:478:void run():305 -> run
-    479:484:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):29:29 -> run
-    479:484:void run():305 -> run
-    485:488:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):30:30 -> run
-    485:488:void run():305 -> run
-    489:497:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):31:31 -> run
-    489:497:void run():305 -> run
-    498:501:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):32:32 -> run
-    498:501:void run():305 -> run
-    502:523:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):33:33 -> run
-    502:523:void run():305 -> run
-    524:527:com.gathin.files.MimeKinds$Kind com.gathin.files.MimeKinds.kindOf(java.lang.String):61:61 -> run
-    524:527:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):34 -> run
-    524:527:void run():305 -> run
-    528:533:java.lang.String com.gathin.files.MimeKinds.extension(java.lang.String):55:55 -> run
-    528:533:com.gathin.files.MimeKinds$Kind com.gathin.files.MimeKinds.kindOf(java.lang.String):61 -> run
-    528:533:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):34 -> run
-    528:533:void run():305 -> run
-    534:543:java.lang.String com.gathin.files.MimeKinds.extension(java.lang.String):56:56 -> run
-    534:543:com.gathin.files.MimeKinds$Kind com.gathin.files.MimeKinds.kindOf(java.lang.String):61 -> run
-    534:543:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):34 -> run
-    534:543:void run():305 -> run
-    544:555:java.lang.String com.gathin.files.MimeKinds.extension(java.lang.String):57:57 -> run
-    544:555:com.gathin.files.MimeKinds$Kind com.gathin.files.MimeKinds.kindOf(java.lang.String):61 -> run
-    544:555:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):34 -> run
-    544:555:void run():305 -> run
-    556:566:com.gathin.files.MimeKinds$Kind com.gathin.files.MimeKinds.kindOf(java.lang.String):61:61 -> run
-    556:566:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):34 -> run
-    556:566:void run():305 -> run
-    567:569:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):34:34 -> run
-    567:569:void run():305 -> run
-    570:576:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):33:33 -> run
-    570:576:void run():305 -> run
-    577:585:java.util.Comparator com.gathin.files.FileSort.comparator(com.gathin.files.FileSort$Key,boolean):12:12 -> run
-    577:585:void run():307 -> run
-    586:588:void run():307:307 -> run
-    589:596:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):58:58 -> run
-    589:596:void run():308 -> run
-    597:605:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):59:59 -> run
-    597:605:void run():308 -> run
-    606:621:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):60:60 -> run
-    606:621:void run():308 -> run
-    622:647:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):61:61 -> run
-    622:647:void run():308 -> run
-    648:671:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):62:62 -> run
-    648:671:void run():308 -> run
-    672:681:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):63:63 -> run
-    672:681:void run():308 -> run
-    682:689:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):61:61 -> run
-    682:689:void run():308 -> run
-    690:703:void run():309:309 -> run
+    461:465:void run():306 -> run
+    466:475:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):21:21 -> run
+    466:475:void run():306 -> run
+    476:481:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):29:29 -> run
+    476:481:void run():306 -> run
+    482:485:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):30:30 -> run
+    482:485:void run():306 -> run
+    486:494:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):31:31 -> run
+    486:494:void run():306 -> run
+    495:498:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):32:32 -> run
+    495:498:void run():306 -> run
+    499:520:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):33:33 -> run
+    499:520:void run():306 -> run
+    521:536:com.gathin.files.MimeKinds$Kind com.gathin.files.MimeKinds.kindOf(java.lang.String):61:61 -> run
+    521:536:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):34 -> run
+    521:536:void run():306 -> run
+    537:539:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):34:34 -> run
+    537:539:void run():306 -> run
+    540:544:java.util.List com.gathin.files.DirLister.list(java.io.File,boolean):33:33 -> run
+    540:544:void run():306 -> run
+    545:553:java.util.Comparator com.gathin.files.FileSort.comparator(com.gathin.files.FileSort$Key,boolean):12:12 -> run
+    545:553:void run():308 -> run
+    554:556:void run():308:308 -> run
+    557:564:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):58:58 -> run
+    557:564:void run():309 -> run
+    565:573:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):59:59 -> run
+    565:573:void run():309 -> run
+    574:589:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):60:60 -> run
+    574:589:void run():309 -> run
+    590:615:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):61:61 -> run
+    590:615:void run():309 -> run
+    616:638:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):62:62 -> run
+    616:638:void run():309 -> run
+    639:648:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):63:63 -> run
+    639:648:void run():309 -> run
+    649:656:java.util.List com.gathin.files.EntryAdapter.rowsOf(android.content.Context,java.util.List):61:61 -> run
+    649:656:void run():309 -> run
+    657:673:void run():310:310 -> run
 com.gathin.files.FilesActivity$4$1 -> com.gathin.files.FilesActivity$4$1:
 # {"id":"sourceFile","fileName":"FilesActivity.java"}
-    0:9:void <init>(com.gathin.files.FilesActivity$4,boolean,java.util.List):309:309 -> <init>
+    0:9:void <init>(com.gathin.files.FilesActivity$4,boolean,java.util.List):310:310 -> <init>
       # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/gathin/files/FilesActivity$4;ZLjava/util/ArrayList;)V"}
-    0:12:void run():312:312 -> run
-    13:21:void run():313:313 -> run
-    22:31:void run():314:314 -> run
-    32:43:void run():315:315 -> run
+    0:12:void run():313:313 -> run
+    13:21:void run():314:314 -> run
+    22:31:void run():315:315 -> run
+    32:43:void run():316:316 -> run
 com.gathin.files.FilesActivity$5 -> com.gathin.files.FilesActivity$5:
 # {"id":"sourceFile","fileName":"FilesActivity.java"}
-    0:9:void <init>(com.gathin.files.FilesActivity,int,int):345:345 -> <init>
-    0:11:void run():348:348 -> run
-    12:17:void run():350:350 -> run
-    18:23:void run():351:351 -> run
-    24:34:void com.gathin.files.FilesActivity.focusPosition(int,int):345:345 -> run
-    24:34:void run():352 -> run
-    35:40:void run():354:354 -> run
+    0:9:void <init>(com.gathin.files.FilesActivity,int,int):346:346 -> <init>
+    0:11:void run():349:349 -> run
+    12:17:void run():351:351 -> run
+    18:23:void run():352:352 -> run
+    24:34:void com.gathin.files.FilesActivity.focusPosition(int,int):346:346 -> run
+    24:34:void run():353 -> run
+    35:40:void run():355:355 -> run
 com.gathin.files.FocusMemory -> com.gathin.files.FocusMemory:
 # {"id":"sourceFile","fileName":"FocusMemory.java"}
     java.util.Map map -> map
@@ -14691,6 +14718,10 @@ com.gathin.files.MimeKinds -> com.gathin.files.MimeKinds:
     0:5:void add(com.gathin.files.MimeKinds$Kind,java.lang.String,java.lang.String[]):17:17 -> add
     6:10:void add(com.gathin.files.MimeKinds$Kind,java.lang.String,java.lang.String[]):18:18 -> add
     11:19:void add(com.gathin.files.MimeKinds$Kind,java.lang.String,java.lang.String[]):19:19 -> add
+    0:6:java.lang.String extension(java.lang.String):54:54 -> extension
+    7:12:java.lang.String extension(java.lang.String):55:55 -> extension
+    13:23:java.lang.String extension(java.lang.String):56:56 -> extension
+    24:35:java.lang.String extension(java.lang.String):57:57 -> extension
 com.gathin.files.MimeKinds$Kind -> com.gathin.files.MimeKinds$Kind:
 # {"id":"sourceFile","fileName":"MimeKinds.java"}
     0:1:void <clinit>():9:9 -> <clinit>
@@ -14708,15 +14739,78 @@ com.gathin.files.MimeKinds$Kind -> com.gathin.files.MimeKinds$Kind:
     38:41:void <clinit>():9:9 -> <clinit>
     42:47:void <init>(java.lang.String,int):9:9 -> <clinit>
     42:47:void <clinit>():9 -> <clinit>
-    48:51:com.gathin.files.MimeKinds$Kind[] $values():9:9 -> <clinit>
-    48:51:void <clinit>():9 -> <clinit>
-    52:54:void <clinit>():9:9 -> <clinit>
+    48:49:void <clinit>():9:9 -> <clinit>
+    50:53:com.gathin.files.MimeKinds$Kind[] $values():9:9 -> <clinit>
+    50:53:void <clinit>():9 -> <clinit>
+    54:56:void <clinit>():9:9 -> <clinit>
     0:8:com.gathin.files.MimeKinds$Kind valueOf(java.lang.String):9:9 -> valueOf
     0:8:com.gathin.files.MimeKinds$Kind[] values():9:9 -> values
 com.gathin.files.NaturalOrder -> com.gathin.files.NaturalOrder:
 # {"id":"sourceFile","fileName":"NaturalOrder.java"}
 com.gathin.files.PermissionGate -> R8$$REMOVED$$CLASS$$26:
 # {"id":"sourceFile","fileName":"PermissionGate.java"}
+com.gathin.files.StreamProvider -> com.gathin.files.StreamProvider:
+# {"id":"sourceFile","fileName":"StreamProvider.java"}
+    0:3:void <init>():21:21 -> <init>
+    0:7:int delete(android.net.Uri,java.lang.String,java.lang.String[]):97:97 -> delete
+    0:7:java.lang.String getType(android.net.Uri):64:64 -> getType
+    8:21:java.lang.String com.gathin.files.MimeKinds.mimeOf(java.lang.String):66:66 -> getType
+    8:21:java.lang.String getType(android.net.Uri):64 -> getType
+    22:26:java.lang.String com.gathin.files.MimeKinds.mimeOf(java.lang.String):67:67 -> getType
+    22:26:java.lang.String getType(android.net.Uri):64 -> getType
+    0:7:android.net.Uri insert(android.net.Uri,android.content.ContentValues):92:92 -> insert
+    0:7:android.os.ParcelFileDescriptor openFile(android.net.Uri,java.lang.String):57:57 -> openFile
+    8:18:android.os.ParcelFileDescriptor openFile(android.net.Uri,java.lang.String):58:58 -> openFile
+    19:26:android.os.ParcelFileDescriptor openFile(android.net.Uri,java.lang.String):57:57 -> openFile
+    0:3:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String):74:74 -> query
+    4:13:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String):78:78 -> query
+    14:19:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String):79:79 -> query
+    20:22:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String):80:80 -> query
+    23:25:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String):81:81 -> query
+    26:40:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String):82:82 -> query
+    41:61:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String):83:83 -> query
+    62:66:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String):85:85 -> query
+    67:72:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String):86:86 -> query
+    0:3:java.io.File resolve(android.net.Uri):36:36 -> resolve
+    4:10:java.io.File resolve(android.net.Uri):37:37 -> resolve
+    11:16:java.io.File resolve(android.net.Uri):38:38 -> resolve
+    17:21:java.util.List rootPaths():44:44 -> resolve
+    17:21:java.io.File resolve(android.net.Uri):38 -> resolve
+    22:50:java.util.List rootPaths():45:45 -> resolve
+    22:50:java.io.File resolve(android.net.Uri):38 -> resolve
+    51:68:java.util.List rootPaths():47:47 -> resolve
+    51:68:java.io.File resolve(android.net.Uri):38 -> resolve
+    69:75:java.lang.String com.gathin.files.UriPaths.decode(java.lang.String):25:25 -> resolve
+    69:75:java.io.File com.gathin.files.UriPaths.resolve(java.lang.String,java.util.List):62 -> resolve
+    69:75:java.io.File resolve(android.net.Uri):38 -> resolve
+    76:90:java.lang.String com.gathin.files.UriPaths.decode(java.lang.String):28:28 -> resolve
+    76:90:java.io.File com.gathin.files.UriPaths.resolve(java.lang.String,java.util.List):62 -> resolve
+    76:90:java.io.File resolve(android.net.Uri):38 -> resolve
+    91:105:boolean com.gathin.files.UriPaths.isSafe(java.lang.String):37:37 -> resolve
+    91:105:java.lang.String com.gathin.files.UriPaths.decode(java.lang.String):32 -> resolve
+    91:105:java.io.File com.gathin.files.UriPaths.resolve(java.lang.String,java.util.List):62 -> resolve
+    91:105:java.io.File resolve(android.net.Uri):38 -> resolve
+    106:112:boolean com.gathin.files.UriPaths.isSafe(java.lang.String):38:38 -> resolve
+    106:112:java.lang.String com.gathin.files.UriPaths.decode(java.lang.String):32 -> resolve
+    106:112:java.io.File com.gathin.files.UriPaths.resolve(java.lang.String,java.util.List):62 -> resolve
+    106:112:java.io.File resolve(android.net.Uri):38 -> resolve
+    113:123:boolean com.gathin.files.UriPaths.isSafe(java.lang.String):39:39 -> resolve
+    113:123:java.lang.String com.gathin.files.UriPaths.decode(java.lang.String):32 -> resolve
+    113:123:java.io.File com.gathin.files.UriPaths.resolve(java.lang.String,java.util.List):62 -> resolve
+    113:123:java.io.File resolve(android.net.Uri):38 -> resolve
+    124:139:boolean com.gathin.files.UriPaths.isSafe(java.lang.String):40:40 -> resolve
+    124:139:java.lang.String com.gathin.files.UriPaths.decode(java.lang.String):32 -> resolve
+    124:139:java.io.File com.gathin.files.UriPaths.resolve(java.lang.String,java.util.List):62 -> resolve
+    124:139:java.io.File resolve(android.net.Uri):38 -> resolve
+    140:148:java.io.File com.gathin.files.UriPaths.resolve(java.lang.String,java.util.List):65:65 -> resolve
+    140:148:java.io.File resolve(android.net.Uri):38 -> resolve
+    149:159:java.io.File com.gathin.files.UriPaths.resolve(java.lang.String,java.util.List):66:66 -> resolve
+    149:159:java.io.File resolve(android.net.Uri):38 -> resolve
+    160:169:java.io.File com.gathin.files.UriPaths.resolve(java.lang.String,java.util.List):67:67 -> resolve
+    160:169:java.io.File resolve(android.net.Uri):38 -> resolve
+    170:177:java.io.File resolve(android.net.Uri):39:39 -> resolve
+    178:185:java.io.File resolve(android.net.Uri):37:37 -> resolve
+    0:7:int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]):102:102 -> update
 com.gathin.files.VolumeModel -> R8$$REMOVED$$CLASS$$27:
 # {"id":"sourceFile","fileName":"VolumeModel.java"}
 com.gathin.files.VolumeModel$Raw -> com.gathin.files.VolumeModel$Raw:
@@ -14805,23 +14899,23 @@ com.gathin.files.Volumes$1 -> com.gathin.files.Volumes$1:
     0:5:void <init>(com.gathin.files.Volumes,com.gathin.files.Volumes$Listener):57:57 -> <init>
       # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/gathin/files/Volumes$Listener;)V"}
     0:3:void onStateChanged(android.os.storage.StorageVolume):60:60 -> onStateChanged
-    4:8:void com.gathin.files.FilesActivity.onVolumesChanged():226:226 -> onStateChanged
+    4:8:void com.gathin.files.FilesActivity.onVolumesChanged():227:227 -> onStateChanged
     4:8:void onStateChanged(android.os.storage.StorageVolume):60 -> onStateChanged
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
-    9:14:void com.gathin.files.FilesActivity.onVolumesChanged():227:227 -> onStateChanged
+    9:14:void com.gathin.files.FilesActivity.onVolumesChanged():228:228 -> onStateChanged
     9:14:void onStateChanged(android.os.storage.StorageVolume):60 -> onStateChanged
-    15:22:int com.gathin.files.FilesActivity.begin():323:323 -> onStateChanged
-    15:22:void com.gathin.files.FilesActivity.loadRoots(boolean):278 -> onStateChanged
-    15:22:void com.gathin.files.FilesActivity.onVolumesChanged():228 -> onStateChanged
+    15:22:int com.gathin.files.FilesActivity.begin():324:324 -> onStateChanged
+    15:22:void com.gathin.files.FilesActivity.loadRoots(boolean):279 -> onStateChanged
+    15:22:void com.gathin.files.FilesActivity.onVolumesChanged():229 -> onStateChanged
     15:22:void onStateChanged(android.os.storage.StorageVolume):60 -> onStateChanged
-    23:27:int com.gathin.files.FilesActivity.begin():324:324 -> onStateChanged
-    23:27:void com.gathin.files.FilesActivity.loadRoots(boolean):278 -> onStateChanged
-    23:27:void com.gathin.files.FilesActivity.onVolumesChanged():228 -> onStateChanged
+    23:27:int com.gathin.files.FilesActivity.begin():325:325 -> onStateChanged
+    23:27:void com.gathin.files.FilesActivity.loadRoots(boolean):279 -> onStateChanged
+    23:27:void com.gathin.files.FilesActivity.onVolumesChanged():229 -> onStateChanged
     23:27:void onStateChanged(android.os.storage.StorageVolume):60 -> onStateChanged
-    28:40:void com.gathin.files.FilesActivity.loadRoots(boolean):279:279 -> onStateChanged
-    28:40:void com.gathin.files.FilesActivity.onVolumesChanged():228 -> onStateChanged
+    28:40:void com.gathin.files.FilesActivity.loadRoots(boolean):280:280 -> onStateChanged
+    28:40:void com.gathin.files.FilesActivity.onVolumesChanged():229 -> onStateChanged
     28:40:void onStateChanged(android.os.storage.StorageVolume):60 -> onStateChanged
-    41:50:void com.gathin.files.FilesActivity.onVolumesChanged():232:232 -> onStateChanged
+    41:50:void com.gathin.files.FilesActivity.onVolumesChanged():233:233 -> onStateChanged
     41:50:void onStateChanged(android.os.storage.StorageVolume):60 -> onStateChanged
 com.gathin.files.Volumes$Listener -> com.gathin.files.Volumes$Listener:
 # {"id":"sourceFile","fileName":"Volumes.java"}
@@ -15021,6 +15115,12 @@ kotlin.ResultKt -> kotlin.ResultKt:
     8:16:boolean androidx.core.os.BuildCompat.isAtLeastS():166 -> isAtLeastS
     17:29:boolean androidx.core.os.BuildCompat.isAtLeastPreReleaseCodename(java.lang.String,java.lang.String):57:57 -> isAtLeastS
     17:29:boolean androidx.core.os.BuildCompat.isAtLeastS():166 -> isAtLeastS
+    3:20:boolean com.gathin.files.UriPaths.isInside(java.lang.String,java.util.List):48:48 -> isInside
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/String;Ljava/util/ArrayList;)Z"}
+    21:27:boolean com.gathin.files.UriPaths.isInside(java.lang.String,java.util.List):49:49 -> isInside
+    28:35:boolean com.gathin.files.UriPaths.isInside(java.lang.String,java.util.List):50:50 -> isInside
+    36:48:boolean com.gathin.files.UriPaths.isInside(java.lang.String,java.util.List):51:51 -> isInside
+    49:56:boolean com.gathin.files.UriPaths.isInside(java.lang.String,java.util.List):52:52 -> isInside
     0:5:float androidx.core.widget.EdgeEffectCompat.onPullDistance(android.widget.EdgeEffect,float,float):239:239 -> onPullDistance
     6:10:float androidx.core.widget.EdgeEffectCompat.onPullDistance(android.widget.EdgeEffect,float,float):240:240 -> onPullDistance
     11:14:void androidx.core.widget.EdgeEffectCompat.onPull(android.widget.EdgeEffect,float,float):195:195 -> onPullDistance
@@ -15063,6 +15163,26 @@ kotlin.ResultKt -> kotlin.ResultKt:
     33:35:void com.gathin.roman.RomanLook.text(android.widget.TextView,float,float,int):36:36 -> text
     36:39:void com.gathin.roman.RomanLook.text(android.widget.TextView,float,float,int):37:37 -> text
     0:9:void throwOnFailure(java.lang.Object):132:132 -> throwOnFailure
+    0:6:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):40:40 -> viewIntent
+    7:8:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):41:41 -> viewIntent
+    9:25:android.net.Uri com.gathin.files.StreamProvider.uriFor(java.lang.String):24:24 -> viewIntent
+    9:25:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):41 -> viewIntent
+    26:43:java.lang.String com.gathin.files.UriPaths.encode(java.lang.String):20:20 -> viewIntent
+    26:43:android.net.Uri com.gathin.files.StreamProvider.uriFor(java.lang.String):25 -> viewIntent
+    26:43:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):41 -> viewIntent
+    44:47:android.net.Uri com.gathin.files.StreamProvider.uriFor(java.lang.String):25:25 -> viewIntent
+    44:47:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):41 -> viewIntent
+    48:59:android.net.Uri com.gathin.files.StreamProvider.uriFor(java.lang.String):26:26 -> viewIntent
+    48:59:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):41 -> viewIntent
+    60:63:android.net.Uri com.gathin.files.StreamProvider.uriFor(java.lang.String):27:27 -> viewIntent
+    60:63:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):41 -> viewIntent
+    64:72:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):41:41 -> viewIntent
+    73:86:java.lang.String com.gathin.files.MimeKinds.mimeOf(java.lang.String):66:66 -> viewIntent
+    73:86:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):41 -> viewIntent
+    87:88:java.lang.String com.gathin.files.MimeKinds.mimeOf(java.lang.String):67:67 -> viewIntent
+    87:88:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):41 -> viewIntent
+    89:92:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):41:41 -> viewIntent
+    93:96:android.content.Intent com.gathin.files.Opener.viewIntent(java.lang.String):42:42 -> viewIntent
 kotlin.Unit -> kotlin.Unit:
 # {"id":"sourceFile","fileName":"Unit.kt"}
     2:4:void <init>():0:0 -> <clinit>

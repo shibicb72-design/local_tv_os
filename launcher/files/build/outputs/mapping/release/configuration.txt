@@ -220,6 +220,7 @@
 # The proguard configuration file for the following section is C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\aapt_proguard_file\release\processReleaseResources\aapt_rules.txt
 -keep class androidx.core.app.CoreComponentFactory { <init>(); }
 -keep class com.gathin.files.FilesActivity { <init>(); }
+-keep class com.gathin.files.StreamProvider { <init>(); }
 
 # End of content from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\build\intermediates\aapt_proguard_file\release\processReleaseResources\aapt_rules.txt
 # The proguard configuration file for the following section is <unknown>

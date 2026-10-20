@@ -2505,7 +2505,10 @@ com.gathin.files.FocusMemory:
 com.gathin.files.MimeKinds:
     public static final java.lang.String UNKNOWN_MIME
     private void <init>()
-    public static java.lang.String mimeOf(java.lang.String)
+com.gathin.files.Opener:
+    static final java.lang.String EXTRA_PATH
+    static final java.lang.String PLAYER_PACKAGE
+    private void <init>()
 com.gathin.files.PermissionGate:
     private void <init>()
 com.gathin.files.R$color
@@ -2513,6 +2516,9 @@ com.gathin.files.R$drawable
 com.gathin.files.R$string
 com.gathin.files.R$style
 com.gathin.files.R
+com.gathin.files.UriPaths:
+    public static final java.lang.String AUTHORITY
+    private void <init>()
 com.gathin.files.VolumeModel:
     static final java.lang.String INTERNAL_LABEL
     static final java.lang.String STATE_MOUNTED
@@ -5371,15 +5377,20 @@ com.gathin.files.FocusMemory$1:
 com.gathin.files.FocusMemory:
     public static com.gathin.files.FocusMemory$Spot recall()
     public static void remember()
-com.gathin.files.MimeKinds$Kind:
-    public static final enum com.gathin.files.MimeKinds$Kind OTHER
+com.gathin.files.MimeKinds:
+    public static com.gathin.files.MimeKinds$Kind kindOf(java.lang.String)
+    public static java.lang.String mimeOf(java.lang.String)
 com.gathin.files.NaturalOrder:
     public static final com.gathin.files.NaturalOrder INSTANCE
     static void <clinit>()
     public final synthetic bridge int compare(java.lang.Object,java.lang.Object)
     public static boolean isDigit(char)
     public static int runEnd(java.lang.String,int)
+com.gathin.files.Opener:
+    public static boolean start(android.content.Context,android.content.Intent)
 com.gathin.files.PermissionGate
+com.gathin.files.StreamProvider:
+    public static java.util.List rootPaths()
 com.gathin.files.VolumeModel$Root:
     public final boolean removable
 com.gathin.files.VolumeModel

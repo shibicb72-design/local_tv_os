@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.gathin.files.UriPathsTest" tests="6" skipped="2" failures="0" errors="0" timestamp="2026-10-20T23:13:55" hostname="ZAZBALL500" time="0.022">
+  <properties/>
+  <testcase name="resolveRejectsOutsideMissingAndDirectories" classname="com.gathin.files.UriPathsTest" time="0.011"/>
+  <testcase name="resolveRejectsSymlinkThatEscapesTheRoot" classname="com.gathin.files.UriPathsTest" time="0.007">
+    <skipped/>
+  </testcase>
+  <testcase name="isInsideMatchesWholeComponents" classname="com.gathin.files.UriPathsTest" time="0.001"/>
+  <testcase name="decodeRejectsGarbageAndUnsafePaths" classname="com.gathin.files.UriPathsTest" time="0.0"/>
+  <testcase name="roundTripUnicodeAndSpaces" classname="com.gathin.files.UriPathsTest" time="0.002"/>
+  <testcase name="resolveAcceptsFileInsideRoot" classname="com.gathin.files.UriPathsTest" time="0.0">
+    <skipped/>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

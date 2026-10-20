@@ -204,8 +204,9 @@ public final class FilesActivity extends Activity implements EntryAdapter.OnRowC
         } else if (row.isDir) {
             rememberFocus();
             open(row.path, true);
+        } else {
+            Opener.open(this, row.path);
         }
-        // Opening a file is F8.
     }
 
     @Override

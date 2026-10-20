@@ -84,7 +84,7 @@
 48    </queries>
 49
 50    <application
-50-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:37:5-56:19
+50-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:37:5-60:19
 51        android:allowBackup="false"
 51-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:38:9-36
 52        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
@@ -121,7 +121,16 @@
 68            </intent-filter>
 69        </activity>
 70
-71        <!-- StreamProvider is added in F8. -->
-72    </application>
-73
-74</manifest>
+71        <provider
+71-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:55:9-59:50
+72            android:name="com.gathin.files.StreamProvider"
+72-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:56:13-43
+73            android:authorities="com.gathin.files.stream"
+73-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:57:13-58
+74            android:exported="false"
+74-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:58:13-37
+75            android:grantUriPermissions="true" />
+75-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:59:13-47
+76    </application>
+77
+78</manifest>
