@@ -60,11 +60,11 @@ visible and the ivory text readable.
 | Relief shadow | `#80000000` | 1 dp offset under gold strokes and carved text |
 | Travertine deep | `#2E261E` | Dark strata |
 | Travertine base | `#4B3F32` | Body |
-| Travertine light | `#6A5A47` | Light strata |
+| Travertine light | `#5F5140` | Light strata (R2: was `#6A5A47`, -10% so gold keeps 3:1 over the header) |
 | Travertine vein | `#8A775F` | Faint cross veins (max 18% mix) |
 | Travertine pit | `#1F1914` | Pores |
-| Marble base | `#4E4B46` | Body (dimmed Luna/Carrara) |
-| Marble light | `#66625B` | Clouding |
+| Marble base | `#4A4742` | Body (dimmed Luna/Carrara; R2: was `#4E4B46`) |
+| Marble light | `#5C5851` | Clouding (R2: was `#66625B`; marble veins also fade with `smoothstep(0.18, 0.38, v)` instead of 0.12..0.32, same reason) |
 | Marble vein | `#A39C90` | Veins (max 55% mix) |
 
 Gold ramp derivation (pure, unit tested): `light = round(c + (255 − c) × 0.35)`, `deep = round(c × 0.68)` per

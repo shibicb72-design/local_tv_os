@@ -99,6 +99,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean romanDate;
     /** Roman look v2, or null for the old look (config.xml, style). */
     private RomanStyle roman;
+    /** Alpha the app-colour glow fades up to: 1, or 0.8 under roman so it warms the stone without flooding it. */
+    private float ambientAlpha = 1f;
     private String vpnApp;
     private SpringAnimation springX, springY;
     private float glassTargetX, glassTargetY;
@@ -201,6 +203,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         root = findViewById(R.id.root);
         root.setBackgroundColor(cfg.backgroundColor);
         if (cfg.wallpaper != null) showWallpaper(cfg.wallpaper);
+        else if (cfg.roman != null) showStone(cfg.roman, cfg.backgroundColor);
         glass = findViewById(R.id.glass);
         ambient = findViewById(R.id.ambient);
         heroName = findViewById(R.id.heroName);
@@ -210,6 +213,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         shamsi = cfg.shamsiDate;
         romanDate = cfg.romanDate;
         roman = cfg.roman;
+        if (roman != null) ambientAlpha = 0.8f;
         if (shamsi || romanDate) {
             shamsiDate.setVisibility(View.VISIBLE);
             TextView date = findViewById(R.id.date);
@@ -367,6 +371,40 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         } catch (Exception | OutOfMemoryError e) {
             // A bad or huge picture must never take the home screen down; the plain colour stays.
         }
+    }
+
+    /**
+     * The Roman look's stone wall behind everything. The root shows the stone's base colour at once (no black
+     * flash); the picture is made on a background thread (StoneCache) and fades in over it. The window and
+     * root backgrounds are dropped only when the stone covers them, so the compositor skips two fills.
+     */
+    private void showStone(RomanStyle style, int backgroundColor) {
+        if (RomanStyle.STONE_NONE.equals(style.stone)) {
+            // No texture: the theme's background colour, or stone ink when it was left at black.
+            if (backgroundColor == 0xFF000000) root.setBackgroundColor(RomanStyle.STONE_INK);
+            return;
+        }
+        root.setBackgroundColor(RomanStyle.STONE_MARBLE.equals(style.stone)
+                ? RomanStyle.MARBLE_BASE : RomanStyle.TRAVERTINE_BASE);
+        final boolean fade = !reducedMotion;
+        StoneCache.load(this, style, bmp -> {
+            if (isFinishing() || isDestroyed()) return;
+            ImageView wall = new ImageView(this);
+            wall.setScaleType(ImageView.ScaleType.FIT_XY);
+            wall.setImageBitmap(bmp);
+            wall.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            root.addView(wall, 0, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            Runnable covered = () -> {
+                getWindow().setBackgroundDrawable(null);
+                root.setBackground(null);
+            };
+            if (fade) {
+                wall.setAlpha(0f);
+                wall.animate().alpha(1f).setDuration(200).withEndAction(covered).start();
+            } else {
+                covered.run();
+            }
+        });
     }
 
     /**
@@ -570,7 +608,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             setAmbient(color);
             if (!heroShown) {
                 ambient.setAlpha(0f);
-                ambient.animate().alpha(1f).setDuration(160).start();
+                ambient.animate().alpha(ambientAlpha).setDuration(160).start();
                 heroShown = true;
             }
             return;
@@ -582,7 +620,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             heroName.setTranslationX(0f);
             heroName.animate().alpha(1f).setDuration(260).start();
             setAmbient(color);
-            ambient.animate().alpha(1f).setDuration(600).start();
+            ambient.animate().alpha(ambientAlpha).setDuration(600).start();
             heroShown = true;
         } else if (changed) {
             heroName.animate().alpha(0f).translationX(-12 * density).setDuration(120).withEndAction(() -> {
@@ -594,7 +632,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (color != ambientColor) {
                 ambient.animate().alpha(0.35f).setDuration(200).withEndAction(() -> {
                     setAmbient(color);
-                    ambient.animate().alpha(1f).setDuration(500).start();
+                    ambient.animate().alpha(ambientAlpha).setDuration(500).start();
                 }).start();
             }
         } else {
@@ -612,8 +650,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (color == ambientColor && ambient.getBackground() != null) return;
         ambientColor = color;
         int c = color & 0x00FFFFFF;
-        int w = 480;
-        int h = 270;
+        // Roman: 240x135, a blurred gradient shows no difference and saves 0.78 MB.
+        int w = roman != null ? 240 : 480;
+        int h = roman != null ? 135 : 270;
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);

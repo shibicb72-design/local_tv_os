@@ -23,11 +23,11 @@ final class RomanStyle {
     static final int HERO_SHADOW = 0xB3000000;
     static final int TRAVERTINE_DEEP = 0xFF2E261E;
     static final int TRAVERTINE_BASE = 0xFF4B3F32;
-    static final int TRAVERTINE_LIGHT = 0xFF6A5A47;
+    static final int TRAVERTINE_LIGHT = 0xFF5F5140;
     static final int TRAVERTINE_VEIN = 0xFF8A775F;
     static final int TRAVERTINE_PIT = 0xFF1F1914;
-    static final int MARBLE_BASE = 0xFF4E4B46;
-    static final int MARBLE_LIGHT = 0xFF66625B;
+    static final int MARBLE_BASE = 0xFF4A4742;
+    static final int MARBLE_LIGHT = 0xFF5C5851;
     static final int MARBLE_VEIN = 0xFFA39C90;
 
     static final String STONE_TRAVERTINE = "travertine";
