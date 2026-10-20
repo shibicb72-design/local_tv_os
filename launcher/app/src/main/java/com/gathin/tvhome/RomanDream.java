@@ -1,6 +1,5 @@
 package com.gathin.tvhome;
 
-import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,23 +13,34 @@ import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.service.dreams.DreamService;
+import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Choreographer;
+import android.view.Gravity;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * Roman screensaver (docs/plans/roman-theme-v2.md, sections 8 and 9): the cached stone wall, warmed to red,
  * panning very slowly behind gold laurel sprays, a legion standard, thin gold rules, the time in Cinzel and the
- * Roman and Gregorian dates, under a porphyry vignette. Select it with
- * {@code settings put secure screensaver_components} {@link RomanDreamMath#COMPONENT}. One bitmap (the shared
- * 960x540 stone), no wake lock, one slow animator, and a minute-tick receiver for the clock. If the stone
- * cannot be loaded the dark porphyry colour stays.
+ * Roman and Gregorian dates, under a porphyry vignette, with a Roman quote fading in and out every few seconds.
+ * Select it with {@code settings put secure screensaver_components} {@link RomanDreamMath#COMPONENT}. One bitmap
+ * (the shared 960x540 stone), no wake lock, one throttled frame callback that only changes render-node
+ * properties (stone translation, quote alpha), and a minute-tick receiver for the clock. If the stone cannot be
+ * loaded the dark porphyry colour stays; if the quotes cannot be read there is simply no quote line.
  */
 public class RomanDream extends DreamService {
 
@@ -40,9 +50,46 @@ public class RomanDream extends DreamService {
 
     private ImageView stone;
     private Overlay overlay;
-    private ValueAnimator pan;
+    private TextView quote;
+    private CharSequence[] lines;   // "text — author", author in gold; built once at load
+    private int quoteStart, shownQuote = -1;
+    private float shownAlpha = -1f;
+    private float travelX, travelY;
+    private long t0Nanos = -1;
+    private Choreographer choreographer;
     private boolean receiverOn;
     private boolean dead;
+
+    /** The one frame loop: no allocation, no invalidate, re-posted every {@link RomanDreamMath#FRAME_MS}. */
+    private final Choreographer.FrameCallback frame = new Choreographer.FrameCallback() {
+        @Override
+        public void doFrame(long frameTimeNanos) {
+            if (dead || stone == null) return;
+            if (t0Nanos < 0) t0Nanos = frameTimeNanos;
+            long t = (frameTimeNanos - t0Nanos) / 1_000_000L;
+            if (travelX == 0f && stone.getWidth() > 0) {
+                travelX = RomanDreamMath.travel(stone.getWidth(), RomanDreamMath.SCALE);
+                travelY = RomanDreamMath.travel(stone.getHeight(), RomanDreamMath.SCALE);
+            }
+            stone.setTranslationX(RomanDreamMath.offset(RomanDreamMath.ease(
+                    RomanDreamMath.pingPong(t, RomanDreamMath.LEG_X_MS)), travelX));
+            stone.setTranslationY(RomanDreamMath.offset(RomanDreamMath.ease(
+                    RomanDreamMath.pingPong(t, RomanDreamMath.LEG_Y_MS)), travelY));
+            if (lines != null && quote != null) {
+                int i = QuoteClock.index(t, quoteStart, lines.length);
+                if (i != shownQuote) {
+                    shownQuote = i;
+                    quote.setText(lines[i]);
+                }
+                float a = QuoteClock.alpha(t);
+                if (a != shownAlpha) {
+                    shownAlpha = a;
+                    quote.setAlpha(a);
+                }
+            }
+            choreographer.postFrameCallbackDelayed(this, RomanDreamMath.FRAME_MS);
+        }
+    };
 
     private final BroadcastReceiver tick = new BroadcastReceiver() {
         @Override
@@ -80,9 +127,58 @@ public class RomanDream extends DreamService {
         root.addView(stone, new FrameLayout.LayoutParams(-1, -1));
         overlay = new Overlay(this, style);
         root.addView(overlay, new FrameLayout.LayoutParams(-1, -1));
+        loadQuotes(root, style);
         setContentView(root);
 
         if (!RomanStyle.STONE_NONE.equals(style.stone)) loadStone(style);
+    }
+
+    /** Reads assets/quotes.json (about 12 KB) and adds the quote line; any failure just means no quotes. */
+    private void loadQuotes(FrameLayout root, RomanStyle style) {
+        try {
+            ByteArrayOutputStream buf = new ByteArrayOutputStream(16 * 1024);
+            try (InputStream in = getAssets().open("quotes.json")) {
+                byte[] chunk = new byte[4096];
+                int n;
+                while ((n = in.read(chunk)) > 0) buf.write(chunk, 0, n);
+            }
+            List<String[]> all = Quotes.parse(new String(buf.toByteArray(), StandardCharsets.UTF_8));
+            if (all.isEmpty()) return;
+            lines = new CharSequence[all.size()];
+            for (int i = 0; i < lines.length; i++) {
+                String[] q = all.get(i);
+                SpannableString s = new SpannableString(Quotes.display(q));
+                s.setSpan(new ForegroundColorSpan(style.goldLight), Quotes.authorStart(q), s.length(), 0);
+                lines[i] = s;
+            }
+            quoteStart = new Random().nextInt(lines.length);
+
+            float dp = getResources().getDisplayMetrics().density;
+            int w = getResources().getDisplayMetrics().widthPixels;
+            int h = getResources().getDisplayMetrics().heightPixels;
+            quote = new TextView(this);
+            try {
+                quote.setTypeface(RomanLook.typeface(this));
+            } catch (Exception e) {
+                Log.w(TAG, "Cinzel unavailable for quotes, system font", e);
+            }
+            quote.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, 20 * dp);
+            quote.setTextColor(RomanStyle.IVORY);
+            quote.setGravity(Gravity.CENTER);
+            quote.setMaxLines(2);
+            quote.setEllipsize(TextUtils.TruncateAt.END);
+            quote.setFocusable(false);
+            quote.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            quote.setAlpha(0f);
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams((int) (w * 0.7f), (int) (52 * dp),
+                    Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+            lp.topMargin = (int) (h * 0.88f - 26 * dp);   // centred at 0.88h
+            root.addView(quote, lp);
+        } catch (Exception | OutOfMemoryError e) {
+            Log.w(TAG, "quotes unavailable, no quote line", e);
+            lines = null;
+            quote = null;
+        }
     }
 
     private void loadStone(RomanStyle style) {
@@ -91,7 +187,6 @@ public class RomanDream extends DreamService {
                 if (dead || stone == null || bmp == null || bmp.isRecycled()) return;
                 stone.setImageBitmap(bmp);
                 stone.animate().alpha(1f).setDuration(1500).start();
-                stone.post(this::startPan);
             });
         } catch (Exception | OutOfMemoryError e) {
             Log.w(TAG, "stone failed, dark colour stays", e);
@@ -107,26 +202,12 @@ public class RomanDream extends DreamService {
         f.addAction(Intent.ACTION_TIMEZONE_CHANGED);
         registerReceiver(tick, f);
         receiverOn = true;
-    }
-
-    /** One animator for the whole dream: the stone moves from one corner to the other and back, over minutes. */
-    private void startPan() {
-        if (dead || stone == null || pan != null) return;
-        final float tx = RomanDreamMath.travel(stone.getWidth(), RomanDreamMath.SCALE);
-        final float ty = RomanDreamMath.travel(stone.getHeight(), RomanDreamMath.SCALE);
-        pan = ValueAnimator.ofFloat(0f, 1f);
-        pan.setDuration(RomanDreamMath.PAN_MS);
-        pan.setInterpolator(new LinearInterpolator());
-        pan.setRepeatCount(ValueAnimator.INFINITE);
-        pan.setRepeatMode(ValueAnimator.REVERSE);
-        pan.addUpdateListener(a -> {
-            // The wall moves about 1 px a second; snapping to half pixels redraws it a few times a second, not 60.
-            if (stone == null) return;
-            float fr = (float) a.getAnimatedValue();
-            stone.setTranslationX(RomanDreamMath.snap(RomanDreamMath.offset(fr, tx), RomanDreamMath.PAN_STEP_PX));
-            stone.setTranslationY(RomanDreamMath.snap(RomanDreamMath.offset(fr, ty), RomanDreamMath.PAN_STEP_PX));
-        });
-        pan.start();
+        if (!dead) {
+            // The wall drifts about 3 px a second and a quote fades every 6 s; both only touch render-node
+            // properties, so a throttled frame callback is all the motion the dream needs.
+            choreographer = Choreographer.getInstance();
+            choreographer.postFrameCallback(frame);
+        }
     }
 
     @Override
@@ -142,11 +223,16 @@ public class RomanDream extends DreamService {
     }
 
     /**
-     * Stops the animator and the receiver and lets go of the stone. The bitmap itself is the launcher's shared
-     * cached one, so it is only dereferenced here, not recycled: Home may be showing the same bitmap.
+     * Stops the frame loop and the receiver and lets go of the stone and the quotes. The bitmap itself is the
+     * launcher's shared cached one, so it is only dereferenced here, not recycled: Home may be showing the same
+     * bitmap.
      */
     private void teardown() {
         dead = true;
+        if (choreographer != null) {
+            choreographer.removeFrameCallback(frame);
+            choreographer = null;
+        }
         if (receiverOn) {
             receiverOn = false;
             try {
@@ -155,10 +241,6 @@ public class RomanDream extends DreamService {
                 // already gone
             }
         }
-        if (pan != null) {
-            pan.cancel();
-            pan = null;
-        }
         if (stone != null) {
             stone.animate().cancel();
             stone.setImageDrawable(null);
@@ -166,6 +248,8 @@ public class RomanDream extends DreamService {
         // Nothing of the dream stays reachable from this service (the system keeps the instance a while).
         stone = null;
         overlay = null;
+        quote = null;
+        lines = null;
         // Heap garbage from the dream goes now rather than at the next trim.
         Runtime.getRuntime().gc();
     }

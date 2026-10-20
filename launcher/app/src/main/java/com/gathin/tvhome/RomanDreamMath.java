@@ -15,11 +15,11 @@ final class RomanDreamMath {
     static final String COMPONENT = "com.gathin.tvhome/.RomanDream";
     /** The stone is drawn this much larger than the screen, so panning never shows an edge. */
     static final float SCALE = 1.12f;
-    /** One way across the pan; the animator reverses at the end. */
-    static final long PAN_MS = 90_000L;
-
-    /** Pan translations are snapped to this many px, so the wall is redrawn only when it really moves. */
-    static final float PAN_STEP_PX = 0.5f;
+    /** Gap between frame callbacks (about 16 fps); only render-node properties change per frame. */
+    static final long FRAME_MS = 60L;
+    /** One way across the pan, per axis; different lengths make the wall drift in a slow Lissajous. */
+    static final long LEG_X_MS = 71_000L;
+    static final long LEG_Y_MS = 47_000L;
 
     /** Legend on the legion standard (Legio XII Fulminata bears the thunderbolt); change it to switch legions. */
     static final String LEGION = "LEG XII FVLMINATA";
@@ -53,9 +53,10 @@ final class RomanDreamMath {
         return (2f * f - 1f) * travel;
     }
 
-    /** {@code value} rounded to a multiple of {@code step}; unchanged when {@code step <= 0}. */
-    static float snap(float value, float step) {
-        return step <= 0f ? value : Math.round(value / step) * step;
+    /** Smoothstep 0..1 (clamped), so the pan reverses softly instead of with a jerk. */
+    static float ease(float f) {
+        float x = Math.min(1f, Math.max(0f, f));
+        return x * x * (3f - 2f * x);
     }
 
     /** Fraction 0..1 of a ping-pong animation that goes 0 to 1 and back, one way taking {@code legMs}. */
