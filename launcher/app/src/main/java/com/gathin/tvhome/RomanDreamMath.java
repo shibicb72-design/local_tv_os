@@ -13,6 +13,9 @@ final class RomanDreamMath {
     /** One way across the pan; the animator reverses at the end. */
     static final long PAN_MS = 90_000L;
 
+    /** Pan translations are snapped to this many px, so the wall is redrawn only when it really moves. */
+    static final float PAN_STEP_PX = 0.5f;
+
     private RomanDreamMath() {
     }
 
@@ -25,6 +28,11 @@ final class RomanDreamMath {
     static float offset(float fraction, float travel) {
         float f = Math.min(1f, Math.max(0f, fraction));
         return (2f * f - 1f) * travel;
+    }
+
+    /** {@code value} rounded to a multiple of {@code step}; unchanged when {@code step <= 0}. */
+    static float snap(float value, float step) {
+        return step <= 0f ? value : Math.round(value / step) * step;
     }
 
     /** Fraction 0..1 of a ping-pong animation that goes 0 to 1 and back, one way taking {@code legMs}. */

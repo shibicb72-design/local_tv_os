@@ -236,6 +236,26 @@ Tie: a 6x3 dp round rect at (cx, cy + R).
 Rules: at most one full-screen-sized bitmap (the stone), no ARGB_8888 above 240x135 added, no `setLayerType` on
 anything full-screen, no `int[w*h]` buffers (rows only), no continuous animation, no `Handler` loops.
 
+#### 2.1.1 Screensaver (RomanDream) memory
+
+Measured on the projector (`dumpsys meminfo com.gathin.tvhome`, total PSS): 51.8 MB fresh start; 70.0 MB right
+after the dream ran and HOME ended it (the dream shares the launcher process); 60.4 MB 30 s later. The dream
+already used the one shared hardware stone (no variants, no software copies, no extra bitmaps), so the rise is
+the dream window's renderer state plus heap garbage that is only released at the next trim/GC. Changes:
+
+- No config re-parse: the dream takes the style from `StoneCache.lastStyle()` (the launcher's), falling back to
+  `Config.load` only if the launcher never loaded the stone. Saves the JSON parse garbage and a duplicate stone key.
+- The pan no longer redraws 60 times a second: the wall moves ~1 px/s, so translations are snapped to 0.5 px
+  (`RomanDreamMath.snap`), about 460 redraws per 90 s leg instead of 5400. That also stops the full-screen scene,
+  including the blurred time shadow, being re-rasterised every frame, which is what keeps GPU caches warm.
+- `teardown()` nulls `stone` and `overlay` (the system keeps the service instance for a while; animator listener
+  and receiver are already released) and calls `Runtime.gc()` so heap garbage goes at once, not 30 s later.
+- The shared stone bitmap is still never recycled by the dream; Home may be showing it.
+
+Expected: peak lower (fewer frames drawn), and the post-dream value closer to the fresh start. Not yet
+re-measured: repeat the three `dumpsys meminfo` readings on the device. If still above 60 MB, the next lever
+is the dream's time shadow (`setShadowLayer`), then reflection-free `trimMemory` from `onDreamingStopped`.
+
 ### 2.2 APK (release ≈ 283 KB + 21 KB font ≈ 304 KB; CI hard limit 400 KB)
 
 | Slice | Content | Budget (compressed, after R8) |

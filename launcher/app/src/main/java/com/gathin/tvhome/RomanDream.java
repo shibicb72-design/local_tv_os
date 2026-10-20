@@ -55,9 +55,9 @@ public class RomanDream extends DreamService {
         setFullscreen(true);
         setScreenBright(false);
 
-        RomanStyle style = null;
+        RomanStyle style = StoneCache.lastStyle();   // the launcher already parsed the config for the shared stone
         try {
-            style = Config.load(this).roman;
+            if (style == null) style = Config.load(this).roman;
         } catch (Exception e) {
             Log.w(TAG, "config unreadable, default stone", e);
         }
@@ -96,7 +96,7 @@ public class RomanDream extends DreamService {
     @Override
     public void onDreamingStarted() {
         super.onDreamingStarted();
-        overlay.refresh();
+        if (overlay != null) overlay.refresh();
         IntentFilter f = new IntentFilter(Intent.ACTION_TIME_TICK);
         f.addAction(Intent.ACTION_TIME_CHANGED);
         f.addAction(Intent.ACTION_TIMEZONE_CHANGED);
@@ -115,9 +115,11 @@ public class RomanDream extends DreamService {
         pan.setRepeatCount(ValueAnimator.INFINITE);
         pan.setRepeatMode(ValueAnimator.REVERSE);
         pan.addUpdateListener(a -> {
+            // The wall moves about 1 px a second; snapping to half pixels redraws it a few times a second, not 60.
+            if (stone == null) return;
             float fr = (float) a.getAnimatedValue();
-            stone.setTranslationX(RomanDreamMath.offset(fr, tx));
-            stone.setTranslationY(RomanDreamMath.offset(fr, ty));
+            stone.setTranslationX(RomanDreamMath.snap(RomanDreamMath.offset(fr, tx), RomanDreamMath.PAN_STEP_PX));
+            stone.setTranslationY(RomanDreamMath.snap(RomanDreamMath.offset(fr, ty), RomanDreamMath.PAN_STEP_PX));
         });
         pan.start();
     }
@@ -156,6 +158,11 @@ public class RomanDream extends DreamService {
             stone.animate().cancel();
             stone.setImageDrawable(null);
         }
+        // Nothing of the dream stays reachable from this service (the system keeps the instance a while).
+        stone = null;
+        overlay = null;
+        // Heap garbage from the dream goes now rather than at the next trim.
+        Runtime.getRuntime().gc();
     }
 
     /** Vignette, gold laurel and rules, the time and the Roman date. All shapes are built in onSizeChanged. */

@@ -33,11 +33,17 @@ final class StoneCache {
 
     private static Bitmap last;
     private static String lastKey;
+    private static RomanStyle lastStyle;
     private static boolean inFlight;
     /** Whoever asked last: after an activity recreation the new activity gets the result, not the dead one. */
     private static Consumer<Bitmap> pending;
 
     private StoneCache() {
+    }
+
+    /** The style the shared stone was built for, or null before the first load; lets the dream skip re-reading the config. */
+    static RomanStyle lastStyle() {
+        return last != null && !last.isRecycled() ? lastStyle : null;
     }
 
     /** Calls {@code onReady} on the main thread with the stone; never calls it when something went wrong. */
@@ -69,6 +75,7 @@ final class StoneCache {
                 }
                 last = bmp;
                 lastKey = key;
+                lastStyle = style;
                 Consumer<Bitmap> cb = pending;
                 pending = null;
                 if (cb != null) cb.accept(bmp);

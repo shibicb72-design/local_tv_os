@@ -21,6 +21,23 @@ public class RomanDreamMathTest {
     }
 
     @Test
+    public void snapRoundsToTheStepAndIgnoresNoStep() {
+        assertEquals(1.5f, RomanDreamMath.snap(1.6f, 0.5f), 1e-6f);
+        assertEquals(-1.0f, RomanDreamMath.snap(-1.2f, 0.5f), 1e-6f);
+        assertEquals(0f, RomanDreamMath.snap(0.2f, 0.5f), 1e-6f);
+        assertEquals(1.23f, RomanDreamMath.snap(1.23f, 0f), 0f);
+        // one 90 s leg across +-115 px changes the snapped value ~460 times, not ~5400 (60 fps)
+        int changes = 0;
+        float prev = Float.NaN;
+        for (int f = 0; f <= 5400; f++) {
+            float v = RomanDreamMath.snap(RomanDreamMath.offset(f / 5400f, 115.2f), RomanDreamMath.PAN_STEP_PX);
+            if (v != prev) changes++;
+            prev = v;
+        }
+        assertTrue(changes < 500);
+    }
+
+    @Test
     public void offsetRunsFromMinusToPlusTravelAndClamps() {
         assertEquals(-100f, RomanDreamMath.offset(0f, 100f), 1e-4f);
         assertEquals(0f, RomanDreamMath.offset(0.5f, 100f), 1e-4f);
