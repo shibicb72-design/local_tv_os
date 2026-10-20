@@ -15,7 +15,7 @@ powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost 192.168.1.50 th
 | `default/` | The built-in look written out as JSON, as a starting point for your own |
 | `aurora/` | A dark aurora wallpaper (teal and violet on navy, darker at the bottom) with a matching background colour |
 | `six-columns/` | Six smaller tiles per row and one grid row visible under the dock |
-| `xgimi-s-max/` | For the XGIMI HORIZON S Max (XK03H): YouTube, Prime Video and Netflix in the dock, HDMI opened through XGIMI's own player (`com.xgimi.action.hdmiPlayer`), no Live TV, factory and screensaver apps hidden |
+| `xgimi-s-max/` | For the XGIMI HORIZON S Max (XK03H): YouTube, Prime Video and Netflix in the dock, HDMI opened through XGIMI's own player (`com.xgimi.action.hdmiPlayer`), no Live TV, factory and screensaver apps hidden; the Roman look is on (serif, Roman date, gold accent, laurel) |
 
 ## Keys
 
@@ -38,6 +38,10 @@ is ignored, and a file that doesn't parse is ignored as a whole, so a theme can 
 | `show_home_settings_shortcut` | bool | The "Default home" tile, where the TV has a home picker |
 | `background_color` | `#RRGGBB` | Colour behind everything; black by default |
 | `wallpaper` | bool | Show `wallpaper.jpg` from the theme folder (`true`), or ignore it (`false`) |
+| `font` | string | `"serif"` sets the header texts (clock, date, greeting, app name) in the system serif face; anything else keeps Outfit. Nothing is bundled |
+| `roman_date` | bool | Date line in Roman numerals, e.g. `XX Octobris MMXXVI`; replaces the Shamsi line when both are on |
+| `accent_color` | `#RRGGBB` | Colour of the greeting line and the laurel; unset keeps the default white look |
+| `laurel` | bool | A small laurel wreath beside the clock, tinted with `accent_color` |
 
 ## Wallpapers
 

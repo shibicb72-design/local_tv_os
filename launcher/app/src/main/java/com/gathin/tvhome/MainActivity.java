@@ -16,6 +16,7 @@ import android.graphics.Paint;
 import android.graphics.RadialGradient;
 import android.graphics.Rect;
 import android.graphics.Shader;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.media.tv.TvContract;
@@ -95,6 +96,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private TextView btnWifi;
     private TextView shamsiDate;
     private boolean shamsi;
+    private boolean romanDate;
     private String vpnApp;
     private SpringAnimation springX, springY;
     private float glassTargetX, glassTargetY;
@@ -204,12 +206,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         btnWifi = findViewById(R.id.btnWifi);
         shamsiDate = findViewById(R.id.shamsiDate);
         shamsi = cfg.shamsiDate;
-        if (shamsi) {
+        romanDate = cfg.romanDate;
+        if (shamsi || romanDate) {
             shamsiDate.setVisibility(View.VISIBLE);
             TextView date = findViewById(R.id.date);
             date.setTextSize(11f);
             date.setPadding(0, (int) (4 * density), 0, 0);
         }
+        applyRomanLook(cfg);
         vpnApp = cfg.vpnApp;
         moduleCards = cfg.moduleCards;
         hiddenApps = new HashSet<>(cfg.hiddenApps);
@@ -693,6 +697,23 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         grid.smoothScrollToPosition(pos);
     }
 
+    /** The optional Roman look: serif header texts, an accent colour and a laurel; all off by default. */
+    private void applyRomanLook(Config cfg) {
+        if ("serif".equalsIgnoreCase(cfg.font)) {
+            for (int id : new int[]{R.id.heroName, R.id.greeting, R.id.clock, R.id.ampm, R.id.shamsiDate, R.id.date}) {
+                TextView tv = findViewById(id);
+                tv.setFontVariationSettings(null);
+                tv.setTypeface(Typeface.SERIF);
+            }
+        }
+        if (cfg.accentColor != 0) greeting.setTextColor(cfg.accentColor);
+        if (cfg.laurel) {
+            ImageView laurel = findViewById(R.id.laurel);
+            laurel.setVisibility(View.VISIBLE);
+            if (cfg.accentColor != 0) laurel.setColorFilter(cfg.accentColor);
+        }
+    }
+
     // ---- top bar ---------------------------------------------------------------------------------
 
     private void updateGreeting() {
@@ -704,7 +725,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         else if (hour < 22) res = R.string.good_evening;
         else res = R.string.good_night;
         greeting.setText(res);
-        if (shamsi) shamsiDate.setText(Shamsi.today());
+        if (romanDate) shamsiDate.setText(Roman.today());
+        else if (shamsi) shamsiDate.setText(Shamsi.today());
     }
 
     /** Shows the Wi-Fi network name on the button when we can read it, otherwise the connection type. */

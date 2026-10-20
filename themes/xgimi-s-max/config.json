@@ -6,5 +6,9 @@
   "columns": 4,
   "rows_below_dock": 0,
   "background_color": "#000000",
-  "wallpaper": false
+  "wallpaper": false,
+  "font": "serif",
+  "roman_date": true,
+  "accent_color": "#C9A24B",
+  "laurel": true
 }

@@ -72,6 +72,17 @@
                     android:orientation="horizontal"
                     android:baselineAligned="true">
 
+                    <ImageView
+                        android:id="@+id/laurel"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginEnd="12dp"
+                        android:layout_marginBottom="6dp"
+                        android:src="@drawable/ic_laurel"
+                        android:importantForAccessibility="no"
+                        android:visibility="gone" />
+
                     <TextClock
                         android:id="@+id/clock"
                         android:layout_width="wrap_content"

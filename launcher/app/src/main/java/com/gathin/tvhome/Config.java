@@ -48,6 +48,14 @@ final class Config {
     final boolean showHomeSettingsShortcut;
     /** Background colour behind everything, #RRGGBB; black unless a theme says otherwise. */
     final int backgroundColor;
+    /** Header font: "serif" for the system serif face, anything else keeps Outfit. */
+    final String font;
+    /** Show the date in Roman numerals. */
+    final boolean romanDate;
+    /** Accent for the greeting and the laurel, or 0 for the default look. */
+    final int accentColor;
+    /** Show the laurel wreath beside the clock. */
+    final boolean laurel;
     /** Full-screen picture behind the launcher, or null for the plain colour. */
     final File wallpaper;
     /** Whether the overlay file was present and parsed. */
@@ -58,6 +66,7 @@ final class Config {
                    int columns, int rowsBelowDock,
                    boolean shamsiDate, boolean moduleCards, boolean reducedMotion, String vpnApp,
                    boolean showHomeSettingsShortcut, int backgroundColor,
+                   String font, boolean romanDate, int accentColor, boolean laurel,
                    File wallpaper, boolean overlayApplied) {
         this.dockApps = Collections.unmodifiableList(dockApps);
         this.hiddenApps = Collections.unmodifiableList(hiddenApps);
@@ -74,6 +83,10 @@ final class Config {
         this.vpnApp = vpnApp;
         this.showHomeSettingsShortcut = showHomeSettingsShortcut;
         this.backgroundColor = backgroundColor;
+        this.font = font;
+        this.romanDate = romanDate;
+        this.accentColor = accentColor;
+        this.laurel = laurel;
         this.wallpaper = wallpaper;
         this.overlayApplied = overlayApplied;
     }
@@ -100,6 +113,10 @@ final class Config {
         String vpn = res.getString(R.string.vpn_app).trim();
         boolean homeSettings = res.getBoolean(R.bool.show_home_settings_shortcut);
         int background = 0xFF000000;
+        String font = res.getString(R.string.font).trim();
+        boolean romanDate = res.getBoolean(R.bool.roman_date);
+        int accent = color(res.getString(R.string.accent_color), 0);
+        boolean laurel = res.getBoolean(R.bool.laurel);
         boolean applied = false;
 
         File dir = dir(ctx);
@@ -122,6 +139,10 @@ final class Config {
             vpn = string(json, "vpn_app", vpn);
             homeSettings = bool(json, "show_home_settings_shortcut", homeSettings);
             background = color(json, "background_color", background);
+            font = string(json, "font", font);
+            romanDate = bool(json, "roman_date", romanDate);
+            accent = color(json, "accent_color", accent);
+            laurel = bool(json, "laurel", laurel);
         }
         File wallpaper = dir != null ? new File(dir, WALLPAPER_NAME) : null;
         if (wallpaper != null && !(wallpaper.isFile() && wallpaper.length() > 0)) wallpaper = null;
@@ -130,7 +151,7 @@ final class Config {
 
         return new Config(dock, hidden, liveTv, liveTvAction, panelService, panelAction, inputAction,
                 Math.max(1, columns), Math.max(0, rowsBelow), shamsi, moduleCards, reducedMotion,
-                vpn, homeSettings, background, wallpaper, applied);
+                vpn, homeSettings, background, font, romanDate, accent, laurel, wallpaper, applied);
     }
 
     /** Reads and parses the overlay; any problem means "no overlay", never a crash on the home screen. */
@@ -172,9 +193,13 @@ final class Config {
 
     private static int color(JSONObject o, String key, int fallback) {
         Object v = o.opt(key);
-        if (!(v instanceof String)) return fallback;
+        return v instanceof String ? color((String) v, fallback) : fallback;
+    }
+
+    private static int color(String text, int fallback) {
+        if (text.trim().isEmpty()) return fallback;
         try {
-            int c = Color.parseColor(((String) v).trim());
+            int c = Color.parseColor(text.trim());
             return c | 0xFF000000;   // always opaque: the window behind is black anyway
         } catch (IllegalArgumentException e) {
             return fallback;
