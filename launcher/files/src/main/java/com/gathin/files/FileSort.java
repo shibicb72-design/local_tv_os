@@ -1,5 +1,7 @@
 package com.gathin.files;
 
+import com.gathin.roman.NaturalOrder;
+
 import java.util.Comparator;
 
 /** Entry comparators for the sort pill. Folders always come first, in both directions. */

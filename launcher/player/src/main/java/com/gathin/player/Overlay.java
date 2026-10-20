@@ -42,6 +42,7 @@ final class Overlay {
     private final ProgressBarView bar;
     private final Source source;
     private boolean visible;
+    private boolean pinned;
 
     private final Runnable hideTask = this::hide;
     private final Runnable tickTask = new Runnable() {
@@ -130,10 +131,16 @@ final class Overlay {
             }
         }
         box.postDelayed(tickTask, TICK_MS);
-        box.postDelayed(hideTask, HIDE_AFTER_MS);
+        if (!pinned) box.postDelayed(hideTask, HIDE_AFTER_MS);
+    }
+
+    /** Audio screen: the overlay stays up (no hide timer, {@link #hide()} does nothing) until {@link #release()}. */
+    void setPinned(boolean pinned) {
+        this.pinned = pinned;
     }
 
     void hide() {
+        if (pinned) return;
         box.removeCallbacks(hideTask);
         box.removeCallbacks(tickTask);
         if (!visible) return;

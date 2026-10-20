@@ -2,6 +2,7 @@ package com.gathin.player;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -15,11 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.media3.common.C;
 import androidx.media3.common.Format;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.common.TrackSelectionOverride;
@@ -31,10 +35,14 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 
 import com.gathin.roman.RomanDialog;
+import com.gathin.roman.RomanLook;
+import com.gathin.roman.RomanRows;
+import com.gathin.roman.RomanStyle;
 
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -87,6 +95,13 @@ public class PlayerActivity extends Activity {
     private String chosenAudioId;
     private String chosenSubtitleId;
     private boolean audioRestored;
+    /** Audio file (P6): no video surface, title and tags centred, the overlay stays up, no resume. */
+    private boolean audioMode;
+    private TextView audioTitle;
+    private TextView audioArtist;
+    private TextView audioAlbum;
+    /** Siblings of the file being played; built on first use (next/previous, next track on completion). */
+    private Playlist playlist;
 
     /** A text track of the current media: where it is in the tracks and how to show it. */
     private static final class TextEntry {
@@ -113,6 +128,11 @@ public class PlayerActivity extends Activity {
         surface.setFocusable(false);
         root.addView(surface, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+        audioMode = detectAudio();
+        if (audioMode) {
+            surface.setVisibility(View.GONE);
+            buildAudioPanel();
+        }
         cueView = new CueView(this);
         root.addView(cueView, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -136,7 +156,7 @@ public class PlayerActivity extends Activity {
         setContentView(root);
         hideSystemBars();
         resume = new ResumeStore(prefsStore());
-        resumeKey = computeResumeKey();
+        resumeKey = audioMode ? null : computeResumeKey();   // album tracks do not resume
         menu = new TracksMenu(this, root, this::onMenuChosen);
         ResumeStore.Entry remembered = resumeKey == null ? null : resume.get(resumeKey);
         if (remembered != null) {
@@ -144,6 +164,8 @@ public class PlayerActivity extends Activity {
             chosenSubtitleId = remembered.subtitleId;
         }
         overlay.setTitle(displayName());
+        overlay.setPinned(audioMode);
+        if (audioMode) audioTitle.setText(displayName());
         SubCache.prune(SubCache.dir(getCacheDir()), SubCache.MAX_FILES);
     }
 
@@ -174,6 +196,11 @@ public class PlayerActivity extends Activity {
             }
 
             @Override
+            public void onMediaMetadataChanged(MediaMetadata metadata) {
+                if (audioMode) showTags(metadata);
+            }
+
+            @Override
             public void onCues(CueGroup cueGroup) {
                 cueView.setCues(cueGroup.cues);
             }
@@ -192,7 +219,7 @@ public class PlayerActivity extends Activity {
                 }
                 if (playbackState == Player.STATE_ENDED) {
                     saveFinished();
-                    finish();
+                    if (!(audioMode && openSibling(true))) finish();   // audio goes on to the next track
                 }
             }
         });
@@ -207,6 +234,7 @@ public class PlayerActivity extends Activity {
         } else {
             resumeDecided = true;
         }
+        if (audioMode) overlay.show();
     }
 
     @Override
@@ -243,7 +271,7 @@ public class PlayerActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (player == null) return super.onKeyDown(keyCode, event);
         int repeat = event.getRepeatCount();
-        KeyMap.Action action = KeyMap.map(keyCode, repeat, overlay.isVisible(), menu.isShowing());
+        KeyMap.Action action = KeyMap.map(keyCode, repeat, overlay.isVisible() && !audioMode, menu.isShowing());
         switch (action) {
             case NONE:
                 return super.onKeyDown(keyCode, event);   // with the menu open this is focus movement
@@ -251,7 +279,7 @@ public class PlayerActivity extends Activity {
                 menu.hide();
                 return true;
             case OPEN_TRACKS:
-                if (repeat == 0) showTracksMenu();
+                if (repeat == 0 && !audioMode) showTracksMenu();
                 return true;
             case HIDE_OVERLAY:
                 overlay.hide();
@@ -268,10 +296,94 @@ public class PlayerActivity extends Activity {
             case SEEK_FORWARD_LONG:
                 seek(KeyMap.seekDelta(action), repeat > 0);
                 break;
+            case NEXT:
+            case PREVIOUS:
+                if (repeat == 0) openSibling(action == KeyMap.Action.NEXT);
+                break;
             default:
-                break;   // next and previous arrive in a later step; the key still shows the overlay
+                break;
         }
         overlay.show();
+        return true;
+    }
+
+    private boolean detectAudio() {
+        String path = getIntent().getStringExtra(EXTRA_PATH);
+        if (path != null) return Playlist.kindOf(new File(path).getName()) == Playlist.Kind.AUDIO;
+        String type = getIntent().getType();
+        return type != null && type.startsWith("audio/");
+    }
+
+    /** Centred Cinzel title with artist and album under it, behind the overlay; nothing is redrawn per frame. */
+    private void buildAudioPanel() {
+        RomanStyle s = RomanStyle.defaults();
+        float density = getResources().getDisplayMetrics().density;
+        LinearLayout panel = new LinearLayout(this);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setGravity(Gravity.CENTER);
+        int pad = Math.round(64 * density);
+        panel.setPadding(pad, pad, pad, pad);
+
+        audioTitle = new TextView(this);
+        RomanRows.title(audioTitle, s);
+        audioTitle.setTextSize(36f);
+        audioTitle.setGravity(Gravity.CENTER);
+        audioTitle.setMaxLines(2);
+        audioTitle.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        panel.addView(audioTitle, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        audioArtist = tagLine(s.gold, density);
+        audioAlbum = tagLine(RomanStyle.IVORY, density);
+        panel.addView(audioArtist);
+        panel.addView(audioAlbum);
+        root.addView(panel, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
+    private TextView tagLine(int color, float density) {
+        TextView tv = new TextView(this);
+        RomanLook.text(tv, 22f, 0.04f, color);
+        tv.setGravity(Gravity.CENTER);
+        tv.setSingleLine(true);
+        tv.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.topMargin = Math.round(12 * density);
+        tv.setLayoutParams(lp);
+        return tv;
+    }
+
+    /** Tags from the file (ID3, Vorbis, MP4); a missing title keeps the file name. */
+    private void showTags(MediaMetadata m) {
+        CharSequence title = m.title;
+        if (title != null && title.length() > 0) {
+            audioTitle.setText(title);
+            overlay.setTitle(title.toString());
+        }
+        CharSequence artist = m.artist != null ? m.artist : m.albumArtist;
+        audioArtist.setText(artist == null ? "" : artist);
+        audioAlbum.setText(m.albumTitle == null ? "" : m.albumTitle);
+    }
+
+    /**
+     * Moves to the next or previous file of the same kind in the folder by starting this activity for it.
+     * False (and nothing happens) when the file is not a plain file or there is no such sibling.
+     */
+    private boolean openSibling(boolean forward) {
+        File current = videoFile();
+        if (current == null || current.getParentFile() == null) return false;
+        if (playlist == null) {
+            String[] names = current.getParentFile().list();
+            playlist = Playlist.of(names == null ? Collections.<String>emptyList() : Arrays.asList(names),
+                    current.getName(), Playlist.kindOf(current.getName()));
+        }
+        String name = forward ? playlist.next() : playlist.previous();
+        if (name == null) return false;
+        startActivity(new Intent(this, PlayerActivity.class)
+                .putExtra(EXTRA_PATH, new File(current.getParentFile(), name).getAbsolutePath())
+                .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION));
+        finish();   // onPause saves this file's position first
         return true;
     }
 
