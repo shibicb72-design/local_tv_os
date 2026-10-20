@@ -1,5 +1,8 @@
 package com.gathin.tvhome;
 
+import com.gathin.roman.Roman;
+import com.gathin.roman.RomanStyle;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;

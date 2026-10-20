@@ -1,5 +1,7 @@
 package com.gathin.tvhome;
 
+import com.gathin.roman.Laurel;
+
 /**
  * The shapes of RomanDream v2 (docs/plans/roman-theme-v2.md, section 9.1): the two laurel sprays, the legion
  * standard and its thunderbolt. Pure Java with plain floats (no RectF, no Path) so the geometry can be unit

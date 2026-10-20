@@ -1,0 +1,7 @@
+com.gathin.roman.romancore-pngs-0 C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\build\generated\res\pngs\release
+com.gathin.roman.romancore-resValues-1 C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\build\generated\res\resValues\release
+com.gathin.roman.romancore-mergeReleaseResources-2 C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\build\intermediates\incremental\release\mergeReleaseResources\merged.dir
+com.gathin.roman.romancore-mergeReleaseResources-3 C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\build\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+com.gathin.roman.romancore-release-4 C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\build\intermediates\merged_res\release\mergeReleaseResources
+com.gathin.roman.romancore-main-5 C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\src\main\res
+com.gathin.roman.romancore-release-6 C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\src\release\res

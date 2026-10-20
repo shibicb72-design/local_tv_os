@@ -1,0 +1,14 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\src\main\AndroidManifest.xml:1:1-13
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\src\main\AndroidManifest.xml:1:1-13
+	package
+		INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\src\main\AndroidManifest.xml
+uses-sdk
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\src\main\AndroidManifest.xml
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\src\main\AndroidManifest.xml
