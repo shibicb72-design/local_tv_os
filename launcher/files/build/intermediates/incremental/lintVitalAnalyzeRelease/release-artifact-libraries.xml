@@ -1,10 +1,10 @@
 <libraries>
   <library
       name=":@@:romancore::release"
-      jars="C:\Users\shibi\.gradle\caches\8.9\transforms\52b94e0a3dcdf78b18fe686856cfd90e\transformed\out\jars\classes.jar;C:\Users\shibi\.gradle\caches\8.9\transforms\52b94e0a3dcdf78b18fe686856cfd90e\transformed\out\jars\libs\R.jar"
+      jars="C:\Users\shibi\.gradle\caches\8.9\transforms\63a428012e08d6e13f1c3b64e7042622\transformed\out\jars\classes.jar;C:\Users\shibi\.gradle\caches\8.9\transforms\63a428012e08d6e13f1c3b64e7042622\transformed\out\jars\libs\R.jar"
       resolved="tvhome:romancore:unspecified"
       partialResultsDir="C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\build\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
-      folder="C:\Users\shibi\.gradle\caches\8.9\transforms\52b94e0a3dcdf78b18fe686856cfd90e\transformed\out"
+      folder="C:\Users\shibi\.gradle\caches\8.9\transforms\63a428012e08d6e13f1c3b64e7042622\transformed\out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"

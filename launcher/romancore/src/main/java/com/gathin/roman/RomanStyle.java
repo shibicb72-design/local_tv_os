@@ -85,6 +85,11 @@ public final class RomanStyle {
                 Roman.inscribe(inscription, INSCRIPTION_MAX), accent);
     }
 
+    /** The style of the apps that do not read the launcher's config (Files, Player): travertine, default gold. */
+    public static RomanStyle defaults() {
+        return of("roman", STONE_TRAVERTINE, 100, 7, 70, true, true, true, "", 0);
+    }
+
     private static String stoneName(String stone) {
         String s = stone == null ? "" : stone.trim().toLowerCase(Locale.ROOT);
         if (s.equals(STONE_MARBLE)) return STONE_MARBLE;

@@ -2530,12 +2530,15 @@ com.gathin.roman.R$font:
     private void <init>()
 com.gathin.roman.R
 com.gathin.roman.Roman
+com.gathin.roman.RomanDialog$InputListener
+com.gathin.roman.RomanDialog
 com.gathin.roman.RomanLook$1
 com.gathin.roman.RomanLook:
     private void <init>()
     public static void gild(android.widget.TextView,com.gathin.roman.RomanStyle)
     public static android.graphics.drawable.GradientDrawable iconTile(com.gathin.roman.RomanStyle,float,float)
     public static void pill(android.widget.TextView,com.gathin.roman.RomanStyle)
+com.gathin.roman.RomanRows
 com.gathin.roman.RomanStyle
 com.gathin.roman.StoneCache
 com.gathin.roman.StoneTexture

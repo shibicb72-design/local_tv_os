@@ -31,6 +31,21 @@ public class RomanStyleTest {
     }
 
     @Test
+    public void defaultsIsTravertineWithTheDefaultGold() {
+        RomanStyle d = RomanStyle.defaults();
+        assertNotNull(d);
+        assertEquals(RomanStyle.STONE_TRAVERTINE, d.stone);
+        assertEquals(100, d.brightness);
+        assertEquals(7, d.seed);
+        assertEquals(70, d.vignette);
+        assertTrue(d.meander && d.pilasters && d.crest);
+        assertEquals("", d.inscription);
+        assertEquals(0xFFC9A24B, d.gold);
+        assertEquals(0xFFDCC38A, d.goldLight);
+        assertEquals(0xFF896E33, d.goldDeep);
+    }
+
+    @Test
     public void goldRampOfTheDefaultGold() {
         assertArrayEquals(new int[]{0xFFDCC38A, 0xFFC9A24B, 0xFF896E33}, RomanStyle.goldRamp(0xFFC9A24B));
     }
