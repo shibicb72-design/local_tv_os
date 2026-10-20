@@ -15,7 +15,7 @@ powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost 192.168.1.50 th
 | `default/` | The built-in look written out as JSON, as a starting point for your own |
 | `aurora/` | A dark aurora wallpaper (teal and violet on navy, darker at the bottom) with a matching background colour |
 | `six-columns/` | Six smaller tiles per row and one grid row visible under the dock |
-| `xgimi-s-max/` | For the XGIMI HORIZON S Max (XK03H): YouTube, Prime Video and HDMI 1 in the dock, HDMI opened through XGIMI's own player (`com.xgimi.action.hdmiPlayer`), no Live TV, factory and screensaver apps hidden; the Roman look v2 is on (Cinzel lettering, Roman date, gold accent; stone and ornaments follow in later steps) |
+| `xgimi-s-max/` | For the XGIMI HORIZON S Max (XK03H): YouTube, Prime Video and HDMI 1 in the dock, HDMI opened through XGIMI's own player (`com.xgimi.action.hdmiPlayer`), no Live TV, factory and screensaver apps hidden; the Roman look v2 is on (travertine wall, gilded Greek-key frieze with a SALVE medallion, fluted pilasters, Cinzel lettering, Roman date, gold focus glow) |
 
 ## Keys
 
@@ -53,8 +53,18 @@ is ignored, and a file that doesn't parse is ignored as a whole, so a theme can 
 | `roman_crest` | bool (default `true`) | Laurel medallion in the frieze |
 | `roman_inscription` | string | Up to 8 letters inside the medallion, carved style (`U` becomes `V`, `J` becomes `I`; only `A-Z 0-9 space · . -`) |
 
-In this step only `style`, `accent_color`, `roman_date` and `roman_inscription` take effect; the stone, frieze,
-pilasters and medallion keys are read but drawn by the next steps.
+### Roman look v2
+
+With `"style": "roman"` the home becomes a Roman interior: a procedural stone wall (rendered once on first start,
+then cached), a gilded Greek-key frieze under the header broken by a laurel medallion, fluted pilasters at the
+edges, Cinzel lettering, a gilded app name, and a gold focus glow with a small lift, gold pills and a dock band.
+Everything is switched by the keys above; with `style` unset nothing of it runs. A `wallpaper.jpg` that is
+switched on replaces the stone. Details and budgets: `docs/plans/roman-theme-v2.md`.
+
+Projector advice: a projector's black is the colour of the wall, so the stone is mid-dark on purpose. Start with
+`roman_stone_brightness` at 100, then try 85 to 115 in the room you watch in. `roman_vignette` (default 70) darkens
+the edges; lower it for a flatter wall. Both only need a `config.json` change, no rebuild. The stone is cached by
+its settings, so the first start after a change takes a moment longer.
 
 ## Wallpapers
 
