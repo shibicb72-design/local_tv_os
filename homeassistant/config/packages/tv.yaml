@@ -1,0 +1,220 @@
+# The projector as one Google device "TV" (docs/plans/next-features.md sections 6.1 and 6.5, step V3).
+#
+# State lives in the helpers below; the universal media player reads them and calls the scripts.
+# The scripts send the only commands that reach the projector, through media_player.projector_adb
+# (the Android Debug Bridge integration, polling switched off, see RUNBOOK). That entity is NOT exposed to Google.
+# Never used here: power/sleep/wakeup keys, settings, setprop, svc, reboot, pm (tests/test_homeassistant.py enforces it).
+
+input_boolean:
+  tv_display:
+    name: TV display
+    icon: mdi:projector
+    initial: true
+
+input_number:
+  tv_volume:
+    name: TV volume
+    min: 0
+    max: 100
+    step: 1
+    mode: slider
+    initial: 20
+
+input_select:
+  tv_source:
+    name: TV source
+    options:
+      - HDMI 1
+      - YouTube
+      - Prime Video
+      - Files
+      - Player
+      - Home
+    initial: Home
+
+template:
+  - sensor:
+      # universal media players need volume_level in 0..1
+      - name: TV volume level
+        unique_id: tv_volume_level
+        state: "{{ (states('input_number.tv_volume') | float(0) / 100) | round(2) }}"
+
+script:
+  tv_select_source:
+    alias: TV select source
+    mode: queued
+    max: 3
+    fields:
+      source:
+        description: One of input_select.tv_source options
+        example: YouTube
+    sequence:
+      - choose:
+          - conditions: "{{ source == 'HDMI 1' }}"
+            sequence:
+              - action: androidtv.adb_command
+                target:
+                  entity_id: media_player.projector_adb
+                data:
+                  command: >-
+                    am start -a com.xgimi.action.hdmiPlayer
+                    -d content://android.media.tv/passthrough/com.xgimi.tvinput%2F.inputservice.Hdmi1TvInputService%2FHW1
+                    -t vnd.android.cursor.item/channel
+                continue_on_error: true
+          - conditions: "{{ source == 'YouTube' }}"
+            sequence:
+              - action: androidtv.adb_command
+                target:
+                  entity_id: media_player.projector_adb
+                data:
+                  command: am start -n com.google.android.youtube.tv/com.google.android.apps.youtube.tv.activity.ShellActivity
+                continue_on_error: true
+          - conditions: "{{ source == 'Prime Video' }}"
+            sequence:
+              - action: androidtv.adb_command
+                target:
+                  entity_id: media_player.projector_adb
+                data:
+                  command: am start -n com.amazon.amazonvideo.livingroom/com.amazon.ignition.IgnitionActivity
+                continue_on_error: true
+          - conditions: "{{ source == 'Files' }}"
+            sequence:
+              - action: androidtv.adb_command
+                target:
+                  entity_id: media_player.projector_adb
+                data:
+                  command: am start -n com.gathin.files/.FilesActivity
+                continue_on_error: true
+          - conditions: "{{ source == 'Player' }}"
+            sequence:
+              - action: androidtv.adb_command
+                target:
+                  entity_id: media_player.projector_adb
+                data:
+                  command: am start -n com.gathin.player/.LibraryActivity
+                continue_on_error: true
+          - conditions: "{{ source == 'Home' }}"
+            sequence:
+              - action: androidtv.adb_command
+                target:
+                  entity_id: media_player.projector_adb
+                data:
+                  command: am start -a android.intent.action.MAIN -c android.intent.category.HOME
+                continue_on_error: true
+        default:
+          - action: persistent_notification.create
+            data:
+              title: TV
+              notification_id: tv_unknown_source
+              message: "Unknown TV source: {{ source }}"
+          - stop: Unknown source
+            error: true
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.tv_source
+        data:
+          option: "{{ source }}"
+
+  tv_set_volume:
+    alias: TV set volume
+    mode: queued
+    max: 3
+    fields:
+      pct:
+        description: Volume in percent, 0 to 100
+        example: 30
+    variables:
+      # VOLUME_MAX: the highest value of media stream 3 on the projector, from Op-V0 (docs/plans/xgimi-display-off.md, step V5).
+      # 0 means "not measured yet": the script then sends nothing.
+      volume_max: 0
+      level: "{{ [[pct | float(0), 0] | max, 100] | min }}"
+      n: "{{ (level * volume_max / 100) | round(0) | int }}"
+    sequence:
+      - if:
+          - condition: template
+            value_template: "{{ volume_max | int(0) <= 0 }}"
+        then:
+          - action: persistent_notification.create
+            data:
+              title: TV
+              notification_id: tv_volume_not_wired
+              message: Volume maximum not wired yet (VOLUME_MAX in tv.yaml, step V5). Nothing was sent to the projector.
+          - stop: VOLUME_MAX not set
+      - action: androidtv.adb_command
+        target:
+          entity_id: media_player.projector_adb
+        data:
+          command: "cmd media_session volume --stream 3 --set {{ n }}"
+        continue_on_error: true
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.tv_volume
+        data:
+          value: "{{ level }}"
+
+  tv_display_off:
+    alias: TV display off
+    mode: queued
+    max: 3
+    sequence:
+      # V5 replaces this with XGIMI's own "Display off" mechanism (found by Op-V0).
+      - action: persistent_notification.create
+        data:
+          title: TV
+          notification_id: tv_display_not_wired
+          message: Display mechanism not wired yet (step V5). Nothing was sent to the projector.
+
+  tv_display_on:
+    alias: TV display on
+    mode: queued
+    max: 3
+    sequence:
+      # V5 replaces this with the counterpart of the display-off line.
+      - action: persistent_notification.create
+        data:
+          title: TV
+          notification_id: tv_display_not_wired
+          message: Display mechanism not wired yet (step V5). Nothing was sent to the projector.
+
+automation:
+  - id: tv_command_failed
+    alias: TV command failed
+    description: A failed adb command raises a notification (scripts use continue_on_error, so they do not stop).
+    triggers:
+      - trigger: event
+        event_type: system_log_event
+        event_data:
+          level: ERROR
+    conditions:
+      - condition: template
+        value_template: "{{ 'androidtv' in (trigger.event.data.name | join(' ') | lower) }}"
+    actions:
+      - action: persistent_notification.create
+        data:
+          title: TV
+          notification_id: tv_command_failed
+          message: "A command to the projector failed: {{ trigger.event.data.message | join(' ') | truncate(200) }}"
+
+media_player:
+  - platform: universal
+    name: TV
+    unique_id: tv_universal
+    # on/off means display on/off; the helper is the source of truth
+    state_template: "{{ 'on' if is_state('input_boolean.tv_display', 'on') else 'off' }}"
+    attributes:
+      volume_level: sensor.tv_volume_level
+      source: input_select.tv_source
+      source_list: input_select.tv_source|options
+    commands:
+      turn_on:
+        action: script.tv_display_on
+      turn_off:
+        action: script.tv_display_off
+      volume_set:
+        action: script.tv_set_volume
+        data:
+          pct: "{{ volume_level * 100 }}"
+      select_source:
+        action: script.tv_select_source
+        data:
+          source: "{{ source }}"

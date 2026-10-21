@@ -28,5 +28,12 @@ Also:
    `docker compose restart homeassistant`.
 4. `scripts\check-exposure.ps1` must pass before linking (added in V4).
 
+## Android Debug Bridge integration (projector)
+
+Add the integration with host `10.0.0.242`, port 5555, default key path, and name the entity
+`media_player.projector_adb` (`config/packages/tv.yaml` sends its commands there). Then open the integration's
+System options and **turn polling off**: no `scan_interval`, no 10-second `dumpsys` on the projector.
+Never expose `media_player.projector_adb` to Google. The full steps come in V4.
+
 Only `media_player.tv` is exposed to Google (`expose_by_default: false`). Link with the dedicated non-admin
 Home Assistant user `google-link`, never with the owner account.
