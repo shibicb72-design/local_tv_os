@@ -121,6 +121,20 @@ class InspectScriptsTest(unittest.TestCase):
         self.assertLess(body.index("Assert-ReadOnly"), body.index("AppendAllLines"))
         self.assertLess(body.index("Assert-ReadOnly"), body.index("& $script:AdbExe"))
 
+    def test_paths_are_made_absolute(self):
+        text = (INSPECT / "common.ps1").read_text(encoding="utf-8")
+        self.assertIn("(New-Item -ItemType Directory -Force $dir).FullName", text)
+        self.assertIn("GetUnresolvedProviderPathFromPSPath($script:AdbLog)", text)
+
+    def test_net_filter_is_uid_exact_and_flags_shared_uid(self):
+        text = (INSPECT / "atmosphere.ps1").read_text(encoding="utf-8")
+        self.assertIn(r'-Filter "uid=$uid\b"', text)
+        self.assertIn("[int]$uid -lt 10000", text)
+
+    def test_build_dirs_are_ignored_and_untracked(self):
+        ignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
+        self.assertIn("launcher/*/build/", ignore)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -64,7 +64,10 @@ function Get-Sample {
         }
     }
     if ($uid) {
-        Invoke-Adb -Name "24-net$Suffix" -Append -Filter "uid=$uid" -Context 0, 6 -AdbArgs @('shell', 'dumpsys', 'netstats', 'detail') | Out-Null
+        if ([int]$uid -lt 10000) {
+            Write-InspectFile -Name "24-net$Suffix" -Append -Lines @("uid $uid is a shared system uid: network use cannot be pinned on this app")
+        }
+        Invoke-Adb -Name "24-net$Suffix" -Append -Filter "uid=$uid\b" -Context 0, 6 -AdbArgs @('shell', 'dumpsys', 'netstats', 'detail') | Out-Null
     }
 }
 

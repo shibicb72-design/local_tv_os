@@ -33,8 +33,10 @@ function Initialize-Inspect {
     param([Parameter(Mandatory)][string]$Topic, [string]$Run, [string]$OutRoot)
     if (-not $Run) { $Run = Get-Date -Format 'yyyyMMdd-HHmm' }
     $root = if ($OutRoot) { $OutRoot } else { $script:InspectRoot }
-    $script:TopicDir = Join-Path (Join-Path $root $Run) $Topic
-    New-Item -ItemType Directory -Force $script:TopicDir | Out-Null
+    $dir = Join-Path (Join-Path $root $Run) $Topic
+    # .NET file calls resolve relative paths from the process folder, not $PWD (Windows PowerShell 5.1): make both absolute.
+    $script:TopicDir = (New-Item -ItemType Directory -Force $dir).FullName
+    $script:AdbLog = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($script:AdbLog)
     New-Item -ItemType Directory -Force (Split-Path -Parent $script:AdbLog) | Out-Null
     Write-Host "Output: $($script:TopicDir)"
     return $script:TopicDir
