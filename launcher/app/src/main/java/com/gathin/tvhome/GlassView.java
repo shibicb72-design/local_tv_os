@@ -15,6 +15,8 @@ import android.view.View;
  */
 public class GlassView extends View {
 
+    private static final int[] GOLD_GLOW = {0x60, 0x30, 0x20};
+
     private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint specular = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint rim = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -22,6 +24,8 @@ public class GlassView extends View {
     private final RectF rect = new RectF();
     private final float density;
     private float radius;
+    /** Roman look v2, or null for the white glass. */
+    private RomanStyle roman;
 
     public GlassView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -42,9 +46,30 @@ public class GlassView extends View {
         invalidate();
     }
 
+    /** Gold glass (plan 1.6): warm fill, gold glow and a gold gradient rim. */
+    void setRoman(RomanStyle style) {
+        roman = style;
+        rim.setStrokeWidth((style != null ? 2f : 1.5f) * density);
+        rim.setColor(0xCCFFFFFF);
+        if (style == null) rim.setShader(null);
+        buildShaders(getWidth(), getHeight());
+        invalidate();
+    }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        buildShaders(w, h);
+    }
+
+    private void buildShaders(int w, int h) {
+        if (roman != null) {
+            fill.setShader(new LinearGradient(0, 0, 0, h, 0x26FFF1D0, 0x0AFFF1D0, Shader.TileMode.CLAMP));
+            specular.setShader(new LinearGradient(0, 0, 0, h * 0.45f, 0x40FFF6E0, 0x00FFF6E0, Shader.TileMode.CLAMP));
+            rim.setShader(new LinearGradient(0, 0, 0, h, new int[]{roman.goldLight, roman.gold, roman.goldDeep},
+                    null, Shader.TileMode.CLAMP));
+            return;
+        }
         fill.setShader(new LinearGradient(0, 0, 0, h, 0x3DFFFFFF, 0x12FFFFFF, Shader.TileMode.CLAMP));
         specular.setShader(new LinearGradient(0, 0, 0, h * 0.45f, 0x66FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
     }
@@ -58,7 +83,8 @@ public class GlassView extends View {
         // they cost one draw, not one per frame of the spring.
         for (int i = 1; i <= 3; i++) {
             glow.setStrokeWidth(i * 2f * density);
-            glow.setColor((0x30 / i) << 24 | 0xFFFFFF);
+            if (roman != null) glow.setColor(RomanStyle.withAlpha(roman.gold, GOLD_GLOW[i - 1]));
+            else glow.setColor((0x30 / i) << 24 | 0xFFFFFF);
             float o = i * density;
             canvas.drawRoundRect(rect.left - o, rect.top - o, rect.right + o, rect.bottom + o, radius + o, radius + o, glow);
         }

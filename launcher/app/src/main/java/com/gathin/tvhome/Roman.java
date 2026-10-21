@@ -1,6 +1,7 @@
 package com.gathin.tvhome;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 /** Roman numerals and a Roman-style date line, pure Java so it can be unit tested. */
 final class Roman {
@@ -33,6 +34,31 @@ final class Roman {
     static String date(int year, int month, int day) {
         String y = numeral(year);
         return numeral(day) + " " + MONTHS[month - 1] + " " + (y != null ? y : String.valueOf(year));
+    }
+
+    /**
+     * Text as carved in stone: upper case, U written V and J written I, only A-Z, 0-9, space, middle dot,
+     * full stop and hyphen kept, spaces collapsed and trimmed, cut to {@code max} characters. null gives "".
+     */
+    static String inscribe(String s, int max) {
+        if (s == null) return "";
+        String up = s.toUpperCase(Locale.ROOT);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < up.length(); i++) {
+            char c = up.charAt(i);
+            if (c == 'U') c = 'V';
+            else if (c == 'J') c = 'I';
+            boolean keep = (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')
+                    || c == '·' || c == '.' || c == '-';
+            if (keep) {
+                sb.append(c);
+            } else if (c == ' ' && sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
+                sb.append(' ');
+            }
+        }
+        String out = sb.toString().trim();
+        if (out.length() > max) out = out.substring(0, Math.max(0, max)).trim();
+        return out;
     }
 
     static String today() {

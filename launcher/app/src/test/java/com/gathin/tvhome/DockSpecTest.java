@@ -27,6 +27,29 @@ public class DockSpecTest {
     }
 
     @Test
+    public void hdmiLabelsGetASpace() {
+        assertEquals("HDMI 1", DockSpec.normalizeHdmiLabel("HDMI1"));
+        assertEquals("HDMI 2", DockSpec.normalizeHdmiLabel("hdmi2"));
+        assertEquals("HDMI 1", DockSpec.normalizeHdmiLabel("HDMI 1"));
+        assertEquals("HDMI 12", DockSpec.normalizeHdmiLabel("HDMI   12"));
+        assertEquals("HDMI 1 (ARC)", DockSpec.normalizeHdmiLabel("HDMI 1 (ARC)"));
+        assertEquals("HDMI", DockSpec.normalizeHdmiLabel("HDMI"));
+        assertEquals("AV1", DockSpec.normalizeHdmiLabel("AV1"));
+        assertNull(DockSpec.normalizeHdmiLabel(null));
+    }
+
+    @Test
+    public void mixedHdmiStylesSortByPortNumber() {
+        assertEquals("HDMI 1", DockSpec.inputLabel("HDMI1", true));
+        assertEquals("HDMI 2", DockSpec.inputLabel("2", true));
+        assertEquals("AV1", DockSpec.inputLabel("AV1", false));
+        String[] labels = {DockSpec.inputLabel("HDMI 2", true), DockSpec.inputLabel("HDMI1", true)};
+        Arrays.sort(labels, DockSpec::compareLabels);
+        assertEquals("HDMI 1", labels[0]);
+        assertEquals("HDMI 2", labels[1]);
+    }
+
+    @Test
     public void inputEntriesAreRecognised() {
         assertTrue(DockSpec.isInput("input:hdmi1"));
         assertTrue(DockSpec.isInput("  INPUT:hdmi1 "));

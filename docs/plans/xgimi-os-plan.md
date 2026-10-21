@@ -133,6 +133,8 @@ so it is NOT disabled here.** The S Pro list disables it.
 | `com.xgimi.atmosphere` | animated screensaver/ambient scenes; 13 MB resident |
 | `com.google.android.backdrop` | Backdrop screensaver. **Before this batch**, point the screensaver at the launcher's ClockDream or `com.android.dreams.basic/.Colors` (a `settings put`, needs OK) |
 
+Measurement template for `com.xgimi.atmosphere` (the cost report, next-features plan 7.3): `docs/reports/atmosphere.md`.
+
 **Batch 5: stock launcher** (done in the device phase right after the new home is verified, not with the debloat)
 | Package | Reason |
 |---|---|
@@ -173,6 +175,8 @@ Android/Google core: `com.android.vending` (Play Store), `com.google.android.gms
 `com.amazon.amazonvideo.livingroom`.
 
 ## 5. Subtle Roman design (inside the low-RAM rules)
+
+> Superseded by `docs/plans/roman-theme-v2.md` (Roman look v2, behind `"style": "roman"`). The S5 keys below stay.
 
 No bundled fonts, no bitmaps beyond the optional wallpaper, no blur, no animation beyond what exists.
 - **Type**: the system serif (`fontFamily="serif"`, Noto Serif, already on the device) for the clock,
