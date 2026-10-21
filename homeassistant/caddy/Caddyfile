@@ -3,6 +3,11 @@
 {
 	auto_https off
 	admin off
+	# trust X-Forwarded-For only from the tailscale container (static address in compose.yaml),
+	# so Funnel's real client address reaches Home Assistant and ip_ban bans the caller, not the proxy
+	servers {
+		trusted_proxies static 172.30.0.4/32
+	}
 }
 
 :8080 {

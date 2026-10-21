@@ -33,6 +33,25 @@ foreach ($c in $checks) {
     }
 }
 
+# The ip_ban lockout guard: HA must log the caller's real public address, not a 172.30.0.x container address.
+# The rejected request above (POST /api/google_assistant, no token) is logged by HA with the address it saw.
+Push-Location (Join-Path $PSScriptRoot '..')
+try {
+    $haLog = & docker compose logs --since 2m homeassistant 2>&1 | Out-String
+} finally {
+    Pop-Location
+}
+$seen = [regex]::Matches($haLog, 'invalid authentication from (\d{1,3}(?:\.\d{1,3}){3}|[0-9a-fA-F:]+)') | ForEach-Object { $_.Groups[1].Value }
+if (-not $seen) {
+    Write-Host 'FAIL  HA log shows no rejected request from the check above; cannot confirm the real client address.' -ForegroundColor Red
+    $failed++
+} elseif ($seen | Where-Object { $_ -like '172.30.0.*' }) {
+    Write-Host ('FAIL  HA logged a container address ({0}) as the caller; ip_ban would lock out every Google request. Check trusted_proxies and the Caddyfile servers block.' -f (($seen | Select-Object -Unique) -join ', ')) -ForegroundColor Red
+    $failed++
+} else {
+    Write-Host ('PASS  HA logs the real client address ({0})' -f (($seen | Select-Object -Unique) -join ', '))
+}
+
 if ($failed -gt 0) {
     Write-Host "$failed check(s) failed. Do NOT configure Google yet; look at caddy/Caddyfile and docker compose logs caddy." -ForegroundColor Red
     exit 1

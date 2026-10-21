@@ -21,7 +21,8 @@ services:
       # operator UI on the Alienware only; never published on the LAN or the internet
       - "127.0.0.1:8123:8123"
     networks:
-      - ha_net
+      ha_net:
+        ipv4_address: 172.30.0.2
 
   caddy:
     # update by hand: Caddy 2.x
@@ -33,7 +34,8 @@ services:
     depends_on:
       - homeassistant
     networks:
-      - ha_net
+      ha_net:
+        ipv4_address: 172.30.0.3
 
   tailscale:
     # update by hand: Tailscale stable
@@ -53,7 +55,8 @@ services:
     depends_on:
       - caddy
     networks:
-      - ha_net
+      ha_net:
+        ipv4_address: 172.30.0.4
 
 networks:
   ha_net:

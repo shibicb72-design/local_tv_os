@@ -82,6 +82,14 @@ class ComposeTest(unittest.TestCase):
         for name, svc in self.services.items():
             self.assertEqual("unless-stopped", svc["restart"], name)
 
+    def test_static_addresses_inside_subnet(self):
+        import ipaddress
+        net = ipaddress.ip_network(self.compose["networks"]["ha_net"]["ipam"]["config"][0]["subnet"])
+        addrs = [self.services[n]["networks"]["ha_net"]["ipv4_address"] for n in self.services]
+        self.assertEqual(3, len(set(addrs)))
+        for a in addrs:
+            self.assertIn(ipaddress.ip_address(a), net)
+
     def test_subnet(self):
         subnet = self.compose["networks"]["ha_net"]["ipam"]["config"][0]["subnet"]
         self.assertEqual("172.30.0.0/24", subnet)
@@ -101,6 +109,10 @@ class CaddyTest(unittest.TestCase):
         self.assertRegex(self.text, r"handle @allowed \{\s*reverse_proxy homeassistant:8123\s*\}")
         # the last handle block is the catch-all and answers 404
         self.assertRegex(self.text.rstrip(), r"handle \{\s*respond \"[^\"]*\" 404\s*\}\s*\}$")
+
+    def test_xff_trusted_only_from_tailscale_static_ip(self):
+        ts = load_compose()["services"]["tailscale"]["networks"]["ha_net"]["ipv4_address"]
+        self.assertRegex(self.text, r"servers \{\s*trusted_proxies static %s/32\s*\}" % re.escape(ts))
 
     def test_admin_api_is_off(self):
         self.assertRegex(self.text, r"admin off")
@@ -168,13 +180,18 @@ class HaConfigurationTest(unittest.TestCase):
         self.assertEqual(("!include", "SERVICE_ACCOUNT.json"),
                          (ga["service_account"].tag, ga["service_account"].value))
 
-    def test_trusted_proxies_only_compose_subnet(self):
+    def test_trusted_proxies_only_caddy_and_tailscale(self):
         http = self.config["http"]
-        subnet = load_compose()["networks"]["ha_net"]["ipam"]["config"][0]["subnet"]
-        self.assertEqual([subnet], http["trusted_proxies"])
+        nets = load_compose()["services"]
+        caddy = nets["caddy"]["networks"]["ha_net"]["ipv4_address"]
+        ts = nets["tailscale"]["networks"]["ha_net"]["ipv4_address"]
+        self.assertEqual([caddy + "/32", ts + "/32"], http["trusted_proxies"])
         self.assertIs(True, http["use_x_forwarded_for"])
         self.assertIs(True, http["ip_ban_enabled"])
         self.assertEqual(5, http["login_attempts_threshold"])
+
+    def test_system_log_fires_events(self):
+        self.assertIs(True, self.config["system_log"]["fire_event"])
 
     def test_recorder_and_logger(self):
         self.assertEqual(3, self.config["recorder"]["purge_keep_days"])
@@ -282,6 +299,13 @@ class TvPackageTest(unittest.TestCase):
         for name in ("tv_display_off", "tv_display_on"):
             self.assertEqual([], adb_commands(self.tv["script"][name]), name)
 
+    def test_failure_automation_matches_string_logger_name(self):
+        auto = self.tv["automation"][0]
+        self.assertEqual("system_log_event", auto["triggers"][0]["event_type"])
+        cond = auto["conditions"][0]["value_template"]
+        self.assertIn("'androidtv' in (trigger.event.data.name | lower)", cond)
+        self.assertNotIn("join", cond)
+
     def test_volume_is_inert_until_volume_max_is_set(self):
         self.assertEqual(0, self.tv["script"]["tv_set_volume"]["variables"]["volume_max"])
 
@@ -337,6 +361,11 @@ class OperatorScriptsTest(unittest.TestCase):
         for fragment in ("'/api/'", "'/api/websocket'", "'/auth/authorize'", "'/api/google_assistant'",
                          "'404'", "'200'", "'401'"):
             self.assertIn(fragment, text)
+
+    def test_exposure_script_checks_real_client_address(self):
+        text = (HA / "scripts" / "check-exposure.ps1").read_text(encoding="utf-8")
+        self.assertIn("docker compose logs", text)
+        self.assertIn("172.30.0.*", text)
 
     def test_runbook_has_14_steps_and_one_boxed_shibi_step(self):
         text = (HA / "RUNBOOK.md").read_text(encoding="utf-8")

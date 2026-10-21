@@ -6,6 +6,10 @@ default_config:
 homeassistant:
   packages: !include_dir_named packages
 
+system_log:
+  # the "TV command failed" automation listens for system_log_event, which is only fired with this on
+  fire_event: true
+
 recorder:
   # the database lives in the ha_db volume (/data), not in the config folder; keep three days only
   db_url: sqlite:////data/home-assistant_v2.db
@@ -15,10 +19,12 @@ logger:
   default: warning
 
 http:
-  # behind Caddy behind Tailscale Funnel: trust forwarded headers from the compose subnet only
+  # behind Caddy behind Tailscale Funnel: trust forwarded headers from those two containers only
+  # (static addresses in compose.yaml); the real client address is then the first untrusted hop
   use_x_forwarded_for: true
   trusted_proxies:
-    - 172.30.0.0/24
+    - 172.30.0.3/32
+    - 172.30.0.4/32
   ip_ban_enabled: true
   login_attempts_threshold: 5
 
