@@ -133,6 +133,8 @@ so it is NOT disabled here.** The S Pro list disables it.
 | `com.xgimi.atmosphere` | animated screensaver/ambient scenes; 13 MB resident |
 | `com.google.android.backdrop` | Backdrop screensaver. **Before this batch**, point the screensaver at the launcher's ClockDream or `com.android.dreams.basic/.Colors` (a `settings put`, needs OK) |
 
+Measurement template for `com.xgimi.atmosphere` (the cost report, next-features plan 7.3): `docs/reports/atmosphere.md`.
+
 **Batch 5: stock launcher** (done in the device phase right after the new home is verified, not with the debloat)
 | Package | Reason |
 |---|---|
