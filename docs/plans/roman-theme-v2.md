@@ -764,6 +764,30 @@ Reviewer checks:
 - Device (each step needs Shibi's OK): PSS < 60 MB at 1 min into the dream, right after HOME, and 30 s later;
   motion visible but calm from the sofa; quotes readable at 3 m.
 
+### 9.3.1 DM2: memory while running, shuffled quotes (Sonnet)
+
+Measured total PSS of `com.gathin.tvhome` (launcher and dream share the process) before DM2: idle 52.8 MB,
+**during** RomanDream v2 67.9 MB, right after 58.1 MB, 30 s after 48.2 MB. Target: during < 60 MB (aim ~56),
+after unchanged or better. Not re-measured yet; repeat the readings on the device.
+
+What changed (no device access, so these are the suspected causes, not proven ones):
+- The panned stone was an `ImageView` scaled 1.12 with view-level alpha, scale and a colour filter. It is now
+  `RomanDream.StoneView`: the shared bitmap drawn through one reused `Matrix` (scale + translate), colour filter
+  and fade on the `Paint`. No view alpha or scale on a full-screen view, so no offscreen layer is possible, and no
+  `ViewPropertyAnimator`. The fade-in runs in the existing frame loop.
+- The quote `TextView` returns `hasOverlappingRendering() == false`, so its alpha fade is applied per draw op and
+  does not allocate an offscreen layer every frame.
+- Quotes are held as two small arrays (`String[]`, `int[]`) instead of 100 `SpannableString`s with spans; the gold
+  author span is built once per quote change (every 6 s).
+- Overlay (laurels, standard, text) was already Paths/Paints built in `onSizeChanged`, no layers: unchanged.
+- If still over 60 MB, the remaining lever is the dream window's own buffers (1920x1080 x3); try an RGB_565
+  window format, or a smaller `StoneView` render size.
+
+Shuffled quotes: `QuoteOrder` (pure Java, injectable `Random`) gives a fresh shuffle on every dream start, each
+quote once per pass, a reshuffle after a full pass, and never the same quote twice in a row (also across the pass
+boundary). `QuoteClock.alpha` is still used for the fade; `QuoteClock.index` is no longer used by the dream.
+Tests: `QuoteOrderTest`.
+
 ### 9.4 Summary
 
 1. Quotes: 78 of Haiku's 87 candidates kept (with 14 sources or authors corrected), 22 well-attested additions, exactly 100 in `assets/quotes.json` (12.5 KB, ASCII only).
