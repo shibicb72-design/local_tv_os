@@ -15,7 +15,7 @@ powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost 192.168.1.50 th
 | `default/` | The built-in look written out as JSON, as a starting point for your own |
 | `aurora/` | A dark aurora wallpaper (teal and violet on navy, darker at the bottom) with a matching background colour |
 | `six-columns/` | Six smaller tiles per row and one grid row visible under the dock |
-| `xgimi-s-max/` | For the XGIMI HORIZON S Max (XK03H): YouTube, Prime Video and HDMI 1 in the dock, HDMI opened through XGIMI's own player (`com.xgimi.action.hdmiPlayer`), no Live TV, factory and screensaver apps hidden; the Roman look is on (serif, Roman date, gold accent, laurel) |
+| `xgimi-s-max/` | For the XGIMI HORIZON S Max (XK03H): YouTube, Prime Video and HDMI 1 in the dock, HDMI opened through XGIMI's own player (`com.xgimi.action.hdmiPlayer`), no Live TV, factory and screensaver apps hidden; the Roman look v2 is on (travertine wall, gilded Greek-key frieze with a SALVE medallion, fluted pilasters, Cinzel lettering, Roman date, gold focus glow) |
 
 ## Keys
 
@@ -31,6 +31,7 @@ is ignored, and a file that doesn't parse is ignored as a whole, so a theme can 
 | `source_panel_service`, `source_panel_action` | string | The TV's own source panel, for sets with no TvInputManager |
 | `input_action` | string | Action sent with an HDMI/AV row's channel URI when nothing handles the standard `VIEW` (XGIMI: `com.xgimi.action.hdmiPlayer`) |
 | `columns` | 1 to 8 | Tiles per row; tiles shrink to fit from 5 up |
+| `dock_columns` | 0 to 8 | Tiles in the dock row, independent of `columns`. `0` or missing = same as `columns`. The XGIMI S Max theme uses `5` over a 4 column grid; Right walks all dock tiles, Down goes to the grid column under the tile |
 | `rows_below_dock` | 0 to 3 | Grid rows left visible under the dock |
 | `shamsi_date` | bool | Show the Solar Hijri date above the Gregorian one |
 | `module_cards` | bool | Look for module cards and ask about them (`true`); `false` turns the feature off |
@@ -43,6 +44,36 @@ is ignored, and a file that doesn't parse is ignored as a whole, so a theme can 
 | `roman_date` | bool | Date line in Roman numerals, e.g. `XX Octobris MMXXVI`; replaces the Shamsi line when both are on |
 | `accent_color` | `#RRGGBB` | Colour of the greeting line and the laurel; unset keeps the default white look |
 | `laurel` | bool | A small laurel wreath beside the clock, tinted with `accent_color` |
+| `style` | string | `"roman"` turns on the Roman look v2 (Cinzel lettering, gold palette); anything else is off. Under it `font` and `laurel` are ignored and `accent_color` (default `#C9A24B`) is the gold. See `docs/plans/roman-theme-v2.md` |
+| `roman_stone` | string | `"travertine"` (default), `"marble"` or `"none"` |
+| `roman_stone_brightness` | 50 to 150 | Stone brightness in percent, default 100 |
+| `roman_seed` | 0 to 9999 | Pattern of the stone, default 7 |
+| `roman_vignette` | 0 to 100 | Edge darkening, default 70 |
+| `roman_meander` | bool (default `true`) | Greek-key frieze |
+| `roman_pilasters` | bool (default `true`) | Fluted pilasters at the edges |
+| `roman_crest` | bool (default `true`) | Laurel medallion in the frieze |
+| `roman_inscription` | string | Up to 8 letters inside the medallion, carved style (`U` becomes `V`, `J` becomes `I`; only `A-Z 0-9 space · . -`) |
+
+### Roman look v2
+
+With `"style": "roman"` the home becomes a Roman interior: a procedural stone wall (rendered once on first start,
+then cached), a gilded Greek-key frieze under the header broken by a laurel medallion, fluted pilasters at the
+edges, Cinzel lettering, a gilded app name, and a gold focus glow with a small lift, gold pills and a dock band.
+Everything is switched by the keys above; with `style` unset nothing of it runs. A `wallpaper.jpg` that is
+switched on replaces the stone. Details and budgets: `docs/plans/roman-theme-v2.md`.
+
+Projector advice: a projector's black is the colour of the wall, so the stone is mid-dark on purpose. Start with
+`roman_stone_brightness` at 100, then try 85 to 115 in the room you watch in. `roman_vignette` (default 70) darkens
+the edges; lower it for a flatter wall. Both only need a `config.json` change, no rebuild. The stone is cached by
+its settings, so the first start after a change takes a moment longer.
+
+### Roman screensaver
+
+`RomanDream` is a second screensaver beside the clock: the cached stone panning slowly behind a gold laurel, the
+time in Cinzel and the Roman date. It needs no keys (it follows `roman_stone`, `roman_seed`, `roman_stone_brightness`,
+`roman_vignette` and `accent_color` when the theme is Roman, else a default travertine). To select it:
+`settings put secure screensaver_components com.gathin.tvhome/.RomanDream` and
+`settings put secure screensaver_enabled 1` over adb (not run automatically). Details: `docs/plans/roman-theme-v2.md`, section 8.
 
 ## Wallpapers
 

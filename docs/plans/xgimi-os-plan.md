@@ -174,6 +174,8 @@ Android/Google core: `com.android.vending` (Play Store), `com.google.android.gms
 
 ## 5. Subtle Roman design (inside the low-RAM rules)
 
+> Superseded by `docs/plans/roman-theme-v2.md` (Roman look v2, behind `"style": "roman"`). The S5 keys below stay.
+
 No bundled fonts, no bitmaps beyond the optional wallpaper, no blur, no animation beyond what exists.
 - **Type**: the system serif (`fontFamily="serif"`, Noto Serif, already on the device) for the clock,
   greeting and date. Clock stays large and thin.
