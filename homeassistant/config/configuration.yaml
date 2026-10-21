@@ -1,0 +1,41 @@
+# Home Assistant configuration for the voice-control stack (docs/plans/next-features.md section 6).
+# Secrets are never written here: !secret values live in secrets.yaml (gitignored, see secrets.yaml.example).
+
+default_config:
+
+homeassistant:
+  packages: !include_dir_named packages
+
+system_log:
+  # the "TV command failed" automation listens for system_log_event, which is only fired with this on
+  fire_event: true
+
+recorder:
+  # the database lives in the ha_db volume (/data), not in the config folder; keep three days only
+  db_url: sqlite:////data/home-assistant_v2.db
+  purge_keep_days: 3
+
+logger:
+  default: warning
+
+http:
+  # behind Caddy behind Tailscale Funnel: trust forwarded headers from those two containers only
+  # (static addresses in compose.yaml); the real client address is then the first untrusted hop
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.0.3/32
+    - 172.30.0.4/32
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
+
+google_assistant:
+  project_id: !secret google_project_id
+  service_account: !include SERVICE_ACCOUNT.json
+  report_state: true
+  # Google sees only the one media player named TV
+  expose_by_default: false
+  entity_config:
+    media_player.tv:
+      name: TV
+      expose: true
+      room: "<room>"

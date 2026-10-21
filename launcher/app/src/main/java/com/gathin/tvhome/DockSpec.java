@@ -120,6 +120,23 @@ final class DockSpec {
         return Integer.compare(a.length() - i, b.length() - j);
     }
 
+    /** "HDMI1" (some TVs) becomes "HDMI 1"; any other label is returned as it is. */
+    static String normalizeHdmiLabel(String label) {
+        if (label == null) return null;
+        java.util.regex.Matcher m = HDMI_LABEL.matcher(label.trim());
+        return m.matches() ? "HDMI " + m.group(1) : label;
+    }
+
+    /** The label shown for an input: HDMI ports always read "HDMI n", so sorting and display agree. */
+    static String inputLabel(String raw, boolean hdmi) {
+        if (!hdmi) return raw;
+        String label = raw.toUpperCase(java.util.Locale.ROOT).contains("HDMI") ? raw : "HDMI " + raw;
+        return normalizeHdmiLabel(label);
+    }
+
+    private static final java.util.regex.Pattern HDMI_LABEL =
+            java.util.regex.Pattern.compile("^HDMI\\s*(\\d+)$", java.util.regex.Pattern.CASE_INSENSITIVE);
+
     /** Name for a "Not installed" tile: a few well-known apps, otherwise the package itself. */
     static String friendlyName(String pkg) {
         switch (pkg) {

@@ -1,0 +1,79 @@
+package com.gathin.tvhome;
+
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+
+/**
+ * The numbers and strings behind the Roman screensaver ({@link RomanDream}); pure Java so they can be unit
+ * tested.
+ */
+final class RomanDreamMath {
+
+    /** Full component name for {@code settings put secure screensaver_components}. */
+    static final String COMPONENT = "com.gathin.tvhome/.RomanDream";
+    /** The stone is drawn this much larger than the screen, so panning never shows an edge. */
+    static final float SCALE = 1.12f;
+    /** Gap between frame callbacks (about 16 fps); only render-node properties change per frame. */
+    static final long FRAME_MS = 60L;
+    /** One way across the pan, per axis; different lengths make the wall drift in a slow Lissajous. */
+    static final long LEG_X_MS = 71_000L;
+    static final long LEG_Y_MS = 47_000L;
+
+    /** Legend on the legion standard (Legio XII Fulminata bears the thunderbolt); change it to switch legions. */
+    static final String LEGION = "LEG XII FVLMINATA";
+
+    private RomanDreamMath() {
+    }
+
+    /** The plain localized long date, e.g. "20 October 2026" (en-GB) or "October 20, 2026" (en-US). */
+    static String gregorian(int year, int month, int day, Locale locale) {
+        Calendar c = new GregorianCalendar(year, month - 1, day);
+        return DateFormat.getDateInstance(DateFormat.LONG, locale).format(c.getTime());
+    }
+
+    /**
+     * Text size (px) that makes a text of {@code widthAtOnePx} (its width at a 1 px size) fill {@code maxWidth},
+     * clamped to [{@code minPx}, {@code maxPx}]. A width of zero or less gives {@code maxPx}.
+     */
+    static float fitTextSize(float maxWidth, float widthAtOnePx, float minPx, float maxPx) {
+        float fit = widthAtOnePx <= 0f ? maxPx : maxWidth / widthAtOnePx;
+        return Math.max(minPx, Math.min(maxPx, fit));
+    }
+
+    /** Largest translation (px) that keeps a view of {@code size} px, scaled by {@code scale}, covering the screen. */
+    static float travel(float size, float scale) {
+        return Math.max(0f, size * (scale - 1f) / 2f);
+    }
+
+    /** Translation for an animation fraction 0..1 (clamped): from {@code -travel} to {@code +travel}. */
+    static float offset(float fraction, float travel) {
+        float f = Math.min(1f, Math.max(0f, fraction));
+        return (2f * f - 1f) * travel;
+    }
+
+    /** Smoothstep 0..1 (clamped), so the pan reverses softly instead of with a jerk. */
+    static float ease(float f) {
+        float x = Math.min(1f, Math.max(0f, f));
+        return x * x * (3f - 2f * x);
+    }
+
+    /** Fraction 0..1 of a ping-pong animation that goes 0 to 1 and back, one way taking {@code legMs}. */
+    static float pingPong(long elapsedMs, long legMs) {
+        if (legMs <= 0) return 0f;
+        long t = Math.floorMod(elapsedMs, 2 * legMs);
+        return t <= legMs ? (float) t / legMs : (float) (2 * legMs - t) / legMs;
+    }
+
+    /** "10:45" for 24-hour clocks (zero padded hour), "10:45" or "9:05" for 12-hour ones. */
+    static String time(int hour, int minute, boolean is24) {
+        int h = is24 ? hour : (hour % 12 == 0 ? 12 : hour % 12);
+        return (is24 && h < 10 ? "0" : "") + h + ":" + (minute < 10 ? "0" : "") + minute;
+    }
+
+    /** "AM" or "PM" for a 12-hour clock, "" for a 24-hour one. */
+    static String ampm(int hour, boolean is24) {
+        return is24 ? "" : (hour < 12 ? "AM" : "PM");
+    }
+}

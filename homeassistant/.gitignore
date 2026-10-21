@@ -1,0 +1,7 @@
+.env
+secrets/
+config/secrets.yaml
+config/SERVICE_ACCOUNT.json
+config/.storage/
+*.db*
+config/.HA_VERSION

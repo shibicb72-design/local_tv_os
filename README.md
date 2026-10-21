@@ -309,4 +309,5 @@ The people whose work is in this repo:
 ## Licence
 
 MIT, see [`LICENSE`](LICENSE). The Outfit typeface is under the SIL Open Font License, see
-`launcher/FONT-LICENSE-OFL.txt`.
+`launcher/FONT-LICENSE-OFL.txt`. The Cinzel typeface (Roman look v2) is also under the SIL Open Font License 1.1,
+see `launcher/FONT-LICENSE-CINZEL-OFL.txt`.

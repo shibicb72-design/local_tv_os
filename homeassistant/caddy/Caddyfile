@@ -1,0 +1,23 @@
+# Path allowlist in front of Home Assistant. Everything not listed is a 404 from outside.
+# Keep the list in sync with docs/plans/next-features.md 6.1; tests/test_homeassistant.py compares them.
+{
+	auto_https off
+	admin off
+	# trust X-Forwarded-For only from the tailscale container (static address in compose.yaml),
+	# so Funnel's real client address reaches Home Assistant and ip_ban bans the caller, not the proxy
+	servers {
+		trusted_proxies static 172.30.0.4/32
+	}
+}
+
+:8080 {
+	@allowed path /api/google_assistant /auth/authorize /auth/token /auth/login_flow* /auth/providers /frontend_latest/* /frontend_es5/* /static/* /manifest.json
+
+	handle @allowed {
+		reverse_proxy homeassistant:8123
+	}
+
+	handle {
+		respond "Not found" 404
+	}
+}

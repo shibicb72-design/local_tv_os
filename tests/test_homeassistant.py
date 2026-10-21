@@ -1,0 +1,429 @@
+"""Checks the Home Assistant voice-control stack in homeassistant/ without Docker.
+
+Run from the repository root: python3 -m unittest discover -s tests -v
+"""
+import json
+from pathlib import Path
+import re
+import unittest
+
+import yaml
+
+
+ROOT = Path(__file__).resolve().parents[1]
+HA = ROOT / "homeassistant"
+
+# docs/plans/next-features.md 6.1: the only paths that may reach Home Assistant from outside.
+ALLOWED_PATHS = [
+    "/api/google_assistant",
+    "/auth/authorize",
+    "/auth/token",
+    "/auth/login_flow*",
+    "/auth/providers",
+    "/frontend_latest/*",
+    "/frontend_es5/*",
+    "/static/*",
+    "/manifest.json",
+]
+
+
+def load_compose():
+    return yaml.safe_load((HA / "compose.yaml").read_text(encoding="utf-8"))
+
+
+class ComposeTest(unittest.TestCase):
+    def setUp(self):
+        self.compose = load_compose()
+        self.services = self.compose["services"]
+
+    def test_services(self):
+        self.assertEqual({"homeassistant", "caddy", "tailscale"}, set(self.services))
+
+    def test_only_loopback_8123_is_published(self):
+        published = []
+        for name, svc in self.services.items():
+            for port in svc.get("ports", []):
+                published.append((name, str(port)))
+        self.assertEqual([("homeassistant", "127.0.0.1:8123:8123")], published)
+
+    def test_adb_port_is_never_mentioned_as_a_port(self):
+        for name, svc in self.services.items():
+            for key in ("ports", "expose"):
+                for port in svc.get(key, []):
+                    self.assertNotIn("5555", str(port), name)
+
+    def test_images_are_pinned(self):
+        for name, svc in self.services.items():
+            image = svc["image"]
+            self.assertIn(":", image, name)
+            self.assertFalse(image.endswith(":latest"), name)
+            self.assertFalse(image.endswith(":stable"), name)
+
+    def test_tailscale_is_userspace(self):
+        ts = self.services["tailscale"]
+        self.assertEqual("true", str(ts["environment"]["TS_USERSPACE"]).lower())
+        self.assertNotIn("devices", ts)
+        self.assertNotIn("cap_add", ts)
+        self.assertNotIn("privileged", ts)
+        self.assertNotIn("network_mode", ts)
+        self.assertNotIn("/dev/net/tun", json.dumps(ts))
+        self.assertNotIn("NET_ADMIN", json.dumps(ts))
+        self.assertIn("TS_SERVE_CONFIG", ts["environment"])
+        self.assertIn("TS_STATE_DIR", ts["environment"])
+
+    def test_adb_key_is_mounted_read_only(self):
+        volumes = self.services["homeassistant"]["volumes"]
+        for key in ("androidtv_adbkey", "androidtv_adbkey.pub"):
+            mounts = [v for v in volumes if v.split(":")[1].endswith(key)]
+            self.assertEqual(1, len(mounts), key)
+            self.assertTrue(mounts[0].endswith(":ro"), key)
+
+    def test_restart_policy(self):
+        for name, svc in self.services.items():
+            self.assertEqual("unless-stopped", svc["restart"], name)
+
+    def test_static_addresses_inside_subnet(self):
+        import ipaddress
+        net = ipaddress.ip_network(self.compose["networks"]["ha_net"]["ipam"]["config"][0]["subnet"])
+        addrs = [self.services[n]["networks"]["ha_net"]["ipv4_address"] for n in self.services]
+        self.assertEqual(3, len(set(addrs)))
+        for a in addrs:
+            self.assertIn(ipaddress.ip_address(a), net)
+
+    def test_subnet(self):
+        subnet = self.compose["networks"]["ha_net"]["ipam"]["config"][0]["subnet"]
+        self.assertEqual("172.30.0.0/24", subnet)
+
+
+class CaddyTest(unittest.TestCase):
+    def setUp(self):
+        self.text = (HA / "caddy" / "Caddyfile").read_text(encoding="utf-8")
+
+    def test_allowlist_matches_plan_exactly(self):
+        matchers = re.findall(r"^\s*@\w+\s+path\s+(.+)$", self.text, re.MULTILINE)
+        self.assertEqual(1, len(matchers))
+        self.assertEqual(ALLOWED_PATHS, matchers[0].split())
+
+    def test_only_allowed_matcher_is_proxied_and_rest_is_404(self):
+        self.assertEqual(1, self.text.count("reverse_proxy"))
+        self.assertRegex(self.text, r"handle @allowed \{\s*reverse_proxy homeassistant:8123\s*\}")
+        # the last handle block is the catch-all and answers 404
+        self.assertRegex(self.text.rstrip(), r"handle \{\s*respond \"[^\"]*\" 404\s*\}\s*\}$")
+
+    def test_xff_trusted_only_from_tailscale_static_ip(self):
+        ts = load_compose()["services"]["tailscale"]["networks"]["ha_net"]["ipv4_address"]
+        self.assertRegex(self.text, r"servers \{\s*trusted_proxies static %s/32\s*\}" % re.escape(ts))
+
+    def test_admin_api_is_off(self):
+        self.assertRegex(self.text, r"admin off")
+
+
+class ServeConfigTest(unittest.TestCase):
+    def setUp(self):
+        self.serve = json.loads((HA / "tailscale" / "serve.json").read_text(encoding="utf-8"))
+
+    def test_funnel_only_443(self):
+        funnel = self.serve["AllowFunnel"]
+        self.assertTrue(funnel)
+        for host_port, enabled in funnel.items():
+            self.assertTrue(host_port.endswith(":443"), host_port)
+            self.assertIs(True, enabled)
+
+    def test_proxies_only_to_caddy(self):
+        proxies = []
+        for web in self.serve["Web"].values():
+            for handler in web["Handlers"].values():
+                proxies.append(handler["Proxy"])
+        self.assertEqual(["http://caddy:8080"], proxies)
+
+    def test_no_raw_tcp_forwarding(self):
+        for port, cfg in self.serve["TCP"].items():
+            self.assertEqual("443", port)
+            self.assertNotIn("TCPForward", cfg)
+
+
+class _Tagged:
+    def __init__(self, tag, value):
+        self.tag, self.value = tag, value
+
+
+def load_ha_yaml(path):
+    """Safe loader that accepts Home Assistant's !secret / !include / !include_dir_named tags."""
+    class Loader(yaml.SafeLoader):
+        pass
+
+    for tag in ("!secret", "!include", "!include_dir_named"):
+        Loader.add_constructor(tag, lambda loader, node, tag=tag: _Tagged(tag, loader.construct_scalar(node)))
+    return yaml.load(path.read_text(encoding="utf-8"), Loader=Loader)
+
+
+class HaConfigurationTest(unittest.TestCase):
+    def setUp(self):
+        self.config = load_ha_yaml(HA / "config" / "configuration.yaml")
+
+    def test_loads_with_ha_tags(self):
+        pkgs = self.config["homeassistant"]["packages"]
+        self.assertEqual(("!include_dir_named", "packages"), (pkgs.tag, pkgs.value))
+
+    def test_only_media_player_tv_is_exposed(self):
+        ga = self.config["google_assistant"]
+        self.assertIs(False, ga["expose_by_default"])
+        self.assertEqual(["media_player.tv"], list(ga["entity_config"]))
+        self.assertIs(True, ga["entity_config"]["media_player.tv"]["expose"])
+        self.assertEqual("TV", ga["entity_config"]["media_player.tv"]["name"])
+        self.assertIs(True, ga["report_state"])
+        self.assertNotIn("exposed_domains", ga)
+
+    def test_google_secrets_are_not_inline(self):
+        ga = self.config["google_assistant"]
+        self.assertEqual(("!secret", "google_project_id"), (ga["project_id"].tag, ga["project_id"].value))
+        self.assertEqual(("!include", "SERVICE_ACCOUNT.json"),
+                         (ga["service_account"].tag, ga["service_account"].value))
+
+    def test_trusted_proxies_only_caddy_and_tailscale(self):
+        http = self.config["http"]
+        nets = load_compose()["services"]
+        caddy = nets["caddy"]["networks"]["ha_net"]["ipv4_address"]
+        ts = nets["tailscale"]["networks"]["ha_net"]["ipv4_address"]
+        self.assertEqual([caddy + "/32", ts + "/32"], http["trusted_proxies"])
+        self.assertIs(True, http["use_x_forwarded_for"])
+        self.assertIs(True, http["ip_ban_enabled"])
+        self.assertEqual(5, http["login_attempts_threshold"])
+
+    def test_system_log_fires_events(self):
+        self.assertIs(True, self.config["system_log"]["fire_event"])
+
+    def test_recorder_and_logger(self):
+        self.assertEqual(3, self.config["recorder"]["purge_keep_days"])
+        self.assertTrue(self.config["recorder"]["db_url"].startswith("sqlite:////data/"))
+        self.assertEqual("warning", self.config["logger"]["default"])
+
+    def test_secrets_example_has_placeholders_only(self):
+        secrets = yaml.safe_load((HA / "config" / "secrets.yaml.example").read_text(encoding="utf-8"))
+        self.assertEqual({"google_project_id"}, set(secrets))
+        self.assertTrue(secrets["google_project_id"].startswith("<"))
+
+    def test_runbook_google_side_values(self):
+        text = (HA / "RUNBOOK.md").read_text(encoding="utf-8")
+        for value in (
+            "https://<host>/api/google_assistant",
+            "https://oauth-redirect.googleusercontent.com/r/<project_id>",
+            "https://<host>/auth/authorize",
+            "https://<host>/auth/token",
+        ):
+            self.assertIn(value, text)
+
+
+TV_COMMAND_ALLOWLIST = [
+    r"^am start (-[andt] \S+ ?|-c \S+ ?)+$",
+    r"^cmd media_session volume --stream 3 --set \{\{ n \}\}$",
+]
+
+TV_COMMAND_DENYLIST = [
+    "KEYCODE_POWER", "KEYCODE_SLEEP", "KEYCODE_WAKEUP", "keyevent 26", "keyevent 223", "keyevent 224",
+    "settings put", "setprop", "svc power", "reboot", "pm ", "input keyevent POWER",
+]
+
+
+def walk(node):
+    if isinstance(node, dict):
+        yield node
+        for value in node.values():
+            yield from walk(value)
+    elif isinstance(node, list):
+        for item in node:
+            yield from walk(item)
+
+
+def adb_commands(tree):
+    """Every data.command of an androidtv.adb_command action, whitespace folded."""
+    found = []
+    for node in walk(tree):
+        if node.get("action") == "androidtv.adb_command":
+            found.append(" ".join(str(node["data"]["command"]).split()))
+    return found
+
+
+class TvPackageTest(unittest.TestCase):
+    def setUp(self):
+        self.tv = load_ha_yaml(HA / "config" / "packages" / "tv.yaml")
+        self.text = (HA / "config" / "packages" / "tv.yaml").read_text(encoding="utf-8")
+        self.sources = self.tv["input_select"]["tv_source"]["options"]
+
+    def test_sources(self):
+        self.assertEqual(["HDMI 1", "YouTube", "Prime Video", "Files", "Player", "Home"], self.sources)
+
+    def test_every_source_has_a_command(self):
+        branches = self.tv["script"]["tv_select_source"]["sequence"][0]["choose"]
+        handled = {}
+        for branch in branches:
+            match = re.search(r"source == '([^']+)'", branch["conditions"])
+            handled[match.group(1)] = adb_commands(branch["sequence"])
+        self.assertEqual(sorted(self.sources), sorted(handled))
+        for source, commands in handled.items():
+            self.assertEqual(1, len(commands), source)
+
+    def test_adb_commands_match_allowlist(self):
+        commands = adb_commands(self.tv)
+        self.assertEqual(7, len(commands))  # six sources + volume
+        for command in commands:
+            self.assertTrue(any(re.match(p, command) for p in TV_COMMAND_ALLOWLIST), command)
+
+    def test_adb_commands_hit_no_denylist_entry(self):
+        for command in adb_commands(self.tv):
+            for bad in TV_COMMAND_DENYLIST:
+                self.assertNotIn(bad.lower(), command.lower(), command)
+        # the whole file, comments aside, never mentions a forbidden verb either
+        code = "\n".join(line for line in self.text.splitlines() if not line.lstrip().startswith("#"))
+        for bad in TV_COMMAND_DENYLIST:
+            self.assertNotIn(bad.lower(), code.lower())
+
+    def test_adb_commands_only_target_projector_adb(self):
+        for node in walk(self.tv):
+            if node.get("action") == "androidtv.adb_command":
+                self.assertEqual("media_player.projector_adb", node["target"]["entity_id"])
+
+    def test_scripts_are_queued_max_3(self):
+        self.assertEqual({"tv_select_source", "tv_set_volume", "tv_display_off", "tv_display_on"},
+                         set(self.tv["script"]))
+        for name, script in self.tv["script"].items():
+            self.assertEqual("queued", script["mode"], name)
+            self.assertEqual(3, script["max"], name)
+
+    def test_adb_actions_continue_on_error(self):
+        for node in walk(self.tv):
+            if node.get("action") == "androidtv.adb_command":
+                self.assertIs(True, node["continue_on_error"])
+
+    def test_display_scripts_send_nothing_until_v5(self):
+        for name in ("tv_display_off", "tv_display_on"):
+            self.assertEqual([], adb_commands(self.tv["script"][name]), name)
+
+    def test_failure_automation_matches_string_logger_name(self):
+        auto = self.tv["automation"][0]
+        self.assertEqual("system_log_event", auto["triggers"][0]["event_type"])
+        cond = auto["conditions"][0]["value_template"]
+        self.assertIn("'androidtv' in (trigger.event.data.name | lower)", cond)
+        self.assertNotIn("join", cond)
+
+    def test_volume_is_inert_until_volume_max_is_set(self):
+        self.assertEqual(0, self.tv["script"]["tv_set_volume"]["variables"]["volume_max"])
+
+    def test_universal_player(self):
+        players = [p for p in self.tv["media_player"] if p["platform"] == "universal"]
+        self.assertEqual(1, len(players))
+        player = players[0]
+        self.assertEqual("TV", player["name"])
+        self.assertEqual("input_select.tv_source|options", player["attributes"]["source_list"])
+        self.assertIn("input_boolean.tv_display", player["state_template"])
+        self.assertEqual({"turn_on", "turn_off", "volume_set", "select_source"}, set(player["commands"]))
+        for command in player["commands"].values():
+            self.assertTrue(command["action"].startswith("script.tv_"))
+
+    def test_no_polling_and_projector_not_exposed(self):
+        for path in HA.rglob("*.yaml"):
+            self.assertNotIn("scan_interval", path.read_text(encoding="utf-8"), path.name)
+        google = load_ha_yaml(HA / "config" / "configuration.yaml")["google_assistant"]
+        self.assertEqual(["media_player.tv"], list(google["entity_config"]))
+        self.assertNotIn("projector_adb", json.dumps(google, default=str))
+
+    def test_runbook_says_polling_off(self):
+        text = (HA / "RUNBOOK.md").read_text(encoding="utf-8")
+        self.assertIn("turn polling off", text)
+
+
+PS1_ADB_DENYLIST = TV_COMMAND_DENYLIST + ["install", "uninstall", "appops set"]
+
+
+class OperatorScriptsTest(unittest.TestCase):
+    def setUp(self):
+        self.scripts = sorted((HA / "scripts").glob("*.ps1"))
+
+    def test_the_three_scripts_exist(self):
+        self.assertEqual(["adb-reauth.ps1", "check-exposure.ps1", "setup.ps1"], [p.name for p in self.scripts])
+
+    def test_no_adb_shell_write_verbs(self):
+        for path in self.scripts:
+            for line in path.read_text(encoding="utf-8").splitlines():
+                lowered = line.lower()
+                if "adb" in lowered and "shell" in lowered:
+                    for bad in PS1_ADB_DENYLIST:
+                        self.assertNotIn(bad.lower(), lowered, f"{path.name}: {line}")
+
+    def test_scripts_never_adb_install_or_shell_writes(self):
+        for path in self.scripts:
+            text = path.read_text(encoding="utf-8").lower()
+            for bad in ("adb install", "adb uninstall", "appops set", "setprop", "settings put"):
+                self.assertNotIn(bad, text, path.name)
+
+    def test_exposure_script_checks(self):
+        text = (HA / "scripts" / "check-exposure.ps1").read_text(encoding="utf-8")
+        for fragment in ("'/api/'", "'/api/websocket'", "'/auth/authorize'", "'/api/google_assistant'",
+                         "'404'", "'200'", "'401'"):
+            self.assertIn(fragment, text)
+
+    def test_exposure_script_checks_real_client_address(self):
+        text = (HA / "scripts" / "check-exposure.ps1").read_text(encoding="utf-8")
+        self.assertIn("docker compose logs", text)
+        self.assertIn("172.30.0.*", text)
+
+    def test_runbook_has_14_steps_and_one_boxed_shibi_step(self):
+        text = (HA / "RUNBOOK.md").read_text(encoding="utf-8")
+        steps = re.findall(r"^(\d+)\. \*\*", text.split("## Steps")[1].split("## SHIBI STEP")[0], re.MULTILINE)
+        self.assertEqual([str(n) for n in range(1, 15)], steps)
+        box = text.split("## SHIBI STEP")[1]
+        self.assertEqual(1, box.count("SHIBI STEP  (the only one)"))
+        self.assertIn("ALLOW / LINK", box)
+        self.assertIn("google-link", box)
+
+
+class RepoHygieneTest(unittest.TestCase):
+    def test_gitignore_covers_secrets(self):
+        lines = (HA / ".gitignore").read_text(encoding="utf-8").split()
+        for path in (
+            ".env",
+            "secrets/",
+            "config/secrets.yaml",
+            "config/SERVICE_ACCOUNT.json",
+            "config/.storage/",
+            "*.db*",
+            "config/.HA_VERSION",
+        ):
+            self.assertIn(path, lines)
+
+    def test_env_example_has_placeholders_only(self):
+        values = {}
+        for line in (HA / ".env.example").read_text(encoding="utf-8").splitlines():
+            if line and not line.startswith("#"):
+                key, _, value = line.partition("=")
+                values[key] = value
+        self.assertEqual({"TS_AUTHKEY", "TS_HOSTNAME", "TZ"}, set(values))
+        self.assertTrue(values["TS_AUTHKEY"].startswith("<"))
+        self.assertTrue(values["TZ"].startswith("<"))
+
+    def test_no_secrets_in_tracked_files(self):
+        patterns = [
+            re.compile(r"tskey-[A-Za-z0-9-]{10,}"),
+            re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
+            re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+"),
+            re.compile(r"\.ts\.net\b"),
+        ]
+        allowed_suffixes = {".yaml", ".yml", ".json", ".example", ".md", ".ps1", ".py", ""}
+        for path in HA.rglob("*"):
+            if not path.is_file() or path.name == ".gitignore":
+                continue
+            if "secrets" in path.relative_to(HA).parts[:1]:
+                continue
+            if path.suffix not in allowed_suffixes:
+                continue
+            text = path.read_text(encoding="utf-8", errors="replace")
+            for pattern in patterns:
+                for match in pattern.finditer(text):
+                    # "<host>.<tailnet>.ts.net" style placeholders in docs are fine
+                    if "<" in text[max(0, match.start() - 20):match.end() + 1]:
+                        continue
+                    self.fail(f"{path.relative_to(ROOT)}: {pattern.pattern} matches {match.group(0)!r}")
+
+
+if __name__ == "__main__":
+    unittest.main()
