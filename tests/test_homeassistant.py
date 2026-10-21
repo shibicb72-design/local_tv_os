@@ -308,6 +308,46 @@ class TvPackageTest(unittest.TestCase):
         self.assertIn("turn polling off", text)
 
 
+PS1_ADB_DENYLIST = TV_COMMAND_DENYLIST + ["install", "uninstall", "appops set"]
+
+
+class OperatorScriptsTest(unittest.TestCase):
+    def setUp(self):
+        self.scripts = sorted((HA / "scripts").glob("*.ps1"))
+
+    def test_the_three_scripts_exist(self):
+        self.assertEqual(["adb-reauth.ps1", "check-exposure.ps1", "setup.ps1"], [p.name for p in self.scripts])
+
+    def test_no_adb_shell_write_verbs(self):
+        for path in self.scripts:
+            for line in path.read_text(encoding="utf-8").splitlines():
+                lowered = line.lower()
+                if "adb" in lowered and "shell" in lowered:
+                    for bad in PS1_ADB_DENYLIST:
+                        self.assertNotIn(bad.lower(), lowered, f"{path.name}: {line}")
+
+    def test_scripts_never_adb_install_or_shell_writes(self):
+        for path in self.scripts:
+            text = path.read_text(encoding="utf-8").lower()
+            for bad in ("adb install", "adb uninstall", "appops set", "setprop", "settings put"):
+                self.assertNotIn(bad, text, path.name)
+
+    def test_exposure_script_checks(self):
+        text = (HA / "scripts" / "check-exposure.ps1").read_text(encoding="utf-8")
+        for fragment in ("'/api/'", "'/api/websocket'", "'/auth/authorize'", "'/api/google_assistant'",
+                         "'404'", "'200'", "'401'"):
+            self.assertIn(fragment, text)
+
+    def test_runbook_has_14_steps_and_one_boxed_shibi_step(self):
+        text = (HA / "RUNBOOK.md").read_text(encoding="utf-8")
+        steps = re.findall(r"^(\d+)\. \*\*", text.split("## Steps")[1].split("## SHIBI STEP")[0], re.MULTILINE)
+        self.assertEqual([str(n) for n in range(1, 15)], steps)
+        box = text.split("## SHIBI STEP")[1]
+        self.assertEqual(1, box.count("SHIBI STEP  (the only one)"))
+        self.assertIn("ALLOW / LINK", box)
+        self.assertIn("google-link", box)
+
+
 class RepoHygieneTest(unittest.TestCase):
     def test_gitignore_covers_secrets(self):
         lines = (HA / ".gitignore").read_text(encoding="utf-8").split()
