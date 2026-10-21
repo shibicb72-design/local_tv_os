@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * App tiles. The first {@link MainActivity#COLUMNS} positions are the pinned dock (favourites, fixed order),
+ * App tiles. The first {@link MainActivity#DOCK_COLUMNS} positions are the pinned dock (favourites, fixed order),
  * then the module cards the owner chose to show (by label), the rest is alphabetical.
  */
 public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
@@ -121,6 +121,9 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
     private final Context ctx;
     private final TileListener listener;
     private final int dockSize;
+    /** Tiles per grid row below the dock (columns), which sizes the grid tiles. */
+    private final int gridColumns;
+    private static final int VIEW_GRID = 0, VIEW_DOCK = 1;
     /** Dock order (config.xml dock_apps, or a theme's config.json). */
     private final List<String> favourites;
     /** Never shown as tiles (res/values/config.xml, hidden_apps). */
@@ -134,10 +137,11 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
     private final RomanStyle roman;
     private final List<Entry> items = new ArrayList<>();
 
-    AppAdapter(Context ctx, TileListener listener, int dockSize, Config cfg) {
+    AppAdapter(Context ctx, TileListener listener, int dockSize, int gridColumns, Config cfg) {
         this.ctx = ctx;
         this.listener = listener;
         this.dockSize = dockSize;
+        this.gridColumns = gridColumns;
         this.favourites = cfg.dockApps;
         this.hidden = new HashSet<>(cfg.hiddenApps);
         this.dockPlaceholders = cfg.dockPlaceholders;
@@ -284,7 +288,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         float density = parent.getResources().getDisplayMetrics().density;
         int width = parent.getWidth() > 0 ? parent.getWidth() : parent.getMeasuredWidth();
         int inner = width - parent.getPaddingLeft() - parent.getPaddingRight();
-        int w = tileWidthPx(inner, dockSize, density), h = tileHeightPx(w);
+        int w = tileWidthPx(inner, viewType == VIEW_DOCK ? dockSize : gridColumns, density), h = tileHeightPx(w);
         View card = v.findViewById(R.id.card);
         ViewGroup.LayoutParams cardLp = card.getLayoutParams();
         cardLp.width = w;
@@ -376,6 +380,11 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         } catch (Exception ex) {
             Toast.makeText(ctx, ctx.getString(R.string.cant_open, e.label), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position < dockSize ? VIEW_DOCK : VIEW_GRID;   // the two rows can have different tile widths
     }
 
     @Override

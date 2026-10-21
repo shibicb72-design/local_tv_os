@@ -10,7 +10,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.LightingColorFilter;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
@@ -28,7 +30,6 @@ import android.view.Choreographer;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
@@ -54,14 +55,18 @@ public class RomanDream extends DreamService {
     /** Same value as {@link RomanDreamMath#COMPONENT}, for callers that already import this class. */
     public static final String COMPONENT = RomanDreamMath.COMPONENT;
 
-    private ImageView stone;
+    private StoneView stone;
     private Overlay overlay;
     private TextView quote;
-    private CharSequence[] lines;   // "text — author", author in gold; built once at load
-    private int quoteStart, shownQuote = -1;
+    private String[] lines;         // "text — author", plain strings; the gold author span is made per change
+    private int[] authorAt;
+    private int goldLight;
+    private QuoteOrder order;       // fresh shuffle on every dream start
+    private long shownSlot = -1;
     private float shownAlpha = -1f;
-    private float travelX, travelY;
     private long t0Nanos = -1;
+    private long fadeT0 = -1;
+    private boolean stoneReady;
     private Choreographer choreographer;
     private boolean receiverOn;
     private boolean dead;
@@ -73,19 +78,21 @@ public class RomanDream extends DreamService {
             if (dead || stone == null) return;
             if (t0Nanos < 0) t0Nanos = frameTimeNanos;
             long t = (frameTimeNanos - t0Nanos) / 1_000_000L;
-            if (travelX == 0f && stone.getWidth() > 0) {
-                travelX = RomanDreamMath.travel(stone.getWidth(), RomanDreamMath.SCALE);
-                travelY = RomanDreamMath.travel(stone.getHeight(), RomanDreamMath.SCALE);
-            }
-            stone.setTranslationX(RomanDreamMath.offset(RomanDreamMath.ease(
-                    RomanDreamMath.pingPong(t, RomanDreamMath.LEG_X_MS)), travelX));
-            stone.setTranslationY(RomanDreamMath.offset(RomanDreamMath.ease(
-                    RomanDreamMath.pingPong(t, RomanDreamMath.LEG_Y_MS)), travelY));
+            if (stoneReady && fadeT0 < 0) fadeT0 = t;
+            float fade = fadeT0 < 0 ? 0f : Math.min(1f, (t - fadeT0) / 1500f);
+            stone.pan(RomanDreamMath.offset(RomanDreamMath.ease(
+                            RomanDreamMath.pingPong(t, RomanDreamMath.LEG_X_MS)), stone.travelX()),
+                    RomanDreamMath.offset(RomanDreamMath.ease(
+                            RomanDreamMath.pingPong(t, RomanDreamMath.LEG_Y_MS)), stone.travelY()),
+                    fade);
             if (lines != null && quote != null) {
-                int i = QuoteClock.index(t, quoteStart, lines.length);
-                if (i != shownQuote) {
-                    shownQuote = i;
-                    quote.setText(lines[i]);
+                long slot = Math.floorDiv(t, QuoteClock.PERIOD_MS);
+                if (slot != shownSlot) {
+                    shownSlot = slot;
+                    int i = order.next();
+                    SpannableString s = new SpannableString(lines[i]);   // one small object per quote change
+                    s.setSpan(new ForegroundColorSpan(goldLight), authorAt[i], s.length(), 0);
+                    quote.setText(s);
                 }
                 float a = QuoteClock.alpha(t);
                 if (a != shownAlpha) {
@@ -123,13 +130,7 @@ public class RomanDream extends DreamService {
 
         FrameLayout root = new FrameLayout(this);
         root.setBackgroundColor(RomanStyle.PORPHYRY_DEEP);   // what stays if the stone fails
-        stone = new ImageView(this);
-        // Warms the wall towards red on the GPU, once; no new bitmap, works on the hardware bitmap too.
-        stone.setColorFilter(new LightingColorFilter(0xFFC07A6C, 0x00140000));
-        stone.setScaleType(ImageView.ScaleType.FIT_XY);
-        stone.setScaleX(RomanDreamMath.SCALE);
-        stone.setScaleY(RomanDreamMath.SCALE);
-        stone.setAlpha(0f);
+        stone = new StoneView(this);
         root.addView(stone, new FrameLayout.LayoutParams(-1, -1));
         overlay = new Overlay(this, style);
         root.addView(overlay, new FrameLayout.LayoutParams(-1, -1));
@@ -150,19 +151,25 @@ public class RomanDream extends DreamService {
             }
             List<String[]> all = Quotes.parse(new String(buf.toByteArray(), StandardCharsets.UTF_8));
             if (all.isEmpty()) return;
-            lines = new CharSequence[all.size()];
+            lines = new String[all.size()];
+            authorAt = new int[lines.length];
             for (int i = 0; i < lines.length; i++) {
                 String[] q = all.get(i);
-                SpannableString s = new SpannableString(Quotes.display(q));
-                s.setSpan(new ForegroundColorSpan(style.goldLight), Quotes.authorStart(q), s.length(), 0);
-                lines[i] = s;
+                lines[i] = Quotes.display(q);
+                authorAt[i] = Quotes.authorStart(q);
             }
-            quoteStart = new Random().nextInt(lines.length);
+            goldLight = style.goldLight;
+            order = new QuoteOrder(lines.length, new Random());
 
             float dp = getResources().getDisplayMetrics().density;
             int w = getResources().getDisplayMetrics().widthPixels;
             int h = getResources().getDisplayMetrics().heightPixels;
-            quote = new TextView(this);
+            quote = new TextView(this) {
+                @Override
+                public boolean hasOverlappingRendering() {
+                    return false;   // alpha is applied per draw op, so no offscreen layer for the fade
+                }
+            };
             try {
                 quote.setTypeface(RomanLook.typeface(this));
             } catch (Exception e) {
@@ -183,6 +190,8 @@ public class RomanDream extends DreamService {
         } catch (Exception | OutOfMemoryError e) {
             Log.w(TAG, "quotes unavailable, no quote line", e);
             lines = null;
+            authorAt = null;
+            order = null;
             quote = null;
         }
     }
@@ -191,8 +200,8 @@ public class RomanDream extends DreamService {
         try {
             StoneCache.load(this, style, bmp -> {
                 if (dead || stone == null || bmp == null || bmp.isRecycled()) return;
-                stone.setImageBitmap(bmp);
-                stone.animate().alpha(1f).setDuration(1500).start();
+                stone.setBitmap(bmp);
+                stoneReady = true;   // the frame loop fades it in
             });
         } catch (Exception | OutOfMemoryError e) {
             Log.w(TAG, "stone failed, dark colour stays", e);
@@ -248,17 +257,72 @@ public class RomanDream extends DreamService {
                 // already gone
             }
         }
-        if (stone != null) {
-            stone.animate().cancel();
-            stone.setImageDrawable(null);
-        }
+        if (stone != null) stone.setBitmap(null);
         // Nothing of the dream stays reachable from this service (the system keeps the instance a while).
         stone = null;
         overlay = null;
         quote = null;
         lines = null;
+        authorAt = null;
+        order = null;
         // Heap garbage from the dream goes now rather than at the next trim.
         Runtime.getRuntime().gc();
+    }
+
+    /**
+     * The shared stone drawn straight from its bitmap through one reused Matrix: scaled {@link RomanDreamMath#SCALE}
+     * larger than the view and shifted by the pan offset. No ImageView drawable wrapper, no view-level alpha or
+     * scale (so no chance of an offscreen layer); the red warming is a colour filter on the paint, applied on the
+     * GPU, and the fade-in is the paint alpha.
+     */
+    private static final class StoneView extends View {
+
+        private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+        private final Matrix matrix = new Matrix();
+        private Bitmap bmp;
+        private float dx, dy, fade = -1f;
+
+        StoneView(Context ctx) {
+            super(ctx);
+            paint.setColorFilter(new LightingColorFilter(0xFFC07A6C, 0x00140000));
+            paint.setAlpha(0);
+            setFocusable(false);
+            setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+
+        /** Dereferences (never recycles) the shared bitmap when {@code b} is null. */
+        void setBitmap(Bitmap b) {
+            bmp = b;
+            invalidate();
+        }
+
+        float travelX() {
+            return RomanDreamMath.travel(getWidth(), RomanDreamMath.SCALE);
+        }
+
+        float travelY() {
+            return RomanDreamMath.travel(getHeight(), RomanDreamMath.SCALE);
+        }
+
+        /** Moves the wall and sets the fade (0..1); redraws only this small display list, and only on change. */
+        void pan(float x, float y, float f) {
+            if (bmp == null || (x == dx && y == dy && f == fade)) return;
+            dx = x;
+            dy = y;
+            fade = f;
+            paint.setAlpha((int) (f * 255f));
+            invalidate();
+        }
+
+        @Override
+        protected void onDraw(Canvas c) {
+            Bitmap b = bmp;
+            if (b == null || b.isRecycled() || paint.getAlpha() == 0) return;
+            float w = getWidth(), h = getHeight();
+            matrix.setScale(w * RomanDreamMath.SCALE / b.getWidth(), h * RomanDreamMath.SCALE / b.getHeight());
+            matrix.postTranslate(w * (1f - RomanDreamMath.SCALE) / 2f + dx, h * (1f - RomanDreamMath.SCALE) / 2f + dy);
+            c.drawBitmap(b, matrix, paint);
+        }
     }
 
     /**

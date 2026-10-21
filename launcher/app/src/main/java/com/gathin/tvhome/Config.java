@@ -43,6 +43,8 @@ final class Config {
     final String sourcePanelAction;
     final String inputAction;
     final int columns;
+    /** Tiles in the dock row (dock_columns); equals {@link #columns} unless set. */
+    final int dockColumns;
     final int rowsBelowDock;
     final boolean shamsiDate;
     final boolean moduleCards;
@@ -70,7 +72,7 @@ final class Config {
     private Config(List<String> dockApps, List<String> hiddenApps, boolean dockPlaceholders,
                    String liveTvPackage, String liveTvAction,
                    String sourcePanelService, String sourcePanelAction, String inputAction,
-                   int columns, int rowsBelowDock,
+                   int columns, int dockColumns, int rowsBelowDock,
                    boolean shamsiDate, boolean moduleCards, boolean reducedMotion, String vpnApp,
                    boolean showHomeSettingsShortcut, int backgroundColor,
                    String font, boolean romanDate, int accentColor, boolean laurel,
@@ -84,6 +86,7 @@ final class Config {
         this.sourcePanelAction = sourcePanelAction;
         this.inputAction = inputAction;
         this.columns = columns;
+        this.dockColumns = dockColumns;
         this.rowsBelowDock = rowsBelowDock;
         this.shamsiDate = shamsiDate;
         this.moduleCards = moduleCards;
@@ -116,6 +119,7 @@ final class Config {
         String panelAction = res.getString(R.string.source_panel_action).trim();
         String inputAction = res.getString(R.string.input_action).trim();
         int columns = res.getInteger(R.integer.columns);
+        int dockColumns = res.getInteger(R.integer.dock_columns);
         int rowsBelow = res.getInteger(R.integer.rows_below_dock);
         boolean shamsi = res.getBoolean(R.bool.shamsi_date);
         boolean moduleCards = res.getBoolean(R.bool.module_cards);
@@ -152,6 +156,7 @@ final class Config {
             panelAction = string(json, "source_panel_action", panelAction);
             inputAction = string(json, "input_action", inputAction);
             columns = integer(json, "columns", columns, 1, 8);
+            dockColumns = integer(json, "dock_columns", dockColumns, 0, 8);
             rowsBelow = integer(json, "rows_below_dock", rowsBelow, 0, 3);
             shamsi = bool(json, "shamsi_date", shamsi);
             moduleCards = bool(json, "module_cards", moduleCards);
@@ -179,7 +184,7 @@ final class Config {
         if (json != null && json.has("wallpaper") && !bool(json, "wallpaper", true)) wallpaper = null;
 
         return new Config(dock, hidden, dockPlaceholders, liveTv, liveTvAction, panelService, panelAction, inputAction,
-                Math.max(1, columns), Math.max(0, rowsBelow), shamsi, moduleCards, reducedMotion,
+                Math.max(1, columns), dockColumns > 0 ? dockColumns : Math.max(1, columns), Math.max(0, rowsBelow), shamsi, moduleCards, reducedMotion,
                 vpn, homeSettings, background, font, romanDate, accent, laurel, wallpaper, applied,
                 RomanStyle.of(style, stone, brightness, seed, vignette, meander, pilasters, crest, inscription, accent));
     }
