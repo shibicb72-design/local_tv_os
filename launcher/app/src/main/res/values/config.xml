@@ -64,6 +64,9 @@
     <!-- Tiles per row in the grid; the dock always has this many slots. Tiles are 180dp wide at 4 columns and
          shrink to fit from 5 up (about 144dp at 5, 117dp at 6 on a 1080p TV). -->
     <integer name="columns">4</integer>
+    <!-- Tiles in the dock row. 0 = same as columns, so the dock lines up with the grid. A bigger number (up to 8)
+         shrinks the dock tiles to fit, e.g. 5 for five favourites over a 4 column grid. -->
+    <integer name="dock_columns">0</integer>
 
     <!-- "Default home" tile that opens Android's home-screen picker, for TVs whose settings have one
          (most Android TVs don't; the tile only appears when the page exists). Off by default. -->

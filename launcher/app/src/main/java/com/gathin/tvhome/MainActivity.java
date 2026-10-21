@@ -75,6 +75,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     /** Tiles per row and dock slots (res/values/config.xml, columns). Set in onCreate. */
     static int COLUMNS = 4;
+    /** Tiles in the dock row (config dock_columns); the same as COLUMNS unless a theme sets it. Set in onCreate. */
+    static int DOCK_COLUMNS = 4;
     private static final long MINUTE_MS = 60_000L;
     private String liveTvPkg;
     private String liveTvAction;
@@ -110,6 +112,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     // Static so they survive the activity being destroyed while another app is open (low-memory TVs,
     // or Developer options → "Don't keep activities"); they only reset when the process dies.
     private static int lastFocused = 0;
+    /** Last dock tile focused: Up from the grid's first row returns to it (see DockGeometry.up). */
+    private static int lastDock = 0;
     /** App of the last focused tile, so focus follows it when the app list changes. */
     private static String lastFocusedKey;
     private float density;
@@ -192,6 +196,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // config.xml, overlaid by config.json from a pushed theme (see Config and tools/theme.sh).
         Config cfg = Config.load(this);
         COLUMNS = cfg.columns;
+        DOCK_COLUMNS = cfg.dockColumns;
         reducedMotion = cfg.reducedMotion;
         liveTvPkg = cfg.liveTvPackage;
         liveTvAction = cfg.liveTvAction;
@@ -226,15 +231,23 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         hiddenApps = new HashSet<>(cfg.hiddenApps);
 
         grid = findViewById(R.id.grid);
-        grid.setLayoutManager(new GridLayoutManager(this, COLUMNS));
+        // One layout manager for both rows: the dock and the grid each get their own tile width through spans.
+        GridLayoutManager glm = new GridLayoutManager(this, DockGeometry.spanCount(DOCK_COLUMNS, COLUMNS));
+        glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return DockGeometry.spanSize(position, DOCK_COLUMNS, COLUMNS);
+            }
+        });
+        grid.setLayoutManager(glm);
         grid.setHasFixedSize(true);
         grid.setItemAnimator(null);
-        grid.addItemDecoration(new DockDecoration(COLUMNS, density, cfg.roman));
+        grid.addItemDecoration(new DockDecoration(DOCK_COLUMNS, density, cfg.roman));
         int enterAnim = reducedMotion ? R.anim.tile_enter_reduced : R.anim.tile_enter;
         float enterDelay = reducedMotion ? 0f : 0.06f;
         grid.setLayoutAnimation(new LayoutAnimationController(
                 AnimationUtils.loadAnimation(this, enterAnim), enterDelay));
-        adapter = new AppAdapter(this, this, COLUMNS, cfg);
+        adapter = new AppAdapter(this, this, DOCK_COLUMNS, COLUMNS, cfg);
         grid.setAdapter(adapter);
 
         // tvOS layout: push the dock row towards the bottom of the screen, leaving room for
@@ -244,7 +257,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             int h = b - t;
             // Item height follows the tile size, which follows the column count (AppAdapter.tileWidthPx).
             int inner = (r - l) - grid.getPaddingLeft() - grid.getPaddingRight();
-            int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(AppAdapter.tileWidthPx(inner, COLUMNS, density)), density);
+            int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(AppAdapter.tileWidthPx(inner, DOCK_COLUMNS, density)), density);
             int dockRow = itemH + (int) ((6 + 12) * density);   // item height plus DockDecoration offsets
             int gridRows = itemH * rowsBelowDock;
             int want = Math.max(0, h - dockRow - gridRows - (int) (30 * density));
@@ -310,7 +323,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (keyCode == KeyEvent.KEYCODE_DPAD_UP) return true;
             if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
                 // Back to the dock tile Up came from, not wherever the focus finder lands.
-                focusTile(lastFocused % COLUMNS);
+                focusTile(DockGeometry.dockIndexFor(lastFocused, DOCK_COLUMNS, COLUMNS));
                 return true;
             }
             if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -538,6 +551,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     public void onTileFocused(int position, View card) {
         lastFocused = position;
+        if (DockGeometry.isDock(position, DOCK_COLUMNS)) lastDock = position;
         lastFocusedKey = adapter.keyAt(position);
         // Tile rect in root coordinates, using layout positions (ignores the scale animation).
         Rect r = new Rect(0, 0, card.getWidth(), card.getHeight());
@@ -569,7 +583,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             springY.animateToFinalPosition(y - glassScrollShift);
         }
         View item = (View) card.getParent();
-        if (position < COLUMNS) {
+        if (DockGeometry.isDock(position, DOCK_COLUMNS)) {
             // Dock: park it at the bottom of the screen and show the top shelf for this app.
             int decoratedTop = item.getTop() - (int) (6 * density);
             int dy = decoratedTop - grid.getPaddingTop();
@@ -689,18 +703,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // Horizontal: swallow the key at a row's ends so focus never wraps to the next row or
         // escapes up into the top bar. Mid-row moves fall through to the default focus search.
         if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-            return position % COLUMNS == 0;
+            return DockGeometry.blocksLeft(position, DOCK_COLUMNS, COLUMNS);
         }
         if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            return position % COLUMNS == COLUMNS - 1 || position == count - 1;
+            return DockGeometry.blocksRight(position, count, DOCK_COLUMNS, COLUMNS);
         }
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-            if (position < COLUMNS) return false;          // dock row: let focus move to the top bar
-            target = position - COLUMNS;
+            target = DockGeometry.up(position, DOCK_COLUMNS, COLUMNS, lastDock);
+            if (target == DockGeometry.TOP_BAR) return false;   // dock row: let focus move to the top bar
         } else {
-            int lastRowStart = ((count - 1) / COLUMNS) * COLUMNS;
-            if (position >= lastRowStart) return true;     // already on the last row: stay put
-            target = Math.min(position + COLUMNS, count - 1);
+            target = DockGeometry.down(position, count, DOCK_COLUMNS, COLUMNS);
+            if (target == position) return true;                // already on the last row: stay put
         }
         focusTile(target);
         return true;
