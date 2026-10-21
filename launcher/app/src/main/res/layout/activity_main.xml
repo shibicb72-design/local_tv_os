@@ -12,6 +12,15 @@
         android:layout_height="match_parent"
         android:alpha="0" />
 
+    <!-- Roman look v2: frieze and crest, shown from code when style is roman. -->
+    <com.gathin.tvhome.RomanFrameView
+        android:id="@+id/romanFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:visibility="gone" />
+
     <!-- Top shelf: the focused dock app's name, positioned above the dock in code. -->
     <TextView
         android:id="@+id/heroName"
@@ -36,6 +45,7 @@
         android:paddingTop="26dp">
 
         <RelativeLayout
+            android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -113,6 +123,7 @@
                         android:textAllCaps="true" />
 
                     <View
+                        android:id="@+id/headerRule"
                         android:layout_width="1dp"
                         android:layout_height="26dp"
                         android:layout_gravity="bottom"
@@ -201,6 +212,7 @@
 
         <!-- The wrapper clips at the grid's edge; the grid itself must not clip so scaled tiles can overflow their cells. -->
         <FrameLayout
+            android:id="@+id/gridFrame"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"

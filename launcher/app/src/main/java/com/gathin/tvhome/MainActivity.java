@@ -1,5 +1,10 @@
 package com.gathin.tvhome;
 
+import com.gathin.roman.Roman;
+import com.gathin.roman.RomanLook;
+import com.gathin.roman.RomanStyle;
+import com.gathin.roman.StoneCache;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -66,7 +71,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -76,6 +80,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     /** Tiles per row and dock slots (res/values/config.xml, columns). Set in onCreate. */
     static int COLUMNS = 4;
+    /** Tiles in the dock row (config dock_columns); the same as COLUMNS unless a theme sets it. Set in onCreate. */
+    static int DOCK_COLUMNS = 4;
     private static final long MINUTE_MS = 60_000L;
     private String liveTvPkg;
     private String liveTvAction;
@@ -97,6 +103,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private TextView shamsiDate;
     private boolean shamsi;
     private boolean romanDate;
+    /** Roman look v2, or null for the old look (config.xml, style). */
+    private RomanStyle roman;
+    /** Alpha the app-colour glow fades up to: 1, or 0.8 under roman so it warms the stone without flooding it. */
+    private float ambientAlpha = 1f;
     private String vpnApp;
     private SpringAnimation springX, springY;
     private float glassTargetX, glassTargetY;
@@ -107,6 +117,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     // Static so they survive the activity being destroyed while another app is open (low-memory TVs,
     // or Developer options → "Don't keep activities"); they only reset when the process dies.
     private static int lastFocused = 0;
+    /** Last dock tile focused: Up from the grid's first row returns to it (see DockGeometry.up). */
+    private static int lastDock = 0;
     /** App of the last focused tile, so focus follows it when the app list changes. */
     private static String lastFocusedKey;
     private float density;
@@ -189,6 +201,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // config.xml, overlaid by config.json from a pushed theme (see Config and tools/theme.sh).
         Config cfg = Config.load(this);
         COLUMNS = cfg.columns;
+        DOCK_COLUMNS = cfg.dockColumns;
         reducedMotion = cfg.reducedMotion;
         liveTvPkg = cfg.liveTvPackage;
         liveTvAction = cfg.liveTvAction;
@@ -199,6 +212,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         root = findViewById(R.id.root);
         root.setBackgroundColor(cfg.backgroundColor);
         if (cfg.wallpaper != null) showWallpaper(cfg.wallpaper);
+        else if (cfg.roman != null) showStone(cfg.roman, cfg.backgroundColor);
         glass = findViewById(R.id.glass);
         ambient = findViewById(R.id.ambient);
         heroName = findViewById(R.id.heroName);
@@ -207,6 +221,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         shamsiDate = findViewById(R.id.shamsiDate);
         shamsi = cfg.shamsiDate;
         romanDate = cfg.romanDate;
+        roman = cfg.roman;
+        if (roman != null) ambientAlpha = 0.8f;
         if (shamsi || romanDate) {
             shamsiDate.setVisibility(View.VISIBLE);
             TextView date = findViewById(R.id.date);
@@ -214,20 +230,29 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             date.setPadding(0, (int) (4 * density), 0, 0);
         }
         applyRomanLook(cfg);
+        if (roman != null) showRomanFrame(roman);
         vpnApp = cfg.vpnApp;
         moduleCards = cfg.moduleCards;
         hiddenApps = new HashSet<>(cfg.hiddenApps);
 
         grid = findViewById(R.id.grid);
-        grid.setLayoutManager(new GridLayoutManager(this, COLUMNS));
+        // One layout manager for both rows: the dock and the grid each get their own tile width through spans.
+        GridLayoutManager glm = new GridLayoutManager(this, DockGeometry.spanCount(DOCK_COLUMNS, COLUMNS));
+        glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return DockGeometry.spanSize(position, DOCK_COLUMNS, COLUMNS);
+            }
+        });
+        grid.setLayoutManager(glm);
         grid.setHasFixedSize(true);
         grid.setItemAnimator(null);
-        grid.addItemDecoration(new DockDecoration(COLUMNS, density));
+        grid.addItemDecoration(new DockDecoration(DOCK_COLUMNS, density, cfg.roman));
         int enterAnim = reducedMotion ? R.anim.tile_enter_reduced : R.anim.tile_enter;
         float enterDelay = reducedMotion ? 0f : 0.06f;
         grid.setLayoutAnimation(new LayoutAnimationController(
                 AnimationUtils.loadAnimation(this, enterAnim), enterDelay));
-        adapter = new AppAdapter(this, this, COLUMNS, cfg);
+        adapter = new AppAdapter(this, this, DOCK_COLUMNS, COLUMNS, cfg);
         grid.setAdapter(adapter);
 
         // tvOS layout: push the dock row towards the bottom of the screen, leaving room for
@@ -237,7 +262,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             int h = b - t;
             // Item height follows the tile size, which follows the column count (AppAdapter.tileWidthPx).
             int inner = (r - l) - grid.getPaddingLeft() - grid.getPaddingRight();
-            int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(AppAdapter.tileWidthPx(inner, COLUMNS, density)), density);
+            int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(AppAdapter.tileWidthPx(inner, DOCK_COLUMNS, density)), density);
             int dockRow = itemH + (int) ((6 + 12) * density);   // item height plus DockDecoration offsets
             int gridRows = itemH * rowsBelowDock;
             int want = Math.max(0, h - dockRow - gridRows - (int) (30 * density));
@@ -303,7 +328,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (keyCode == KeyEvent.KEYCODE_DPAD_UP) return true;
             if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
                 // Back to the dock tile Up came from, not wherever the focus finder lands.
-                focusTile(lastFocused % COLUMNS);
+                focusTile(DockGeometry.dockIndexFor(lastFocused, DOCK_COLUMNS, COLUMNS));
                 return true;
             }
             if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -364,6 +389,40 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         } catch (Exception | OutOfMemoryError e) {
             // A bad or huge picture must never take the home screen down; the plain colour stays.
         }
+    }
+
+    /**
+     * The Roman look's stone wall behind everything. The root shows the stone's base colour at once (no black
+     * flash); the picture is made on a background thread (StoneCache) and fades in over it. The window and
+     * root backgrounds are dropped only when the stone covers them, so the compositor skips two fills.
+     */
+    private void showStone(RomanStyle style, int backgroundColor) {
+        if (RomanStyle.STONE_NONE.equals(style.stone)) {
+            // No texture: the theme's background colour, or stone ink when it was left at black.
+            if (backgroundColor == 0xFF000000) root.setBackgroundColor(RomanStyle.STONE_INK);
+            return;
+        }
+        root.setBackgroundColor(RomanStyle.STONE_MARBLE.equals(style.stone)
+                ? RomanStyle.MARBLE_BASE : RomanStyle.TRAVERTINE_BASE);
+        final boolean fade = !reducedMotion;
+        StoneCache.load(this, style, bmp -> {
+            if (isFinishing() || isDestroyed()) return;
+            ImageView wall = new ImageView(this);
+            wall.setScaleType(ImageView.ScaleType.FIT_XY);
+            wall.setImageBitmap(bmp);
+            wall.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            root.addView(wall, 0, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            Runnable covered = () -> {
+                getWindow().setBackgroundDrawable(null);
+                root.setBackground(null);
+            };
+            if (fade) {
+                wall.setAlpha(0f);
+                wall.animate().alpha(1f).setDuration(200).withEndAction(covered).start();
+            } else {
+                covered.run();
+            }
+        });
     }
 
     /**
@@ -497,15 +556,16 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     public void onTileFocused(int position, View card) {
         lastFocused = position;
+        if (DockGeometry.isDock(position, DOCK_COLUMNS)) lastDock = position;
         lastFocusedKey = adapter.keyAt(position);
         // Tile rect in root coordinates, using layout positions (ignores the scale animation).
         Rect r = new Rect(0, 0, card.getWidth(), card.getHeight());
         root.offsetDescendantRectToMyCoords(card, r);
         float pad = 6f * density;        // matches GlassView's glow inset
-        float w = card.getWidth() * AppAdapter.FOCUS_SCALE + 2 * pad;
-        float h = card.getHeight() * AppAdapter.FOCUS_SCALE + 2 * pad;
-        float x = r.exactCenterX() - w / 2f;
-        float y = r.exactCenterY() - h / 2f;
+        float lift = roman != null ? AppAdapter.LIFT_DP * density : 0f;   // the tile rises, the glass follows
+        float[] g = FocusGeometry.glassRect(r.left, r.top, card.getWidth(), card.getHeight(),
+                AppAdapter.FOCUS_SCALE, pad, lift);
+        float x = g[0], y = g[1], w = g[2], h = g[3];
 
         ViewGroup.LayoutParams lp = glass.getLayoutParams();
         if (lp.width != (int) w || lp.height != (int) h) {
@@ -528,7 +588,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             springY.animateToFinalPosition(y - glassScrollShift);
         }
         View item = (View) card.getParent();
-        if (position < COLUMNS) {
+        if (DockGeometry.isDock(position, DOCK_COLUMNS)) {
             // Dock: park it at the bottom of the screen and show the top shelf for this app.
             int decoratedTop = item.getTop() - (int) (6 * density);
             int dy = decoratedTop - grid.getPaddingTop();
@@ -543,7 +603,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         } else {
             hideHero();
             // Scroll just enough so the whole glass (not only the tile) is visible.
-            Rect want = new Rect(0, -(int) pad * 2, item.getWidth(), item.getHeight() + (int) pad);
+            Rect want = new Rect(0, -(int) (pad * 2 + lift), item.getWidth(), item.getHeight() + (int) pad);
             grid.requestChildRectangleOnScreen(item, want, reducedMotion);
         }
     }
@@ -567,7 +627,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             setAmbient(color);
             if (!heroShown) {
                 ambient.setAlpha(0f);
-                ambient.animate().alpha(1f).setDuration(160).start();
+                ambient.animate().alpha(ambientAlpha).setDuration(160).start();
                 heroShown = true;
             }
             return;
@@ -579,7 +639,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             heroName.setTranslationX(0f);
             heroName.animate().alpha(1f).setDuration(260).start();
             setAmbient(color);
-            ambient.animate().alpha(1f).setDuration(600).start();
+            ambient.animate().alpha(ambientAlpha).setDuration(600).start();
             heroShown = true;
         } else if (changed) {
             heroName.animate().alpha(0f).translationX(-12 * density).setDuration(120).withEndAction(() -> {
@@ -591,7 +651,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (color != ambientColor) {
                 ambient.animate().alpha(0.35f).setDuration(200).withEndAction(() -> {
                     setAmbient(color);
-                    ambient.animate().alpha(1f).setDuration(500).start();
+                    ambient.animate().alpha(ambientAlpha).setDuration(500).start();
                 }).start();
             }
         } else {
@@ -609,8 +669,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (color == ambientColor && ambient.getBackground() != null) return;
         ambientColor = color;
         int c = color & 0x00FFFFFF;
-        int w = 480;
-        int h = 270;
+        // Roman: 240x135, a blurred gradient shows no difference and saves 0.78 MB.
+        int w = roman != null ? 240 : 480;
+        int h = roman != null ? 135 : 270;
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -647,18 +708,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // Horizontal: swallow the key at a row's ends so focus never wraps to the next row or
         // escapes up into the top bar. Mid-row moves fall through to the default focus search.
         if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-            return position % COLUMNS == 0;
+            return DockGeometry.blocksLeft(position, DOCK_COLUMNS, COLUMNS);
         }
         if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            return position % COLUMNS == COLUMNS - 1 || position == count - 1;
+            return DockGeometry.blocksRight(position, count, DOCK_COLUMNS, COLUMNS);
         }
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-            if (position < COLUMNS) return false;          // dock row: let focus move to the top bar
-            target = position - COLUMNS;
+            target = DockGeometry.up(position, DOCK_COLUMNS, COLUMNS, lastDock);
+            if (target == DockGeometry.TOP_BAR) return false;   // dock row: let focus move to the top bar
         } else {
-            int lastRowStart = ((count - 1) / COLUMNS) * COLUMNS;
-            if (position >= lastRowStart) return true;     // already on the last row: stay put
-            target = Math.min(position + COLUMNS, count - 1);
+            target = DockGeometry.down(position, count, DOCK_COLUMNS, COLUMNS);
+            if (target == position) return true;                // already on the last row: stay put
         }
         focusTile(target);
         return true;
@@ -697,8 +757,35 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         grid.smoothScrollToPosition(pos);
     }
 
+    /**
+     * Roman look v2: shows the frieze 30 dp under the header and moves the grid down so scrolled tiles pass
+     * under the crest's lower half, never under the frieze. setFriezeTop ignores an unchanged value, so the
+     * layout listener cannot loop.
+     */
+    private void showRomanFrame(RomanStyle style) {
+        RomanFrameView frame = findViewById(R.id.romanFrame);
+        frame.setStyle(style);
+        frame.setVisibility(View.VISIBLE);
+        findViewById(R.id.header).addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) ->
+                frame.setFriezeTop(b + (int) (30 * density)));
+        View gridFrame = findViewById(R.id.gridFrame);
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) gridFrame.getLayoutParams();
+        lp.topMargin = (int) (62 * density);
+        gridFrame.setLayoutParams(lp);
+    }
+
     /** The optional Roman look: serif header texts, an accent colour and a laurel; all off by default. */
     private void applyRomanLook(Config cfg) {
+        if (cfg.roman != null) {
+            // v2: Cinzel and the gold palette replace the S5 look (font and laurel are ignored).
+            RomanHeader.applyHeader(this, cfg.roman);
+            glass.setRoman(cfg.roman);
+            RomanLook.pill(findViewById(R.id.btnInputs), cfg.roman);
+            RomanLook.pill(findViewById(R.id.btnWifi), cfg.roman);
+            RomanLook.pill(findViewById(R.id.btnSettings), cfg.roman);
+            findViewById(R.id.laurel).setVisibility(View.GONE);
+            return;
+        }
         if ("serif".equalsIgnoreCase(cfg.font)) {
             for (int id : new int[]{R.id.heroName, R.id.greeting, R.id.clock, R.id.ampm, R.id.shamsiDate, R.id.date}) {
                 TextView tv = findViewById(id);
@@ -725,7 +812,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         else if (hour < 22) res = R.string.good_evening;
         else res = R.string.good_night;
         greeting.setText(res);
-        if (romanDate) shamsiDate.setText(Roman.today());
+        if (romanDate) shamsiDate.setText(roman != null ? Roman.inscribe(Roman.today(), 40) : Roman.today());
         else if (shamsi) shamsiDate.setText(Shamsi.today());
     }
 
@@ -876,6 +963,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     }
 
     /** Dropdown menu under the Inputs pill: HDMI ports (with connection state), AV and Live TV. */
+    private String menuLabel(TvInputInfo info) {
+        CharSequence l = info.loadLabel(this);
+        return DockSpec.inputLabel(l == null ? info.getId() : l.toString(), info.getType() == TvInputInfo.TYPE_HDMI);
+    }
+
     private void showInputs() {
         View anchor = findViewById(R.id.btnInputs);
         View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
@@ -895,7 +987,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             Collections.sort(inputs, (a, b) -> {
                 boolean ha = a.getType() == TvInputInfo.TYPE_HDMI, hb = b.getType() == TvInputInfo.TYPE_HDMI;
                 if (ha != hb) return ha ? -1 : 1;
-                return String.valueOf(a.loadLabel(this)).compareToIgnoreCase(String.valueOf(b.loadLabel(this)));
+                return DockSpec.compareLabels(menuLabel(a), menuLabel(b));
             });
             // Some TVs (Sony) report every HDMI port as connected whether or not anything is plugged in,
             // so drop the HDMI status then. A TV with every port really in use loses it too.
@@ -918,10 +1010,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                     }
                 }
                 if (!info.isPassthroughInput()) continue;
-                CharSequence l = info.loadLabel(this);
-                String label = l == null ? info.getId() : l.toString();
+                String label = menuLabel(info);
                 boolean hdmi = info.getType() == TvInputInfo.TYPE_HDMI;
-                if (hdmi && !label.toUpperCase(Locale.ROOT).contains("HDMI")) label = "HDMI " + label;
                 final String id = info.getId();
                 int state = hdmi && hdmiStateBogus ? -1 : tim.getInputState(id);
                 if (!hdmi && rows.getChildCount() > 0 && !sawNonHdmi) addSeparator(rows);

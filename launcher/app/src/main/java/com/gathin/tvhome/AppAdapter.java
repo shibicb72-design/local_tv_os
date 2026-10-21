@@ -1,5 +1,8 @@
 package com.gathin.tvhome;
 
+import com.gathin.roman.RomanLook;
+import com.gathin.roman.RomanStyle;
+
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Outline;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.tv.TvInputInfo;
@@ -38,12 +42,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * App tiles. The first {@link MainActivity#COLUMNS} positions are the pinned dock (favourites, fixed order),
+ * App tiles. The first {@link MainActivity#DOCK_COLUMNS} positions are the pinned dock (favourites, fixed order),
  * then the module cards the owner chose to show (by label), the rest is alphabetical.
  */
 public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
@@ -89,6 +92,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
     }
 
     static final float FOCUS_SCALE = 1.10f;
+    /** Roman look: a focused tile lifts 4 dp and rises 6 dp in Z, which gives it a real shadow. */
+    static final float LIFT_DP = 4f, LIFT_Z_DP = 6f;
     /** Design size of a tile (dp); tiles shrink from here when the columns don't fit, see tileWidthPx. */
     static final float DESIGN_W_DP = 180f, DESIGN_H_DP = 101f;
 
@@ -116,6 +121,9 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
     private final Context ctx;
     private final TileListener listener;
     private final int dockSize;
+    /** Tiles per grid row below the dock (columns), which sizes the grid tiles. */
+    private final int gridColumns;
+    private static final int VIEW_GRID = 0, VIEW_DOCK = 1;
     /** Dock order (config.xml dock_apps, or a theme's config.json). */
     private final List<String> favourites;
     /** Never shown as tiles (res/values/config.xml, hidden_apps). */
@@ -125,17 +133,21 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
     private final boolean showHomeSettings;
     /** Calmer motion for weak GPUs (config.xml, reduced_motion): no overshoot, shorter fades. */
     private final boolean reducedMotion;
+    /** Roman look v2, or null for the old look: tile names are then set in Cinzel. */
+    private final RomanStyle roman;
     private final List<Entry> items = new ArrayList<>();
 
-    AppAdapter(Context ctx, TileListener listener, int dockSize, Config cfg) {
+    AppAdapter(Context ctx, TileListener listener, int dockSize, int gridColumns, Config cfg) {
         this.ctx = ctx;
         this.listener = listener;
         this.dockSize = dockSize;
+        this.gridColumns = gridColumns;
         this.favourites = cfg.dockApps;
         this.hidden = new HashSet<>(cfg.hiddenApps);
         this.dockPlaceholders = cfg.dockPlaceholders;
         this.showHomeSettings = cfg.showHomeSettingsShortcut;
         this.reducedMotion = cfg.reducedMotion;
+        this.roman = cfg.roman;
         // Tiles keep their identity across reload(), so a focused tile stays on its app instead of
         // its view being rebound to whatever app now sits in that slot.
         setHasStableIds(true);
@@ -213,7 +225,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             for (TvInputInfo info : tim.getTvInputList()) {
                 if (!info.isPassthroughInput()) continue;
                 CharSequence l = info.loadLabel(ctx);
-                raw.put(info.getId(), l == null ? info.getId() : l.toString());
+                raw.put(info.getId(), DockSpec.inputLabel(l == null ? info.getId() : l.toString(),
+                        info.getType() == TvInputInfo.TYPE_HDMI));
                 inputs.add(info);
             }
             Collections.sort(inputs, (a, b) -> {
@@ -225,7 +238,6 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                 String label = raw.get(info.getId());
                 if (info.getType() == TvInputInfo.TYPE_HDMI) {
                     hdmi.add(info.getId());
-                    if (!label.toUpperCase(Locale.ROOT).contains("HDMI")) label = "HDMI " + label;
                 }
                 all.add(info.getId());
                 labels.put(info.getId(), Cards.cleanLabel(label, info.getId()));
@@ -276,7 +288,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         float density = parent.getResources().getDisplayMetrics().density;
         int width = parent.getWidth() > 0 ? parent.getWidth() : parent.getMeasuredWidth();
         int inner = width - parent.getPaddingLeft() - parent.getPaddingRight();
-        int w = tileWidthPx(inner, dockSize, density), h = tileHeightPx(w);
+        int w = tileWidthPx(inner, viewType == VIEW_DOCK ? dockSize : gridColumns, density), h = tileHeightPx(w);
         View card = v.findViewById(R.id.card);
         ViewGroup.LayoutParams cardLp = card.getLayoutParams();
         cardLp.width = w;
@@ -287,7 +299,14 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         nameLp.width = w;
         nameLp.topMargin = h + Math.round(7 * density);
         name.setLayoutParams(nameLp);
-        return new Holder(v, listener, reducedMotion);
+        if (roman != null) {
+            RomanLook.text((TextView) name, 13f, 0.08f, RomanStyle.IVORY);
+            RomanLook.text(v.findViewById(R.id.label), 13f, 0.06f, RomanStyle.IVORY);
+            // Icon tiles show this; a banner covers it completely.
+            card.setBackground(RomanLook.iconTile(roman, cornerRadius(w, density), density));
+        }
+        return new Holder(v, listener, reducedMotion, roman != null ? LIFT_DP * density : 0f,
+                roman != null ? LIFT_Z_DP * density : 0f);
     }
 
     @Override
@@ -299,16 +318,20 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         h.name.setAlpha(focused ? 1f : 0f);
         h.card.setScaleX(focused ? FOCUS_SCALE : 1f);
         h.card.setScaleY(focused ? FOCUS_SCALE : 1f);
+        h.card.setTranslationY(focused ? -h.liftPx : 0f);   // 0 and 0 when not roman
+        h.card.setTranslationZ(focused ? h.liftZPx : 0f);
         if (e.banner != null) {
             h.banner.setImageDrawable(e.banner);
             h.banner.setVisibility(View.VISIBLE);
             h.icon.setVisibility(View.GONE);
             h.label.setVisibility(View.GONE);
+            h.icon.clearColorFilter();
         } else {
             h.banner.setImageDrawable(null);
             h.banner.setVisibility(View.GONE);
             h.icon.setImageDrawable(e.icon);
             h.icon.setVisibility(View.VISIBLE);
+            if (roman != null) h.icon.setColorFilter(roman.goldLight, PorterDuff.Mode.SRC_IN);
             h.label.setText(e.kind == Entry.MISSING ? ctx.getString(R.string.not_installed) : e.label);
             h.label.setVisibility(View.VISIBLE);
         }
@@ -357,6 +380,11 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         } catch (Exception ex) {
             Toast.makeText(ctx, ctx.getString(R.string.cant_open, e.label), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position < dockSize ? VIEW_DOCK : VIEW_GRID;   // the two rows can have different tile widths
     }
 
     @Override
@@ -449,8 +477,10 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         final TextView label;
         final TextView name;
         final boolean reducedMotion;
+        /** Focus lift in px (translationY) and Z; 0 for the old look. */
+        final float liftPx, liftZPx;
 
-        Holder(View v, TileListener listener, boolean reducedMotion) {
+        Holder(View v, TileListener listener, boolean reducedMotion, float liftPx, float liftZPx) {
             super(v);
             card = v.findViewById(R.id.card);
             banner = v.findViewById(R.id.banner);
@@ -458,6 +488,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             label = v.findViewById(R.id.label);
             name = v.findViewById(R.id.name);
             this.reducedMotion = reducedMotion;
+            this.liftPx = liftPx;
+            this.liftZPx = liftZPx;
 
             final float density = v.getResources().getDisplayMetrics().density;
             card.setOutlineProvider(new ViewOutlineProvider() {
@@ -484,6 +516,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                 if (reducedMotion) {
                     // No overshoot: the extra frames redraw the banner and the dock band on a weak GPU.
                     view.animate().scaleX(s).scaleY(s)
+                            .translationY(focused ? -liftPx : 0f).translationZ(focused ? liftZPx : 0f)
                             .setDuration(focused ? 120 : 80)
                             .setInterpolator(new DecelerateInterpolator())
                             .withLayer()
@@ -491,6 +524,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                     name.animate().alpha(focused ? 1f : 0f).setDuration(100).start();
                 } else {
                     view.animate().scaleX(s).scaleY(s)
+                            .translationY(focused ? -liftPx : 0f).translationZ(focused ? liftZPx : 0f)
                             .setDuration(focused ? 260 : 180)
                             .setInterpolator(new OvershootInterpolator(focused ? 1.6f : 0f))
                             .withLayer()

@@ -1,0 +1,43 @@
+F11: integration (dock, theme, README, Files install) (operator fills in)
+
+Build (outside Claude):
+  cd launcher; gradlew testReleaseUnitTest assembleRelease assembleDebug  ->  ____
+
+Release APK sizes (bytes, after R8):
+  app-release.apk    (limit 409600, +2048 vs F2):   ____
+  files-release.apk  (limit 307200, target <= 204800): ____
+
+Tests (gradlew testReleaseUnitTest), counts per module:
+  :romancore  ____
+  :app        ____
+  :files      ____
+  total       ____
+
+Install and grant (each line after Shibi's OK):
+  install app-release.apk (Home unchanged):          ____
+  install files-release.apk:                         ____
+  appops set ... MANAGE_EXTERNAL_STORAGE allow:      ____
+  appops get ... (expect: allow):                    ____
+  theme push (tools\theme.ps1 themes\xgimi-s-max):   ____
+
+Dock and grid on the TV:
+  Dock order (expect YouTube, Prime Video, HDMI 1, Files):  ____
+  Five columns, tiles readable (Q1 answered: yes/no):       ____
+  No Netflix tile in dock:                                  ____
+  com.xgimi.filemanager still visible:                      ____
+
+USB stick test (a few videos, an .srt, photos, a 2,000-file folder):
+  browse / sort / open:                              ____
+  rename / copy to internal / move back:             ____
+  delete a copy (confirm dialog, Cancel focused):    ____
+  unplug while browsing (no crash, message shown):   ____
+  4 GB copy finishes, source removed only after verify: ____
+
+Memory and state (read-only checks):
+  dumpsys meminfo com.gathin.files, browsing (<= 35 MB, ceiling 45):   ____
+  dumpsys meminfo com.gathin.files, during 4 GB copy (<= 40, ceiling 50): ____
+  dumpsys activity top | Select-String ACTIVITY:     ____
+  uiautomator dump /dev/tty (UI tree, no file):      ____
+  launcher idle meminfo com.gathin.tvhome (< 60 MB): ____
+
+Shibi's sign-off on replacing com.xgimi.filemanager:  ____  (yes / no / later)

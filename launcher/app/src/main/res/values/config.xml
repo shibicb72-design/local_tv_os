@@ -64,6 +64,9 @@
     <!-- Tiles per row in the grid; the dock always has this many slots. Tiles are 180dp wide at 4 columns and
          shrink to fit from 5 up (about 144dp at 5, 117dp at 6 on a 1080p TV). -->
     <integer name="columns">4</integer>
+    <!-- Tiles in the dock row. 0 = same as columns, so the dock lines up with the grid. A bigger number (up to 8)
+         shrinks the dock tiles to fit, e.g. 5 for five favourites over a 4 column grid. -->
+    <integer name="dock_columns">0</integer>
 
     <!-- "Default home" tile that opens Android's home-screen picker, for TVs whose settings have one
          (most Android TVs don't; the tile only appears when the page exists). Off by default. -->
@@ -87,4 +90,20 @@
     <bool name="roman_date">false</bool>
     <string name="accent_color" translatable="false"></string>
     <bool name="laurel">false</bool>
+
+    <!-- Roman look v2 (docs/plans/roman-theme-v2.md), off unless style is "roman". Under it the header, hero
+         name and tile names are set in Cinzel and gold comes from accent_color (default #C9A24B); font and
+         laurel above are ignored. roman_stone: "travertine", "marble" or "none". roman_stone_brightness:
+         50 to 150 percent. roman_seed: 0 to 9999, the pattern of the stone. roman_vignette: 0 to 100, edge
+         darkening. roman_meander, roman_pilasters, roman_crest: the frieze, the pilasters and the laurel
+         medallion. roman_inscription: up to 8 letters inside the medallion (A-Z, 0-9, space, dot, hyphen). -->
+    <string name="style" translatable="false"></string>
+    <string name="roman_stone" translatable="false">travertine</string>
+    <integer name="roman_stone_brightness">100</integer>
+    <integer name="roman_seed">7</integer>
+    <integer name="roman_vignette">70</integer>
+    <bool name="roman_meander">true</bool>
+    <bool name="roman_pilasters">true</bool>
+    <bool name="roman_crest">true</bool>
+    <string name="roman_inscription" translatable="false"></string>
 </resources>

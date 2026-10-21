@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class DebloatPathsTest(unittest.TestCase):
+    @unittest.skipIf(shutil.which("bash") is None, "bash not available")
     def test_list_paths(self):
         for script in ("disable.sh", "restore.sh"):
             for path_kind in ("caller-relative", "absolute", "repo-relative"):

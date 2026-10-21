@@ -43,16 +43,21 @@ jobs:
         working-directory: launcher
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon testReleaseUnitTest assembleRelease
-      - name: The launcher stays small
+          ./gradlew --no-daemon testReleaseUnitTest assembleRelease assembleDebug
+      - name: APK size budgets
         run: |
-          size=$(stat -c %s launcher/app/build/outputs/apk/release/app-release.apk)
-          echo "release APK: $((size / 1024)) KB"
-          test "$size" -lt 409600 || { echo "APK is over 400 KB; the launcher targets 1 GB TVs, keep it small"; exit 1; }
-      - name: Debug APK
-        working-directory: launcher
-        run: ./gradlew --no-daemon assembleDebug
+          fail=0
+          check() { f="launcher/$1/build/outputs/apk/release/$1-release.apk"; s=$(stat -c %s "$f") || { echo "::error::$f missing"; fail=1; return; }
+                    echo "$1: $((s / 1024)) KB (limit $(($2 / 1024)) KB)"
+                    [ "$s" -lt "$2" ] || { echo "::error::$1 release APK over budget"; fail=1; }; }
+          check app 409600     # the launcher targets 1 GB TVs, keep it small
+          check files 307200
+          exit $fail
       - uses: actions/upload-artifact@v4
         with:
           name: launcher-debug-apk
           path: launcher/app/build/outputs/apk/debug/app-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: files-debug-apk
+          path: launcher/files/build/outputs/apk/debug/files-debug.apk

@@ -1,5 +1,7 @@
 package com.gathin.tvhome;
 
+import com.gathin.roman.RomanStyle;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -18,13 +20,22 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
     private final Paint edge = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF rect = new RectF();
 
-    DockDecoration(int dockSize, float density) {
+    /** Roman look v2, or null for the old band. */
+    private final RomanStyle roman;
+
+    DockDecoration(int dockSize, float density, RomanStyle roman) {
         this.dockSize = dockSize;
         this.density = density;
-        band.setColor(0xFF141416);
+        this.roman = roman;
         edge.setStyle(Paint.Style.STROKE);
         edge.setStrokeWidth(density);
-        edge.setColor(0x1FFFFFFF);
+        if (roman != null) {
+            band.setColor(RomanStyle.withAlpha(RomanStyle.STONE_INK, 0xB3));   // 70%
+            edge.setStyle(Paint.Style.FILL);
+        } else {
+            band.setColor(0xFF141416);
+            edge.setColor(0x1FFFFFFF);
+        }
     }
 
     @Override
@@ -60,8 +71,26 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
         if (!any) return;
         float pad = 14 * density;
         rect.inset(-pad, -pad);
+        if (roman != null) {
+            drawRomanBand(c);
+            return;
+        }
         float radius = 26 * density;
         c.drawRoundRect(rect, radius, radius, band);
         c.drawRoundRect(rect, radius, radius, edge);
+    }
+
+    /** Stone ink band with a gold double rule (1 dp on the edge, a fainter one 3 dp inside) top and bottom. */
+    private void drawRomanBand(Canvas c) {
+        float radius = 8 * density;
+        c.drawRoundRect(rect, radius, radius, band);
+        float x0 = rect.left + 8 * density, x1 = rect.right - 8 * density;
+        float thin = density;
+        for (int i = 0; i < 2; i++) {
+            edge.setColor(RomanStyle.withAlpha(roman.gold, i == 0 ? 0xB3 : 0x4D));   // 70%, 30%
+            float inset = i == 0 ? 0 : 3 * density;
+            c.drawRect(x0, rect.top + inset, x1, rect.top + inset + thin, edge);
+            c.drawRect(x0, rect.bottom - inset - thin, x1, rect.bottom - inset, edge);
+        }
     }
 }

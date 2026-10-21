@@ -4,6 +4,8 @@ Status: **plan only, waiting for Shibi's review.** No app code has been written 
 projector was changed. Source brief: `C:\Users\shibi\cc_xgimi\PROMPT.md`.
 Branch: `opus/xgimi-os-plan` (work stays on feature branches; never `main`).
 
+Files, Player and voice control are planned in [`next-features.md`](next-features.md); this file stays the device reference.
+
 ## 1. What was checked on the device (read-only, 2026-10-20)
 
 All commands were read-only (`getprop`, `pm list packages`, `dumpsys`, `cmd package query-activities`,
@@ -173,6 +175,8 @@ Android/Google core: `com.android.vending` (Play Store), `com.google.android.gms
 `com.amazon.amazonvideo.livingroom`.
 
 ## 5. Subtle Roman design (inside the low-RAM rules)
+
+> Superseded by `docs/plans/roman-theme-v2.md` (Roman look v2, behind `"style": "roman"`). The S5 keys below stay.
 
 No bundled fonts, no bitmaps beyond the optional wallpaper, no blur, no animation beyond what exists.
 - **Type**: the system serif (`fontFamily="serif"`, Noto Serif, already on the device) for the clock,

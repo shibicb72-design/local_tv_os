@@ -1,0 +1,18 @@
+F2: :romancore Android pieces and the font (operator fills in)
+
+Release APK size (app-release.apk, bytes):
+  before F2 (feat/files at F1):   ____
+  after F2:                       ____
+  delta (limit +2048 B):          ____
+
+Tests (gradlew testReleaseUnitTest), counts per module:
+  :romancore  before ____  after ____
+  :app        before ____  after ____
+  total       before ____  after ____   (must be equal)
+
+Build: testReleaseUnitTest assembleRelease assembleDebug  ->  ____
+
+Device (optional, with F11 install):
+  Home looks identical:                 ____
+  dumpsys meminfo com.gathin.tvhome:    ____ MB (< 60)
+  versionName 2.6 / versionCode 7:      ____
