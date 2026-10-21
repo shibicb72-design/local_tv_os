@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="stone_ink">#FF1A1511</color>
+    <string name="app_name">Player</string>
+    <style name="Theme.Player" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        
+        <item name="android:windowBackground">@color/stone_ink</item>
+    </style>
+</resources>

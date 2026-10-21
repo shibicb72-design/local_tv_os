@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.gathin.player.ResumeStoreTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-10-21T00:00:52" hostname="ZAZBALL500" time="0.03">
+  <properties/>
+  <testcase name="recentIsNewestFirstAndSkipsMissingFilesAndTrackOnlyEntries" classname="com.gathin.player.ResumeStoreTest" time="0.001"/>
+  <testcase name="clearRemovesTheEntry" classname="com.gathin.player.ResumeStoreTest" time="0.0"/>
+  <testcase name="doesNotSaveFirstMinute" classname="com.gathin.player.ResumeStoreTest" time="0.0"/>
+  <testcase name="recentIsCappedAndPathOfRejectsMalformedKeys" classname="com.gathin.player.ResumeStoreTest" time="0.003"/>
+  <testcase name="changedMtimeOrSizeDoesNotResume" classname="com.gathin.player.ResumeStoreTest" time="0.0"/>
+  <testcase name="survivesAReloadFromTheSameStore" classname="com.gathin.player.ResumeStoreTest" time="0.0"/>
+  <testcase name="savesPositionBetweenOneMinuteAndNinetyFivePercent" classname="com.gathin.player.ResumeStoreTest" time="0.0"/>
+  <testcase name="pathWithTabOrNewlineDoesNotCorruptTheStore" classname="com.gathin.player.ResumeStoreTest" time="0.0"/>
+  <testcase name="passingTheMinuteLaterAfterRewindingResetsPosition" classname="com.gathin.player.ResumeStoreTest" time="0.0"/>
+  <testcase name="unknownDurationSavesNothing" classname="com.gathin.player.ResumeStoreTest" time="0.0"/>
+  <testcase name="savingAgainRefreshesLruOrder" classname="com.gathin.player.ResumeStoreTest" time="0.017"/>
+  <testcase name="finishingClearsTheEntry" classname="com.gathin.player.ResumeStoreTest" time="0.0"/>
+  <testcase name="tracksKeepPositionAndNullMeansNoChoice" classname="com.gathin.player.ResumeStoreTest" time="0.0"/>
+  <testcase name="remembersTracksAndKeepsThemWhenPositionChanges" classname="com.gathin.player.ResumeStoreTest" time="0.0"/>
+  <testcase name="keepsOnlyTwoHundredMostRecentlyUsed" classname="com.gathin.player.ResumeStoreTest" time="0.008"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,156 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<!--
+3 Debug builds only (merged into player-debug.apk, absent from the release APK). Started by hand:
+4     adb shell am start -n com.gathin.player/.CodecReportActivity
+5-->
+6<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+7    package="com.gathin.player"
+8    android:versionCode="1"
+9    android:versionName="1.0" >
+10
+11    <uses-sdk
+12        android:minSdkVersion="30"
+13        android:targetSdkVersion="34" />
+14
+15    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+15-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:4:5-82
+15-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:4:22-79
+16
+17    <uses-feature
+17-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:6:5-8:36
+18        android:name="android.software.leanback"
+18-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:7:9-49
+19        android:required="false" />
+19-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:8:9-33
+20    <uses-feature
+20-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:9:5-11:36
+21        android:name="android.hardware.touchscreen"
+21-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:10:9-52
+22        android:required="false" />
+22-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:11:9-33
+23
+24    <queries>
+24-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:13:5-19:15
+25        <package android:name="com.gathin.files" />
+25-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:14:9-52
+25-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:14:18-49
+26
+27        <intent>
+27-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:15:9-18:18
+28            <action android:name="android.intent.action.VIEW" />
+28-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:16:13-65
+28-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:16:21-62
+29
+30            <data android:mimeType="video/*" />
+30-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:13-48
+30-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:19-45
+31        </intent>
+32    </queries>
+33
+34    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+34-->[androidx.media3:media3-common:1.4.1] C:\Users\shibi\.gradle\caches\8.9\transforms\71a3d4d7867ccf930919e7fe5351d607\transformed\media3-common-1.4.1\AndroidManifest.xml:22:5-79
+34-->[androidx.media3:media3-common:1.4.1] C:\Users\shibi\.gradle\caches\8.9\transforms\71a3d4d7867ccf930919e7fe5351d607\transformed\media3-common-1.4.1\AndroidManifest.xml:22:22-76
+35
+36    <application
+36-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:21:5-65:19
+37        android:allowBackup="false"
+37-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:22:9-36
+38        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+38-->[androidx.core:core:1.8.0] C:\Users\shibi\.gradle\caches\8.9\transforms\9bb5645abb523bb91216cd2ff5c08a27\transformed\core-1.8.0\AndroidManifest.xml:24:18-86
+39        android:banner="@drawable/banner"
+39-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:23:9-42
+40        android:debuggable="true"
+41        android:extractNativeLibs="false"
+42        android:icon="@drawable/banner"
+42-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:24:9-40
+43        android:label="@string/app_name"
+43-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:25:9-41
+44        android:theme="@style/Theme.Player" >
+44-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:26:9-44
+45        <activity
+45-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\debug\AndroidManifest.xml:6:9-8:39
+46            android:name="com.gathin.player.CodecReportActivity"
+46-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\debug\AndroidManifest.xml:7:13-48
+47            android:exported="true" />
+47-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\debug\AndroidManifest.xml:8:13-36
+48        <activity
+48-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:28:9-37:20
+49            android:name="com.gathin.player.LibraryActivity"
+49-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:29:13-44
+50            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode"
+50-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:32:13-90
+51            android:exported="true"
+51-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:30:13-36
+52            android:launchMode="singleTask" >
+52-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:31:13-44
+53            <intent-filter>
+53-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:33:13-36:29
+54                <action android:name="android.intent.action.MAIN" />
+54-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:34:17-69
+54-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:34:25-66
+55
+56                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+56-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:35:17-86
+56-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:35:27-83
+57            </intent-filter>
+58        </activity>
+59        <activity
+59-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:39:9-51:20
+60            android:name="com.gathin.player.PlayerActivity"
+60-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:40:13-43
+61            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode"
+61-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:42:13-90
+62            android:exported="true" >
+62-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:41:13-36
+63            <intent-filter>
+63-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:43:13-50:29
+64                <action android:name="android.intent.action.VIEW" />
+64-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:16:13-65
+64-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:16:21-62
+65
+66                <category android:name="android.intent.category.DEFAULT" />
+66-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:45:17-76
+66-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:45:27-73
+67
+68                <data android:scheme="content" />
+68-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:13-48
+69                <data android:scheme="file" />
+69-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:13-48
+70                <data android:mimeType="video/*" />
+70-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:13-48
+70-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:19-45
+71                <data android:mimeType="audio/*" />
+71-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:13-48
+71-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:19-45
+72            </intent-filter>
+73        </activity>
+74        <activity
+74-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:53:9-64:20
+75            android:name="com.gathin.player.SlideshowActivity"
+75-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:54:13-46
+76            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode"
+76-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:56:13-90
+77            android:exported="true" >
+77-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:55:13-36
+78            <intent-filter>
+78-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:57:13-63:29
+79                <action android:name="android.intent.action.VIEW" />
+79-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:16:13-65
+79-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:16:21-62
+80
+81                <category android:name="android.intent.category.DEFAULT" />
+81-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:45:17-76
+81-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:45:27-73
+82
+83                <data android:scheme="content" />
+83-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:13-48
+84                <data android:scheme="file" />
+84-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:13-48
+85                <data android:mimeType="image/*" />
+85-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:13-48
+85-->C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\player\src\main\AndroidManifest.xml:17:19-45
+86            </intent-filter>
+87        </activity>
+88    </application>
+89
+90</manifest>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.gathin.files.FocusMemoryTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-20T23:48:04" hostname="ZAZBALL500" time="0.001">
+  <properties/>
+  <testcase name="unknownPathIsZero" classname="com.gathin.files.FocusMemoryTest" time="0.0"/>
+  <testcase name="recallsAfterGoingDownAndBackUp" classname="com.gathin.files.FocusMemoryTest" time="0.0"/>
+  <testcase name="evictsLeastRecentlyUsedBeyond64" classname="com.gathin.files.FocusMemoryTest" time="0.0"/>
+  <testcase name="rememberingAgainReplaces" classname="com.gathin.files.FocusMemoryTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,118 @@
+[
+    {
+        "merged": "com.gathin.player-release-9:/layout-v21_notification_action.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-xhdpi-v4_notification_bg_low_normal.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-xhdpi-v4/notification_bg_low_normal.9.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/layout_notification_template_part_chronometer.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/layout/notification_template_part_chronometer.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/layout_notification_template_part_time.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/layout/notification_template_part_time.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-mdpi-v4_notification_bg_normal.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-mdpi-v4/notification_bg_normal.9.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-mdpi-v4_notification_bg_normal_pressed.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-mdpi-v4/notification_bg_normal_pressed.9.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-xhdpi-v4_notification_bg_normal_pressed.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-xhdpi-v4/notification_bg_normal_pressed.9.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable_notification_icon_background.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable/notification_icon_background.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable_notification_tile_bg.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable/notification_tile_bg.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/layout_custom_dialog.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/layout/custom_dialog.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-v21_notification_action_background.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-v21/notification_action_background.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-xhdpi-v4_notification_bg_low_pressed.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-xhdpi-v4/notification_bg_low_pressed.9.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-mdpi-v4_notification_bg_low_pressed.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-mdpi-v4/notification_bg_low_pressed.9.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable_notification_bg_low.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable/notification_bg_low.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-mdpi-v4_notification_bg_low_normal.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-mdpi-v4/notification_bg_low_normal.9.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-xhdpi-v4_notification_bg_normal.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-xhdpi-v4/notification_bg_normal.9.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-hdpi-v4_notification_bg_low_normal.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-hdpi-v4/notification_bg_low_normal.9.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-xhdpi-v4_notify_panel_notification_icon_bg.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-xhdpi-v4/notify_panel_notification_icon_bg.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/layout-v21_notification_template_icon_group.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/layout-v21/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/font_cinzel_roman.ttf.flat",
+        "source": "com.gathin.player-release-12:/font/cinzel_roman.ttf"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-hdpi-v4_notification_bg_normal.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-hdpi-v4/notification_bg_normal.9.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable_notification_bg.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable/notification_bg.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable_banner.xml.flat",
+        "source": "com.gathin.player-main-10:/drawable/banner.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/layout-v21_notification_template_custom_big.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/layout-v21_notification_action_tombstone.xml.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/layout-v21/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-hdpi-v4_notification_bg_low_pressed.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-hdpi-v4/notification_bg_low_pressed.9.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-mdpi-v4_notify_panel_notification_icon_bg.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-mdpi-v4/notify_panel_notification_icon_bg.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-hdpi-v4_notify_panel_notification_icon_bg.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-hdpi-v4/notify_panel_notification_icon_bg.png"
+    },
+    {
+        "merged": "com.gathin.player-release-9:/drawable-hdpi-v4_notification_bg_normal_pressed.9.png.flat",
+        "source": "com.gathin.player-core-1.8.0-2:/drawable-hdpi-v4/notification_bg_normal_pressed.9.png"
+    }
+]

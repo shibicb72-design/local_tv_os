@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.gathin.roman.RomanStyleTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-20T23:48:50" hostname="ZAZBALL500" time="0.004">
+  <properties/>
+  <testcase name="stoneKeyChangesWithEveryInput" classname="com.gathin.roman.RomanStyleTest" time="0.001"/>
+  <testcase name="dreamColoursAreOpaqueAndRed" classname="com.gathin.roman.RomanStyleTest" time="0.0"/>
+  <testcase name="goldRampIsAlwaysOpaque" classname="com.gathin.roman.RomanStyleTest" time="0.002"/>
+  <testcase name="onlyRomanSwitchesTheStyleOn" classname="com.gathin.roman.RomanStyleTest" time="0.0"/>
+  <testcase name="goldRampOfTheDefaultGold" classname="com.gathin.roman.RomanStyleTest" time="0.0"/>
+  <testcase name="inscriptionIsCarvedAndCut" classname="com.gathin.roman.RomanStyleTest" time="0.0"/>
+  <testcase name="defaultsIsTravertineWithTheDefaultGold" classname="com.gathin.roman.RomanStyleTest" time="0.0"/>
+  <testcase name="stoneNameIsNormalised" classname="com.gathin.roman.RomanStyleTest" time="0.0"/>
+  <testcase name="goldComesFromTheAccent" classname="com.gathin.roman.RomanStyleTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

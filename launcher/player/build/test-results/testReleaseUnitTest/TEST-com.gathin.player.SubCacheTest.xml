@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.gathin.player.SubCacheTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-21T00:00:52" hostname="ZAZBALL500" time="0.114">
+  <properties/>
+  <testcase name="pruneKeepsTheNewestFiles" classname="com.gathin.player.SubCacheTest" time="0.03"/>
+  <testcase name="changedSourceGetsANewName" classname="com.gathin.player.SubCacheTest" time="0.002"/>
+  <testcase name="pruneOnAMissingFolderIsHarmless" classname="com.gathin.player.SubCacheTest" time="0.001"/>
+  <testcase name="writeStoresTheBytesUnderAHashedName" classname="com.gathin.player.SubCacheTest" time="0.004"/>
+  <testcase name="writeNeverLeavesMoreThanTheCap" classname="com.gathin.player.SubCacheTest" time="0.077"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
