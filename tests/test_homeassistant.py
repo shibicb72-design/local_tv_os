@@ -130,6 +130,73 @@ class ServeConfigTest(unittest.TestCase):
             self.assertNotIn("TCPForward", cfg)
 
 
+class _Tagged:
+    def __init__(self, tag, value):
+        self.tag, self.value = tag, value
+
+
+def load_ha_yaml(path):
+    """Safe loader that accepts Home Assistant's !secret / !include / !include_dir_named tags."""
+    class Loader(yaml.SafeLoader):
+        pass
+
+    for tag in ("!secret", "!include", "!include_dir_named"):
+        Loader.add_constructor(tag, lambda loader, node, tag=tag: _Tagged(tag, loader.construct_scalar(node)))
+    return yaml.load(path.read_text(encoding="utf-8"), Loader=Loader)
+
+
+class HaConfigurationTest(unittest.TestCase):
+    def setUp(self):
+        self.config = load_ha_yaml(HA / "config" / "configuration.yaml")
+
+    def test_loads_with_ha_tags(self):
+        pkgs = self.config["homeassistant"]["packages"]
+        self.assertEqual(("!include_dir_named", "packages"), (pkgs.tag, pkgs.value))
+
+    def test_only_media_player_tv_is_exposed(self):
+        ga = self.config["google_assistant"]
+        self.assertIs(False, ga["expose_by_default"])
+        self.assertEqual(["media_player.tv"], list(ga["entity_config"]))
+        self.assertIs(True, ga["entity_config"]["media_player.tv"]["expose"])
+        self.assertEqual("TV", ga["entity_config"]["media_player.tv"]["name"])
+        self.assertIs(True, ga["report_state"])
+        self.assertNotIn("exposed_domains", ga)
+
+    def test_google_secrets_are_not_inline(self):
+        ga = self.config["google_assistant"]
+        self.assertEqual(("!secret", "google_project_id"), (ga["project_id"].tag, ga["project_id"].value))
+        self.assertEqual(("!include", "SERVICE_ACCOUNT.json"),
+                         (ga["service_account"].tag, ga["service_account"].value))
+
+    def test_trusted_proxies_only_compose_subnet(self):
+        http = self.config["http"]
+        subnet = load_compose()["networks"]["ha_net"]["ipam"]["config"][0]["subnet"]
+        self.assertEqual([subnet], http["trusted_proxies"])
+        self.assertIs(True, http["use_x_forwarded_for"])
+        self.assertIs(True, http["ip_ban_enabled"])
+        self.assertEqual(5, http["login_attempts_threshold"])
+
+    def test_recorder_and_logger(self):
+        self.assertEqual(3, self.config["recorder"]["purge_keep_days"])
+        self.assertTrue(self.config["recorder"]["db_url"].startswith("sqlite:////data/"))
+        self.assertEqual("warning", self.config["logger"]["default"])
+
+    def test_secrets_example_has_placeholders_only(self):
+        secrets = yaml.safe_load((HA / "config" / "secrets.yaml.example").read_text(encoding="utf-8"))
+        self.assertEqual({"google_project_id"}, set(secrets))
+        self.assertTrue(secrets["google_project_id"].startswith("<"))
+
+    def test_runbook_google_side_values(self):
+        text = (HA / "RUNBOOK.md").read_text(encoding="utf-8")
+        for value in (
+            "https://<host>/api/google_assistant",
+            "https://oauth-redirect.googleusercontent.com/r/<project_id>",
+            "https://<host>/auth/authorize",
+            "https://<host>/auth/token",
+        ):
+            self.assertIn(value, text)
+
+
 class RepoHygieneTest(unittest.TestCase):
     def test_gitignore_covers_secrets(self):
         lines = (HA / ".gitignore").read_text(encoding="utf-8").split()
