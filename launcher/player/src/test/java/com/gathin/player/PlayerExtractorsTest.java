@@ -37,6 +37,20 @@ public class PlayerExtractorsTest {
     }
 
     @Test
+    public void embeddedTextIsConvertedByTheSubtitleParserFactory() throws IOException {
+        String src = source("PlayerExtractors");
+        assertTrue(src.contains("new DefaultSubtitleParserFactory()"));
+        assertTrue(src.contains("setSubtitleParserFactory("));
+        assertTrue(src.contains("experimentalSetTextTrackTranscodingEnabled("));
+        assertTrue(src.contains("new MatroskaExtractor(f, "));
+        assertTrue(src.contains("new Mp4Extractor(f, "));
+        assertTrue(src.contains("new FragmentedMp4Extractor(f, "));
+        assertTrue(src.contains("new TsExtractor(0, f)"));
+        assertTrue(src.contains("new AviExtractor(0, f)"));
+        assertFalse(Pattern.compile("new (Matroska|Mp4|FragmentedMp4|Ts|Avi)Extractor\\(\\)").matcher(src).find());
+    }
+
+    @Test
     public void defaultExtractorsFactoryIsNeverReferenced() throws IOException {
         for (String cls : new String[]{"PlayerExtractors", "PlayerFactory", "PlayerActivity"}) {
             assertFalse(cls, source(cls).contains("DefaultExtractorsFactory"));

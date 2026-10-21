@@ -9,6 +9,8 @@ final class KeyMap {
     enum Action {
         NONE,
         TOGGLE_PLAY,
+        PLAY,
+        PAUSE,
         SEEK_BACK_SHORT,
         SEEK_FORWARD_SHORT,
         SEEK_BACK_LONG,
@@ -58,9 +60,11 @@ final class KeyMap {
             case KEYCODE_ENTER:
             case KEYCODE_NUMPAD_ENTER:
             case KEYCODE_MEDIA_PLAY_PAUSE:
-            case KEYCODE_MEDIA_PLAY:
-            case KEYCODE_MEDIA_PAUSE:
                 return Action.TOGGLE_PLAY;
+            case KEYCODE_MEDIA_PLAY:
+                return Action.PLAY;
+            case KEYCODE_MEDIA_PAUSE:
+                return Action.PAUSE;
             case KEYCODE_DPAD_LEFT:
                 return held ? Action.SEEK_BACK_LONG : Action.SEEK_BACK_SHORT;
             case KEYCODE_DPAD_RIGHT:

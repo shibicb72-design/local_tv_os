@@ -94,6 +94,7 @@ public class PlayerActivity extends Activity {
     /** Remembered choices (ResumeStore): audio track id, subtitle id or {@link SubtitlePick#OFF}; null = none made. */
     private String chosenAudioId;
     private String chosenSubtitleId;
+    private boolean audioFailureShown;
     private boolean audioRestored;
     /** Audio file (P6): no video surface, title and tags centred, the overlay stays up, no resume. */
     private boolean audioMode;
@@ -191,8 +192,7 @@ public class PlayerActivity extends Activity {
 
             @Override
             public void onPlayerError(PlaybackException error) {
-                Toast.makeText(PlayerActivity.this, "Cannot play this file: " + error.getErrorCodeName(),
-                        Toast.LENGTH_LONG).show();
+                showPlaybackFailure("Cannot play this file: " + error.getErrorCodeName());
             }
 
             @Override
@@ -207,6 +207,10 @@ public class PlayerActivity extends Activity {
 
             @Override
             public void onTracksChanged(Tracks tracks) {
+                if (!audioFailureShown && noPlayableAudio(tracks)) {
+                    audioFailureShown = true;
+                    showPlaybackFailure("No decoder for this audio track");
+                }
                 if (!audioRestored) restoreAudio(tracks);
                 if (!subtitlesSettled) chooseSubtitles(tracks);
             }
@@ -289,6 +293,12 @@ public class PlayerActivity extends Activity {
                 return true;
             case TOGGLE_PLAY:
                 if (repeat == 0) player.setPlayWhenReady(!player.getPlayWhenReady());
+                break;
+            case PLAY:
+                player.setPlayWhenReady(true);
+                break;
+            case PAUSE:
+                player.setPlayWhenReady(false);
                 break;
             case SEEK_BACK_SHORT:
             case SEEK_FORWARD_SHORT:
@@ -714,11 +724,53 @@ public class PlayerActivity extends Activity {
                     sidecars = SubtitleSources.build(f, getCacheDir(), subtitleCharset(),
                             Locale.getDefault().getLanguage());
                 }
+                addRememberedSidecar(f);
                 return new MediaItem.Builder().setUri(Uri.fromFile(f)).setSubtitleConfigurations(sidecars).build();
             }
         }
         Uri data = getIntent().getData();
         return data == null ? null : MediaItem.fromUri(data);
+    }
+
+    /** A subtitle file picked by hand can have another name than the video's: put it back so the choice is restored. */
+    private void addRememberedSidecar(File video) {
+        String id = chosenSubtitleId;
+        if (id == null || !id.startsWith(SubtitlePick.SIDECAR_PREFIX)) return;
+        for (MediaItem.SubtitleConfiguration c : sidecars) {
+            if (id.equals(c.id)) return;
+        }
+        MediaItem.SubtitleConfiguration config = SubtitleSources.buildOne(video,
+                id.substring(SubtitlePick.SIDECAR_PREFIX.length()), getCacheDir(), subtitleCharset());
+        if (config != null) sidecars.add(config);
+    }
+
+    private static boolean noPlayableAudio(Tracks tracks) {
+        boolean any = false;
+        for (Tracks.Group g : tracks.getGroups()) {
+            if (g.getType() != C.TRACK_TYPE_AUDIO) continue;
+            any = true;
+            if (g.isSupported()) return false;
+        }
+        return any;
+    }
+
+    /** Plan D7: say what failed on the overlay and offer the file to any other installed player. */
+    private void showPlaybackFailure(String message) {
+        overlay.setTitle(message);
+        overlay.show();
+        String path = getIntent().getStringExtra(EXTRA_PATH);
+        Uri data = path != null ? Uri.fromFile(new File(path)) : getIntent().getData();
+        if (data == null) return;
+        Intent view = new Intent(Intent.ACTION_VIEW).setDataAndType(data, "*/*")
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        Intent chooser = Intent.createChooser(view, "Open in another player");
+        chooser.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS,
+                new android.content.ComponentName[]{new android.content.ComponentName(this, PlayerActivity.class)});
+        try {
+            startActivity(chooser);
+        } catch (RuntimeException e) {
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void applyFit() {

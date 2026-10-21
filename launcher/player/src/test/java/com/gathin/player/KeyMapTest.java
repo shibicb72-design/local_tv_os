@@ -14,8 +14,14 @@ public class KeyMapTest {
     @Test
     public void okAndPlayKeysTogglePlay() {
         int[] keys = {KeyMap.KEYCODE_DPAD_CENTER, KeyMap.KEYCODE_ENTER, KeyMap.KEYCODE_NUMPAD_ENTER,
-                KeyMap.KEYCODE_MEDIA_PLAY_PAUSE, KeyMap.KEYCODE_MEDIA_PLAY, KeyMap.KEYCODE_MEDIA_PAUSE};
+                KeyMap.KEYCODE_MEDIA_PLAY_PAUSE};
         for (int k : keys) assertEquals(Action.TOGGLE_PLAY, map(k));
+    }
+
+    @Test
+    public void playAndPauseKeysSetAState() {
+        assertEquals(Action.PLAY, map(KeyMap.KEYCODE_MEDIA_PLAY));
+        assertEquals(Action.PAUSE, map(KeyMap.KEYCODE_MEDIA_PAUSE));
     }
 
     @Test
