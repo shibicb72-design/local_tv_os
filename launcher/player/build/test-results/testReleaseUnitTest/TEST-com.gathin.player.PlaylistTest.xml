@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.gathin.player.PlaylistTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-21T00:00:52" hostname="ZAZBALL500" time="0.001">
+  <properties/>
+  <testcase name="kindFromExtension" classname="com.gathin.player.PlaylistTest" time="0.0"/>
+  <testcase name="currentIsIncludedEvenWhenNotListed" classname="com.gathin.player.PlaylistTest" time="0.001"/>
+  <testcase name="noWrapAround" classname="com.gathin.player.PlaylistTest" time="0.0"/>
+  <testcase name="otherKindsAreIgnored" classname="com.gathin.player.PlaylistTest" time="0.0"/>
+  <testcase name="siblingsOfTheSameKindInNaturalOrder" classname="com.gathin.player.PlaylistTest" time="0.0"/>
+  <testcase name="emptyListHasNoCurrent" classname="com.gathin.player.PlaylistTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

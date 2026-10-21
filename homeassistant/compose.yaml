@@ -1,0 +1,66 @@
+# Voice control stack: Home Assistant + Caddy allowlist + Tailscale Funnel.
+# Run from this folder: docker compose up -d   (see RUNBOOK.md)
+# Images are pinned on purpose; update them by hand, one at a time, after reading the release notes.
+
+name: ha
+
+services:
+  homeassistant:
+    # update by hand: the current stable YYYY.M.x tag on the day of setup (check the tag exists first)
+    image: ghcr.io/home-assistant/home-assistant:2026.9.3
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - ./config:/config
+      - ha_db:/data
+      # the Platform-Tools key the projector already trusts, read-only: no new "Allow USB debugging?" prompt
+      - ./secrets/adbkey:/config/.storage/androidtv_adbkey:ro
+      - ./secrets/adbkey.pub:/config/.storage/androidtv_adbkey.pub:ro
+    ports:
+      # operator UI on the Alienware only; never published on the LAN or the internet
+      - "127.0.0.1:8123:8123"
+    networks:
+      - ha_net
+
+  caddy:
+    # update by hand: Caddy 2.x
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    # no ports: only the tailscale container reaches it, over ha_net
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - homeassistant
+    networks:
+      - ha_net
+
+  tailscale:
+    # update by hand: Tailscale stable
+    image: tailscale/tailscale:v1.80.3
+    restart: unless-stopped
+    # userspace networking: no /dev/net/tun, no NET_ADMIN; no ports, the tunnel is opened outbound
+    environment:
+      TS_AUTHKEY: ${TS_AUTHKEY}
+      TS_HOSTNAME: ${TS_HOSTNAME}
+      TS_USERSPACE: "true"
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_SERVE_CONFIG: /config/serve.json
+      TS_EXTRA_ARGS: --advertise-tags=tag:ha
+    volumes:
+      - ts_state:/var/lib/tailscale
+      - ./tailscale/serve.json:/config/serve.json:ro
+    depends_on:
+      - caddy
+    networks:
+      - ha_net
+
+networks:
+  ha_net:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  ha_db:
+  ts_state:

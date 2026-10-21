@@ -1,0 +1,149 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-61:12
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-61:12
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-61:12
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:1-61:12
+MERGED from [:romancore] C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.recyclerview:recyclerview:1.3.2] C:\Users\shibi\.gradle\caches\8.9\transforms\62454a3cca38d4b1256266a06e5b4e28\transformed\recyclerview-1.3.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\shibi\.gradle\caches\8.9\transforms\665b1e76a46b4d117d595669e0cc4c46\transformed\customview-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\shibi\.gradle\caches\8.9\transforms\70a4404f78ff4408ba72cdeb9a417244\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:17:1-23:12
+MERGED from [androidx.core:core-ktx:1.5.0] C:\Users\shibi\.gradle\caches\8.9\transforms\9ff1fbd0aec35f5246851cd69fdfa9dd\transformed\core-ktx-1.5.0\AndroidManifest.xml:2:1-9:12
+MERGED from [androidx.core:core:1.7.0] C:\Users\shibi\.gradle\caches\8.9\transforms\3afe7fa58a47c7b182ae0caccac05374\transformed\core-1.7.0\AndroidManifest.xml:17:1-26:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\shibi\.gradle\caches\8.9\transforms\d76f7faec08758676fd25dae129ae9e7\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.3.1] C:\Users\shibi\.gradle\caches\8.9\transforms\f1d82a6203e10e6412308c12e4bcd04c\transformed\lifecycle-runtime-2.3.1\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.arch.core:core-runtime:2.1.0] C:\Users\shibi\.gradle\caches\8.9\transforms\d0330487892176a387111f536d1875f8\transformed\core-runtime-2.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.annotation:annotation-experimental:1.1.0] C:\Users\shibi\.gradle\caches\8.9\transforms\cbf874f2032679cdc0e9758f5dc6ada9\transformed\annotation-experimental-1.1.0\AndroidManifest.xml:17:1-24:12
+	package
+		INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml
+	android:versionCode
+		INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.MANAGE_EXTERNAL_STORAGE
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:4:5-82
+	android:name
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:4:22-79
+uses-feature#android.software.leanback
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:6:5-8:36
+	android:required
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:8:9-33
+	android:name
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:7:9-49
+uses-feature#android.hardware.touchscreen
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:9:5-11:36
+	android:required
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:11:9-33
+	android:name
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:10:9-52
+queries
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:13:5-35:15
+package#com.gathin.player
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:14:9-53
+	android:name
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:14:18-50
+intent#action:name:android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION+data:scheme:package
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:15:9-18:18
+action#android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:13-94
+	android:name
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:16:21-91
+data
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:13-46
+	android:scheme
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:17:19-43
+	android:mimeType
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:21:19-45
+intent#action:name:android.intent.action.VIEW+data:mimeType:video/*
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:19:9-22:18
+action#android.intent.action.VIEW
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:20:13-65
+	android:name
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:20:21-62
+intent#action:name:android.intent.action.VIEW+data:mimeType:audio/*
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:23:9-26:18
+intent#action:name:android.intent.action.VIEW+data:mimeType:image/*
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:27:9-30:18
+intent#action:name:android.intent.action.VIEW+data:mimeType:*/*
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:31:9-34:18
+application
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:37:5-60:19
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:37:5-60:19
+MERGED from [androidx.core:core:1.7.0] C:\Users\shibi\.gradle\caches\8.9\transforms\3afe7fa58a47c7b182ae0caccac05374\transformed\core-1.7.0\AndroidManifest.xml:24:5-89
+MERGED from [androidx.core:core:1.7.0] C:\Users\shibi\.gradle\caches\8.9\transforms\3afe7fa58a47c7b182ae0caccac05374\transformed\core-1.7.0\AndroidManifest.xml:24:5-89
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\shibi\.gradle\caches\8.9\transforms\d76f7faec08758676fd25dae129ae9e7\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\shibi\.gradle\caches\8.9\transforms\d76f7faec08758676fd25dae129ae9e7\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+	android:extractNativeLibs
+		INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.7.0] C:\Users\shibi\.gradle\caches\8.9\transforms\3afe7fa58a47c7b182ae0caccac05374\transformed\core-1.7.0\AndroidManifest.xml:24:18-86
+	android:label
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:41:9-41
+	android:icon
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:40:9-40
+	android:allowBackup
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:38:9-36
+	android:banner
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:39:9-42
+	android:theme
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:42:9-43
+activity#com.gathin.files.FilesActivity
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:44:9-53:20
+	android:launchMode
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:47:13-44
+	android:exported
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:46:13-36
+	android:configChanges
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:48:13-90
+	android:name
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:45:13-42
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LEANBACK_LAUNCHER
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:49:13-52:29
+action#android.intent.action.MAIN
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:50:17-69
+	android:name
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:50:25-66
+category#android.intent.category.LEANBACK_LAUNCHER
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:51:17-86
+	android:name
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:51:27-83
+provider#com.gathin.files.StreamProvider
+ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:55:9-59:50
+	android:grantUriPermissions
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:59:13-47
+	android:authorities
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:57:13-58
+	android:exported
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:58:13-37
+	android:name
+		ADDED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml:56:13-43
+uses-sdk
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml
+INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml
+MERGED from [:romancore] C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:5:5-44
+MERGED from [:romancore] C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\romancore\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:5:5-44
+MERGED from [androidx.recyclerview:recyclerview:1.3.2] C:\Users\shibi\.gradle\caches\8.9\transforms\62454a3cca38d4b1256266a06e5b4e28\transformed\recyclerview-1.3.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.recyclerview:recyclerview:1.3.2] C:\Users\shibi\.gradle\caches\8.9\transforms\62454a3cca38d4b1256266a06e5b4e28\transformed\recyclerview-1.3.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\shibi\.gradle\caches\8.9\transforms\665b1e76a46b4d117d595669e0cc4c46\transformed\customview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\shibi\.gradle\caches\8.9\transforms\665b1e76a46b4d117d595669e0cc4c46\transformed\customview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\shibi\.gradle\caches\8.9\transforms\70a4404f78ff4408ba72cdeb9a417244\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\shibi\.gradle\caches\8.9\transforms\70a4404f78ff4408ba72cdeb9a417244\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.core:core-ktx:1.5.0] C:\Users\shibi\.gradle\caches\8.9\transforms\9ff1fbd0aec35f5246851cd69fdfa9dd\transformed\core-ktx-1.5.0\AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.core:core-ktx:1.5.0] C:\Users\shibi\.gradle\caches\8.9\transforms\9ff1fbd0aec35f5246851cd69fdfa9dd\transformed\core-ktx-1.5.0\AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.core:core:1.7.0] C:\Users\shibi\.gradle\caches\8.9\transforms\3afe7fa58a47c7b182ae0caccac05374\transformed\core-1.7.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.core:core:1.7.0] C:\Users\shibi\.gradle\caches\8.9\transforms\3afe7fa58a47c7b182ae0caccac05374\transformed\core-1.7.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\shibi\.gradle\caches\8.9\transforms\d76f7faec08758676fd25dae129ae9e7\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\shibi\.gradle\caches\8.9\transforms\d76f7faec08758676fd25dae129ae9e7\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.3.1] C:\Users\shibi\.gradle\caches\8.9\transforms\f1d82a6203e10e6412308c12e4bcd04c\transformed\lifecycle-runtime-2.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.3.1] C:\Users\shibi\.gradle\caches\8.9\transforms\f1d82a6203e10e6412308c12e4bcd04c\transformed\lifecycle-runtime-2.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.1.0] C:\Users\shibi\.gradle\caches\8.9\transforms\d0330487892176a387111f536d1875f8\transformed\core-runtime-2.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.1.0] C:\Users\shibi\.gradle\caches\8.9\transforms\d0330487892176a387111f536d1875f8\transformed\core-runtime-2.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.annotation:annotation-experimental:1.1.0] C:\Users\shibi\.gradle\caches\8.9\transforms\cbf874f2032679cdc0e9758f5dc6ada9\transformed\annotation-experimental-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.annotation:annotation-experimental:1.1.0] C:\Users\shibi\.gradle\caches\8.9\transforms\cbf874f2032679cdc0e9758f5dc6ada9\transformed\annotation-experimental-1.1.0\AndroidManifest.xml:20:5-22:41
+	android:targetSdkVersion
+		INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\shibi\Fabrica_Augusta\Instrumenta_Imperii\local_tv_os_feat\launcher\files\src\main\AndroidManifest.xml

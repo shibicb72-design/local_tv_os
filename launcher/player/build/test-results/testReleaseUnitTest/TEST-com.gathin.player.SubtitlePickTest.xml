@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.gathin.player.SubtitlePickTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-21T00:00:52" hostname="ZAZBALL500" time="0.001">
+  <properties/>
+  <testcase name="rememberedOffMeansNoSubtitles" classname="com.gathin.player.SubtitlePickTest" time="0.0"/>
+  <testcase name="firstSidecarWhenNothingElseApplies" classname="com.gathin.player.SubtitlePickTest" time="0.0"/>
+  <testcase name="unknownRememberedIdFallsThrough" classname="com.gathin.player.SubtitlePickTest" time="0.0"/>
+  <testcase name="forcedTrackInSystemLanguageBeatsSidecar" classname="com.gathin.player.SubtitlePickTest" time="0.0"/>
+  <testcase name="forcedTrackInAnotherLanguageIsIgnored" classname="com.gathin.player.SubtitlePickTest" time="0.0"/>
+  <testcase name="embeddedOnlyDefaultsToOff" classname="com.gathin.player.SubtitlePickTest" time="0.0"/>
+  <testcase name="rememberedChoiceWins" classname="com.gathin.player.SubtitlePickTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
