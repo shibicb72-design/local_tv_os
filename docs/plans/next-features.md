@@ -385,6 +385,9 @@ the overlay says what failed and offers "Open in another player" (chooser exclud
 - Tests: `PlayerExtractorsTest` (exactly the 9 classes, no Default factory referenced: read the source like
   `StoneTextureTest` does).
 - Budget: report the release size; stop at 1.8 MB.
+- Status: written with Media3 1.4.1. **Op-P0 (codec inventory) is pending** (projector was off): no codec
+  assumption is made in code beyond ExoPlayer's `DefaultRenderersFactory` and the failure toast; P8's debug
+  codec report will answer it.
 - Reviewer checks: no `media3-ui`; no `DefaultExtractorsFactory`, no `new ExoPlayer.Builder(context)` without the
   custom factory (that pulls all extractors back in); player released in `onStop`; `settings.gradle` includes `:player`.
 - Device: none.

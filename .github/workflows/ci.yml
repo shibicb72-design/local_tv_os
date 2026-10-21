@@ -52,6 +52,7 @@ jobs:
                     [ "$s" -lt "$2" ] || { echo "::error::$1 release APK over budget"; fail=1; }; }
           check app 409600     # the launcher targets 1 GB TVs, keep it small
           check files 307200
+          check player 2097152 # ExoPlayer with nine extractors
           exit $fail
       - uses: actions/upload-artifact@v4
         with:
@@ -61,3 +62,7 @@ jobs:
         with:
           name: files-debug-apk
           path: launcher/files/build/outputs/apk/debug/files-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: player-debug-apk
+          path: launcher/player/build/outputs/apk/debug/player-debug.apk

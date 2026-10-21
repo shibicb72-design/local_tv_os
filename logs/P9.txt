@@ -1,0 +1,57 @@
+P9: integration (dock, theme, README, Player install) (operator fills in)
+
+Build (outside Claude):
+  cd launcher; gradlew testReleaseUnitTest assembleRelease assembleDebug  ->  ____
+
+Release APK sizes (bytes, after R8):
+  app-release.apk    (limit 409600, +2048 vs F11):      ____
+  files-release.apk  (limit 307200, target <= 204800):  ____
+  player-release.apk (limit 2097152, target <= 1572864, stop at 1.8 MB): ____
+
+Tests (gradlew testReleaseUnitTest), counts per module:
+  :romancore  ____
+  :app        ____
+  :files      ____
+  :player     ____
+  total       ____
+
+Install and grant (each line after Shibi's OK):
+  install player-release.apk:                              ____
+  appops set --uid com.gathin.player MANAGE_EXTERNAL_STORAGE allow: ____
+  appops get ... (expect: allow):                          ____
+  theme push (tools\theme.ps1 themes\xgimi-s-max):         ____
+  install player-debug.apk once, logcat -d -s PlayerCodecs: ____
+  reinstall player-release.apk:                            ____
+
+Dock and grid on the TV:
+  Dock order (expect YouTube, Prime Video, HDMI 1, Files, Player): ____
+  Five columns, tiles readable:                            ____
+  com.xgimi.gimiplayer still visible (not hidden):         ____
+
+Codec report (Op-P0 answer, from the debug build):
+  hardware video decoders (name, MIME, max size):          ____
+  audio decoders (AC-3, E-AC-3, DTS, TrueHD, AAC):         ____
+  passthrough encodings:                                   ____
+
+Test matrix (record each line):
+  MKV H.264 + AC-3 + embedded SRT:                         ____
+  MKV H.264 + AC-3 + embedded PGS:                         ____
+  MKV HEVC 10-bit + E-AC-3 / DTS:                          ____
+  MP4 H.264 + AAC + sidecar Movie.fa.srt (Windows-1256):   ____
+  AVI Xvid + MP3:                                          ____
+  TS:                                                      ____
+  MP3 / FLAC album folder (next track, tags):              ____
+  30 JPEG / HEIC photos (slideshow, 8 s, OK pauses):       ____
+  resume after BACK (position and track choices kept):     ____
+  LEFT/RIGHT -10 s / +10 s, hold for -30 s / +30 s:        ____
+  audio and subtitle switching (tracks menu):              ____
+  unsupported file shows "Cannot play this file":          ____
+
+Memory (read-only, dumpsys meminfo com.gathin.player):
+  browse / library (<= 35 MB, ceiling 45):                 ____
+  1080p H.264/HEVC with subtitles (<= 90, ceiling 110):    ____
+  4K HEVC, if decoded (<= 100, ceiling 120):               ____
+  photo slideshow (<= 50, ceiling 60):                     ____
+  launcher idle meminfo com.gathin.tvhome (< 60 MB):       ____
+
+Shibi's sign-off on replacing com.xgimi.gimiplayer:        ____  (yes / no / later)

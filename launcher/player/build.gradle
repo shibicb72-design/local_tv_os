@@ -1,0 +1,40 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.gathin.player'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.gathin.player'
+        // Written for the projector (SDK 30): no pre-Android-11 storage branches.
+        minSdk 30
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Sideloaded over ADB, never published: sign with the debug key like the launcher.
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation project(':romancore')
+    // Media3 1.4.1: the last release that builds with compileSdk 34 (1.5.0 and later require compileSdk 35,
+    // and compileSdk is not raised for this plan). ExoPlayer only: no media3-ui (plan D7), no HLS/DASH modules.
+    implementation 'androidx.media3:media3-exoplayer:1.4.1'
+    testImplementation 'junit:junit:4.13.2'
+}
